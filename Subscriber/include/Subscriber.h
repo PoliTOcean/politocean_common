@@ -46,6 +46,8 @@ class callback : public virtual mqtt::callback, public virtual mqtt::iaction_lis
     mqtt::connect_options& connectOptions_;
     action_listener subListener_;
 
+    void (*pFunction_)(std::string payload);
+
     void reconnect() {
         std::this_thread::sleep_for(std::chrono::milliseconds(2500));
         try {
@@ -84,19 +86,23 @@ class callback : public virtual mqtt::callback, public virtual mqtt::iaction_lis
     }
 
     void message_arrived(mqtt::const_message_ptr msg) override {
-        std::cout << msg->get_topic() << ": " << msg->get_payload_str() << std::endl;
+        if (pFunction_ != nullptr)
+            pFunction_(msg->get_payload_str());
     }
 
     void delivery_complete(mqtt::delivery_token_ptr token) override {}
 
 public:
     callback(mqtt::async_client& asyncClient, mqtt::connect_options& connectOptions,
-             std::string clientID, std::string topic, int QOS) :
+             std::string clientID, std::string topic, int QOS, void (*pFunction)(std::string payload) = nullptr) :
             nRetry(0),
             asyncClient_(asyncClient),
             connectOptions_(connectOptions),
             subListener_("Subscription"),
-            clientID_(clientID), topic_(topic), QOS_(QOS) {}
+            clientID_(clientID), topic_(topic), QOS_(QOS),
+            pFunction_(pFunction) {}
+
+    void setpFunction(void (*pFunction)(std::string payload)) { pFunction_ = pFunction; }
 };
 
 class Subscriber {
@@ -112,7 +118,7 @@ public:
     /**
      * Creates new client with @clientID listening on the topic @topic on a server with address @address
      */
-    Subscriber(std::string address, std::string clientID, std::string topic);
+    Subscriber(std::string address, std::string clientID, std::string topic, void (*pFunction)(std::string payload) = nullptr);
     /**
      * Removes references for pointers @asyncClient, @connectOptions, @cb
      */
@@ -122,6 +128,7 @@ public:
      * Connects the client to the server.
      */
     void connect();
+    void setCallback(void (*pFunction)(std::string payload));
     /*
      * Listens the topic until the user press q<Enter> on the keyboard
      */

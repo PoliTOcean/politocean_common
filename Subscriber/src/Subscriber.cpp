@@ -6,7 +6,7 @@
 
 using namespace std;
 
-Subscriber::Subscriber(string address, string clientID, string topic)
+Subscriber::Subscriber(string address, string clientID, string topic, void (*pFunction)(std::string payload))
     : address(address), clientID(clientID), topic(topic)
 {
     connectOptions = new mqtt::connect_options();
@@ -15,7 +15,7 @@ Subscriber::Subscriber(string address, string clientID, string topic)
 
     asyncClient = new mqtt::async_client(address, clientID);
 
-    cb = new callback(*asyncClient, *connectOptions, clientID, topic, QOS);
+    cb = new callback(*asyncClient, *connectOptions, clientID, topic, QOS, pFunction);
     asyncClient->set_callback(*cb);
 }
 
@@ -33,6 +33,11 @@ void Subscriber::connect()
         cerr << e.what() << endl;
         exit(EXIT_FAILURE);
     }
+}
+
+void Subscriber::setCallback(void (*pFunction)(std::string payload))
+{
+    cb->setpFunction(pFunction);
 }
 
 void Subscriber::listen()
