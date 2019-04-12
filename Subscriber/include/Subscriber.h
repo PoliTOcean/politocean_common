@@ -12,30 +12,6 @@
 
 #include "mqtt/async_client.h"
 
-class action_listener : public virtual mqtt::iaction_listener {
-    std::string name_;
-
-    void on_failure(const mqtt::token& tok) override {
-        std::cout << name_ << " failure";
-        if (tok.get_message_id() != 0)
-            std::cout << " for token: [" << tok.get_message_id() << "]" << std::endl;
-        std::cout << std::endl;
-    }
-
-    void on_success(const mqtt::token& tok) override {
-        std::cout << name_ << " success";
-        if (tok.get_message_id() != 0)
-            std::cout << " for token: [" << tok.get_message_id() << "]" << std::endl;
-        auto top = tok.get_topics();
-        if (top && !top->empty())
-            std::cout << "\ttoken topic: '" << (*top)[0] << "', ..." << std::endl;
-        std::cout << std::endl;
-    }
-
-public:
-    action_listener(const std::string& name) : name_(name) {}
-};
-
 class callback : public virtual mqtt::callback, public virtual mqtt::iaction_listener {
     const int N_RETRY_ATTEMPTS = 5;
 
@@ -44,7 +20,6 @@ class callback : public virtual mqtt::callback, public virtual mqtt::iaction_lis
 
     mqtt::async_client& asyncClient_;
     mqtt::connect_options& connectOptions_;
-    action_listener subListener_;
 
     void (*pFunction_)(std::string payload);
 
@@ -75,7 +50,7 @@ class callback : public virtual mqtt::callback, public virtual mqtt::iaction_lis
                     << " using QoS " << QOS_ << std::endl;
         std::cout << "\nPress Q<Enter> to quit" << std::endl;
 
-        asyncClient_.subscribe(clientID_, QOS_);
+        asyncClient_.subscribe(topics_, QOS_);
     }
 
     void connection_lost(const std::string& cause) override {
@@ -98,7 +73,6 @@ public:
             nRetry(0),
             asyncClient_(asyncClient),
             connectOptions_(connectOptions),
-            subListener_("Subscription"),
             clientID_(clientID), topic_(topic), QOS_(QOS),
             pFunction_(pFunction) {}
 
