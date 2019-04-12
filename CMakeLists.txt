@@ -3,8 +3,6 @@ project(Politocean)
 
 add_subdirectory(Publisher)
 add_subdirectory(Subscriber)
-add_subdirectory(Sensor)
-
 
 
 install(
