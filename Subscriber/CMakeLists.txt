@@ -1,16 +1,31 @@
 cmake_minimum_required(VERSION 3.13)
-project(Subscriber)
+project(Subscriber VERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 11)
 
-include_directories(include)
 
-add_library(subscriber SHARED
+add_library(Subscriber SHARED
         src/Subscriber.cpp)
-target_link_libraries(subscriber -lpaho-mqttpp3)
 
-install(TARGETS publisher
-        LIBRARY DESTINATION /usr/local/lib
-        ARCHIVE DESTINATION /usr/local/lib
-        RUNTIME DESTINATION /usr/local/bin
-        INCLUDES DESTINATION /usr/local/include)
+target_link_directories(Subscriber
+        PUBLIC
+            $<INSTALL_INTERFACE:include>
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_link_libraries(Subscriber -lpaho-mqttpp3)
+
+include(GNUInstallDirs)
+
+install(TARGETS Subscriber
+        EXPORT subscriber-export
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+install(EXPORT subscriber-export
+        FILE SubscriberTargets.cmake
+        NAMESPACE Subscriber::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Subscriber
+)
+
