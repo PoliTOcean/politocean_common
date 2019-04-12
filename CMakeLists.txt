@@ -4,7 +4,6 @@ project(Politocean)
 add_subdirectory(Publisher)
 add_subdirectory(Subscriber)
 
-
 install(
   EXPORT PolitoceanTargets
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Politocean
