@@ -25,7 +25,7 @@ public:
     /**
     * Removes references for @asyncClient
     */
-    ~Publisher()
+    ~Publisher();
     /*
      * Connects the client to the server.
      */
