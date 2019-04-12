@@ -50,7 +50,7 @@ class callback : public virtual mqtt::callback, public virtual mqtt::iaction_lis
                     << " using QoS " << QOS_ << std::endl;
         std::cout << "\nPress Q<Enter> to quit" << std::endl;
 
-        asyncClient_.subscribe(topics_, QOS_);
+        asyncClient_.subscribe(topic_, QOS_);
     }
 
     void connection_lost(const std::string& cause) override {
