@@ -2,16 +2,16 @@ cmake_minimum_required(VERSION 3.5)
 project(Publisher VERSION 1.0.0 LANGUAGES CXX)
 
 add_library(Publisher
-        src/Publisher.cpp)
+        Publisher.cpp)
 
-add_library(Politocean::Publisher ALIAS Publisher)
+add_library(PolitoceanCommon::Publisher ALIAS Publisher)
 
 target_include_directories(Publisher
         PUBLIC
             $<INSTALL_INTERFACE:include>
-            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         PRIVATE
-            ${CMAKE_CURRENT_SOURCE_DIR}/src
+            ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_link_libraries(Publisher -lpaho-mqttpp3)
@@ -21,7 +21,7 @@ target_compile_options(Publisher PRIVATE $<$<CXX_COMPILER_ID:GNU>:-Wall>)
 
 include(GNUInstallDirs)
 install(TARGETS Publisher
-        EXPORT PolitoceanTargets
+        EXPORT PolitoceanCommonTargets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
