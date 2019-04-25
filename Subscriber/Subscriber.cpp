@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include "Subscriber.h"
+#include "PolitoceanExceptions.hpp"
 
 namespace Politocean {
 using namespace std;
@@ -34,7 +35,7 @@ void Subscriber::connect()
     } catch (const mqtt::exception& e) {
         std::stringstream ss;
         ss << "Error while connecting: " << e.what();
-        throw ss.str();
+        throw Politocean::mqttException(ss.str().c_str());
     }
 }
 
@@ -50,7 +51,7 @@ void Subscriber::disconnect()
     } catch (mqtt::exception& e) {
         std::stringstream ss;
         ss << "Error while disconnecting: " << e.what();
-        throw ss.str();
+        throw Politocean::mqttException(ss.str().c_str());
     }
 }
 

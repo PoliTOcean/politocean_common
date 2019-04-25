@@ -1,0 +1,42 @@
+
+namespace Politocean {
+
+class exception : std::exception {
+public:
+    /// returns the explanatory string
+    const char* what() const noexcept override
+    {
+        return m.what();
+    }
+
+    exception(const char* what_arg) : std::exception(), m(what_arg) {}
+
+protected:
+    static std::string name(const std::string& ename, int id_)
+    {
+        return "[Politocean.exception." + ename + "." + std::to_string(id_) + "] ";
+    }
+
+private:
+    /// an exception object as storage for error messages
+    std::runtime_error m;
+};
+
+
+class mqttException : exception {
+public:
+    mqttException(const char* what_arg) : exception(what_arg), m(what_arg) {}
+
+protected:
+    static std::string name(const std::string& ename, int id_)
+    {
+        return "[Politocean.mqttException." + ename + "." + std::to_string(id_) + "] ";
+    }
+
+
+private:
+    /// an exception object as storage for error messages
+    std::runtime_error m;
+};
+
+}

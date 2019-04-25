@@ -3,6 +3,7 @@
 //
 
 #include "Publisher.h"
+#include "PolitoceanExceptions.hpp"
 
 namespace Politocean {
 using namespace std;
@@ -39,7 +40,7 @@ void Publisher::disconnect()
     tok->wait();
 
     if (!toks.empty()){
-        throw "There are pending delivery tokens.";
+        throw Politocean::mqttException("There are pending delivery tokens.");
     }
 }
 
