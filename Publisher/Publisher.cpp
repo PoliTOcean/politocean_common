@@ -4,6 +4,7 @@
 
 #include "Publisher.h"
 
+namespace Politocean {
 using namespace std;
 
 Publisher::Publisher(string address, string clientID)
@@ -40,4 +41,6 @@ void Publisher::disconnect()
     if (!toks.empty()){
         throw "There are pending delivery tokens.";
     }
+}
+
 }

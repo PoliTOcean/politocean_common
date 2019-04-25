@@ -13,6 +13,8 @@
 #include "mqtt/async_client.h"
 #include "include/callback.hpp"
 
+namespace Politocean {
+
 class Subscriber {
     std::string address, clientID, topic;
 
@@ -47,5 +49,7 @@ public:
     void disconnect();
 
 };
+
+}
 
 #endif //SUBSCRIBER_SUBSCRIBER_H

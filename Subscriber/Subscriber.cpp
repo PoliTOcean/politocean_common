@@ -6,6 +6,7 @@
 #include <string>
 #include "Subscriber.h"
 
+namespace Politocean {
 using namespace std;
 
 Subscriber::Subscriber(string address, string clientID, string topic, void (*pFunction)(std::string payload))
@@ -51,4 +52,6 @@ void Subscriber::disconnect()
         ss << "Error while disconnecting: " << e.what();
         throw ss.str();
     }
+}
+
 }
