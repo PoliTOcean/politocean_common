@@ -1,6 +1,7 @@
 
 namespace Politocean {
 
+
 class exception : public std::exception {
 public:
     /// returns the explanatory string
@@ -23,6 +24,7 @@ private:
 };
 
 
+
 class mqttException : public exception {
 public:
     mqttException(const char* what_arg) : exception(what_arg) {}
@@ -33,5 +35,6 @@ protected:
         return "[Politocean.mqttException." + ename + "." + std::to_string(id_) + "] ";
     }
 };
+
 
 }
