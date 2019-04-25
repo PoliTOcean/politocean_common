@@ -40,10 +40,6 @@ public:
     void connect();
     void setCallback(void (*pFunction)(std::string payload));
     /*
-     * Listens the topic until the user press q<Enter> on the keyboard
-     */
-    void listen();
-    /*
      * Disconnects the client from the server.
      */
     void disconnect();
