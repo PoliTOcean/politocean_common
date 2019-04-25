@@ -1,21 +1,19 @@
 cmake_minimum_required(VERSION 3.5)
-project(Subscriber VERSION 1.0)
+project(Subscriber VERSION 1.0.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 11)
+include_directories(include)
 
+add_library(Subscriber
+        Subscriber.cpp)
 
-add_library(Subscriber SHARED
-        src/Subscriber.cpp)
-
-add_library(Politocean::Subscriber ALIAS Subscriber)
-
+add_library(PolitoceanCommon::Subscriber ALIAS Subscriber)
 
 target_include_directories(Subscriber
         PUBLIC
             $<INSTALL_INTERFACE:include>
-            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         PRIVATE
-            ${CMAKE_CURRENT_SOURCE_DIR}/src
+            ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_link_libraries(Subscriber -lpaho-mqttpp3)
@@ -25,8 +23,7 @@ target_compile_options(Subscriber PRIVATE $<$<CXX_COMPILER_ID:GNU>:-Wall>)
 
 include(GNUInstallDirs)
 install(TARGETS Subscriber
-        EXPORT PolitoceanTargets
+        EXPORT PolitoceanCommonTargets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
-

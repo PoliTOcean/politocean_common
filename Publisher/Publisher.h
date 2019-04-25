@@ -9,6 +9,7 @@
 
 #include "mqtt/async_client.h"
 
+namespace Politocean {
 class Publisher {
     std::string address, clientID;
     mqtt::async_client *asyncClient;
@@ -41,5 +42,5 @@ public:
     void publish(std::string topic, std::string payload);
 };
 
-
+}
 #endif //PUBLISHER_PUBLISHER_H
