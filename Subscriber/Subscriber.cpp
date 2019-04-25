@@ -54,4 +54,8 @@ void Subscriber::disconnect()
     }
 }
 
+void Subscriber::listen(){
+    while(asyncClient->is_connected()); // TODO trovare un modo più custom
+}
+
 }
