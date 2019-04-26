@@ -5,9 +5,10 @@ include_directories(include)
 
 # Add here all libraries' directories
 #add_subdirectory(name_of_directory)
+add_subdirectory(Logger)
+add_subdirectory(mqttLogger)
 add_subdirectory(Publisher)
 add_subdirectory(Subscriber)
-#add_subdirectory(json)
 
 
 # Install and export (do not touch this part)

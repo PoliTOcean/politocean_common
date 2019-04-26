@@ -3,7 +3,9 @@
 //
 
 #include "Publisher.h"
+
 #include "PolitoceanExceptions.hpp"
+#include "logger.h"
 
 namespace Politocean {
 using namespace std;
@@ -21,8 +23,10 @@ Publisher::~Publisher()
 
 void Publisher::connect()
 {
+    logger::log(logger::INFO, "Trying to connect to... ..."); // TODO aggiungere informazioni
     tok = asyncClient->connect();
     tok->wait();
+    logger::log(logger::INFO, "Connected to... .");
 }
 
 void Publisher::publish(string topic, string payload)
@@ -36,10 +40,12 @@ void Publisher::disconnect()
 {
     auto toks = asyncClient->get_pending_delivery_tokens();
 
+    logger::log(logger::INFO, "Disconnecting from... ...");
     tok = asyncClient->disconnect();
     tok->wait();
 
     if (!toks.empty()){
+        logger::log(logger::ERROR, "There are pending delivery tokens.");
         throw Politocean::mqttException("There are pending delivery tokens.");
     }
 }

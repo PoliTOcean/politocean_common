@@ -11,6 +11,8 @@
 
 #include "mqtt/async_client.h"
 
+namespace Politocean {
+
 class action_listener : public virtual mqtt::iaction_listener
 {
 	std::string name_;
@@ -39,5 +41,7 @@ class action_listener : public virtual mqtt::iaction_listener
 public:
 	action_listener(const std::string& name) : name_(name) {}
 };
+
+}
 
 #endif //ACTION_LISTENER_SUBSCRIBER_H

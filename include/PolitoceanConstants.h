@@ -1,13 +1,27 @@
+#ifndef POLITOCEAN_CONSTANTS_H
+#define POLITOCEAN_CONSTANTS_H
 
 namespace Politocean {
 
     namespace Constants {
+        
+        namespace Logger {
+
+            const std::string LOGS_PATH { "logs/" };
+
+            namespace Levels {
+                const std::string ERROR { "error" };
+                const std::string INFO { "info" };
+                const std::string DEBUG { "debug" };
+            }
+        }
 
         namespace Common {
         }
 
         namespace Topics {
             const std::string ERRORS { "Errors" };
+            const std::string INFO { "Info" };
             const std::string MICRO_ROV_CAMERA { "MicroRovCamera" };
         }
 
@@ -21,3 +35,5 @@ namespace Politocean {
     }
 
 }
+
+#endif

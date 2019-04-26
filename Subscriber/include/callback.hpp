@@ -15,6 +15,8 @@
 #include "action_listener.hpp"
 #include "PolitoceanExceptions.hpp"
 
+namespace Politocean {
+
 class callback : public virtual mqtt::callback,
 					public virtual mqtt::iaction_listener
 
@@ -101,5 +103,7 @@ public:
         pf_ = pf;
     }
 };
+
+}
 
 #endif //CALLBACK_SUBSCRIBER_H
