@@ -1,61 +1,63 @@
-//
-// Created by pettinz.
-//
+/**
+ * @author: pettinz
+ * 
+ * Implementation for MQTT Subscriber client.
+ */ 
 
-#include <sstream>
-#include <string>
 #include "Subscriber.h"
 
+#include <sstream>
+#include "logger.h"
+
 namespace Politocean {
-using namespace std;
-
-Subscriber::Subscriber(string address, string clientID, string topic, void (*pFunction)(std::string payload))
-    : address(address), clientID(clientID), topic(topic)
-{
-    connectOptions = new mqtt::connect_options();
-    connectOptions->set_keep_alive_interval(20);
-    connectOptions->set_clean_session(true);
-
-    asyncClient = new mqtt::async_client(address, clientID);
-
-    cb = new callback(*asyncClient, *connectOptions, clientID, topic, QOS, pFunction);
-    asyncClient->set_callback(*cb);
-}
-
-Subscriber::~Subscriber()
-{
-    delete asyncClient, connectOptions, cb;
-}
 
 void Subscriber::connect()
 {
-    try {
-        asyncClient->connect(*connectOptions, nullptr, *cb);
-    } catch (const mqtt::exception& e) {
-        std::stringstream ss;
-        ss << "Error while connecting: " << e.what();
-        throw ss.str();
-    }
-}
+    connOpts_ = new mqtt::connect_options();
+	connOpts_->set_keep_alive_interval(20);
+	connOpts_->set_clean_session(true);
+    
+	cb_ = new callback(cli_, *connOpts_, clientID_, topic_, QOS);
+	cli_.set_callback(*cb_);
 
-void Subscriber::setCallback(void (*pFunction)(std::string payload))
-{
-    cb->setpFunction(pFunction);
+	logger::log(logger::INFO, "Trying to connect to... ...");
+	try{
+    	cli_.connect(*connOpts_, nullptr, *cb_);
+	}
+	catch(mqtt::exception e){
+        std::stringstream ss;
+        ss << "MQTT error while connecting: " << e.what();
+		logger::log(logger::ERROR, ss.str().c_str());
+		throw Politocean::mqttException(ss.str());
+	}
+	catch(std::exception e){
+        std::stringstream ss;
+        ss << "Generic error while connecting: " << e.what();
+		logger::log(logger::ERROR, ss.str().c_str());
+		throw Politocean::exception(ss.str());
+	}
+	logger::log(logger::INFO, "Connected to... .");
 }
 
 void Subscriber::disconnect()
 {
-    try {
-        asyncClient->disconnect();
-    } catch (mqtt::exception& e) {
+	logger::log(logger::INFO, "Trying to disconnect from... ...");
+	try{
+    	cli_.disconnect()->wait();
+	}
+	catch(mqtt::exception e){
         std::stringstream ss;
-        ss << "Error while disconnecting: " << e.what();
-        throw ss.str();
-    }
-}
-
-void Subscriber::listen(){
-    while(asyncClient->is_connected()); // TODO trovare un modo più custom
+        ss << "MQTT error while disconnecting: " << e.what();
+		logger::log(logger::ERROR, ss.str().c_str());
+		throw Politocean::mqttException(ss.str());
+	}
+	catch(std::exception e){
+        std::stringstream ss;
+        ss << "Generic error while disconnecting: " << e.what();
+		logger::log(logger::ERROR, ss.str().c_str());
+		throw Politocean::exception(ss.str());
+	}
+	logger::log(logger::INFO, "Disconnected from... .");
 }
 
 }
