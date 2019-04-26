@@ -1,6 +1,8 @@
-//
-// Created by pettinz.
-//
+/**
+ * @author: pettinz
+ * 
+ * MQTT Subscriber client definition
+ */
 
 #ifndef SUBSCRIBER_SUBSCRIBER_H
 #define SUBSCRIBER_SUBSCRIBER_H
@@ -16,39 +18,44 @@
 namespace Politocean {
 
 class Subscriber {
-    std::string address, clientID, topic;
+    std::string address_, clientID_, topic_;
+    mqtt::async_client cli_;
 
-    mqtt::async_client *asyncClient;
-    mqtt::connect_options *connectOptions;
-    callback *cb;
+    mqtt::connect_options *connOpts_;
+    callback *cb_;
+
 public:
-    const int QOS = 1;
+    static const std::string DFLT_ADDRESS, DFLT_CLIENT_ID, DFLT_TOPIC;
+    static const int QOS = 1;
 
-    Subscriber() = default;
-    /**
-     * Creates new client with @clientID listening on the topic @topic on a server with address @address
-     */
-    Subscriber(std::string address, std::string clientID, std::string topic, void (*pFunction)(std::string payload) = nullptr);
-    /**
-     * Removes references for pointers @asyncClient, @connectOptions, @cb
-     */
-    ~Subscriber();
+    Subscriber(const std::string& address, const std::string& clientID, const std::string& topic)
+        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID) {}
+	~Subscriber() { delete connOpts_; delete cb_; }
 
     /*
-     * Connects the client to the server.
-     */
+	 * Creates new client with @clientID listening on the topic @topic on a server with address @address.
+     * It throws a mqtt::exception in case of failure.
+	 */
     void connect();
-    void setCallback(void (*pFunction)(std::string payload));
-    /*
-     * Listens the topic until the user press q<Enter> on the keyboard
-     */
-    void listen();
-    /*
-     * Disconnects the client from the server.
-     */
-    void disconnect();
+    /**
+	 * Listens the topic until the user press q<Enter> on the keyboard.
+	 *  @pf is the pointer to the method function to be execute every time a message arrives
+     *  @obj is the instance object to bind with @pf
+	 */
+    template<class M, class T>
+    std::thread *listen(void (T::*pf)(const std::string& payload), M *obj) {
+        cb_->set_callback(std::bind(pf, obj, std::placeholders::_1));
 
+        return new std::thread([]() {
+            while (std::tolower(std::cin.get()) != 'q');
+        });
+    }
+    /*
+	 * Disconnects the client from the server
+	 */
+    void disconnect();
 };
+
 
 }
 
