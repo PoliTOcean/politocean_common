@@ -13,6 +13,7 @@
 
 #include "mqtt/async_client.h"
 #include "action_listener.hpp"
+#include "PolitoceanExceptions.hpp"
 
 class callback : public virtual mqtt::callback,
 					public virtual mqtt::iaction_listener
@@ -39,16 +40,18 @@ class callback : public virtual mqtt::callback,
 			cli_.connect(connOpts_, nullptr, *this);
 		}
 		catch (const mqtt::exception& exc) {
-			std::cerr << "Error: " << exc.what() << std::endl;
-			exit(1);
+			//TODO logger error
+			throw Politocean::mqttException(exc.what());
 		}
 	}
 
     // Re-connection failure
 	void on_failure(const mqtt::token& tok) override {
-		std::cout << "Connection attempt failed" << std::endl;
-		if (++nretry_ > N_RETRY_ATTEMPTS)
-			exit(1);
+		//TODO logger info: "Failed connection attempt. Retrying..."
+		if (++nretry_ > N_RETRY_ATTEMPTS){
+			//TODO logger error
+			throw Politocean::mqttException("Limit of retry attempts reached while trying to reconnect.");
+		}
 		reconnect();
 	}
 
@@ -57,23 +60,25 @@ class callback : public virtual mqtt::callback,
 	void on_success(const mqtt::token& tok) override {}
 
 	void connected(const std::string& cause) override {
+		/* Logger info:
 		std::cout << "\nConnection success" << std::endl;
 		std::cout << "\nSubscribing to topic '" << topic_ << "'\n"
 			<< "\tfor client " << clientID_
 			<< " using QoS" << QOS_ << "\n"
-			<< "\nPress Q<Enter> to quit\n" << std::endl;
-
+		*/
 		cli_.subscribe(topic_, QOS_, nullptr, subListener_);
 	}
 
 	// Callback for when the connection is lost.
     // This will initiate the attempt to manually reconnect.
 	void connection_lost(const std::string& cause) override {
+		/* Logger info:
 		std::cout << "\nConnection lost" << std::endl;
 		if (!cause.empty())
 			std::cout << "\tcause: " << cause << std::endl;
 
 		std::cout << "Reconnecting..." << std::endl;
+		*/
 		nretry_ = 0;
 		reconnect();
 	}

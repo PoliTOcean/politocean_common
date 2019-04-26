@@ -24,12 +24,40 @@ void Subscriber::connect()
 	cb_ = new callback(cli_, *connOpts_, clientID_, topic_, QOS);
 	cli_.set_callback(*cb_);
 
-    cli_.connect(*connOpts_, nullptr, *cb_);
+	try{
+    	cli_.connect(*connOpts_, nullptr, *cb_);
+	}
+	catch(mqtt::exception e){
+        std::stringstream ss;
+        ss << "MQTT error while connecting: " << e.what();
+		//TODO logger error
+		throw Politocean::mqttException(ss.str().c_str());
+	}
+	catch(std::exception e){
+        std::stringstream ss;
+        ss << "Generic error while connecting: " << e.what();
+		//TODO logger error
+		throw Politocean::exception(ss.str().c_str());
+	}
 }
 
 void Subscriber::disconnect()
 {
-    cli_.disconnect()->wait();
+	try{
+    	cli_.disconnect()->wait();
+	}
+	catch(mqtt::exception e){
+        std::stringstream ss;
+        ss << "MQTT error while disconnecting: " << e.what();
+		//TODO logger error
+		throw Politocean::mqttException(ss.str().c_str());
+	}
+	catch(std::exception e){
+        std::stringstream ss;
+        ss << "Generic error while disconnecting: " << e.what();
+		//TODO logger error
+		throw Politocean::exception(ss.str().c_str());
+	}
 }
 
 }
