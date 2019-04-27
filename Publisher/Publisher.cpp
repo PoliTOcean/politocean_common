@@ -1,43 +1,38 @@
-//
-// Created by pettinz.
-//
+/**
+ * @author: pettinz
+ */
+
+#include <thread>
+#include <chrono>
 
 #include "Publisher.h"
+
+#include "action_listener.hpp"
 #include "PolitoceanExceptions.hpp"
 
 namespace Politocean {
-using namespace std;
-
-Publisher::Publisher(string address, string clientID)
-    : address(address), clientID(clientID), TIMEOUT(10)
-{
-    asyncClient = new mqtt::async_client(address, clientID);
-}
-
-Publisher::~Publisher()
-{
-    delete asyncClient;
-}
 
 void Publisher::connect()
 {
-    tok = asyncClient->connect();
-    tok->wait();
+    cli_.set_callback(*cb_);
+
+    cli_.connect()->wait();
 }
 
-void Publisher::publish(string topic, string payload)
+void Publisher::publish(std::string topic, std::string payload)
 {
+    action_listener listener;
     mqtt::message_ptr pubmsg = mqtt::make_message(topic, payload);
     pubmsg->set_qos(QOS);
-    asyncClient->publish(pubmsg)->wait_for(TIMEOUT);
+
+    cli_.publish(pubmsg, nullptr, listener)->wait();
 }
 
 void Publisher::disconnect()
 {
-    auto toks = asyncClient->get_pending_delivery_tokens();
+    auto toks = cli_.get_pending_delivery_tokens();
 
-    tok = asyncClient->disconnect();
-    tok->wait();
+    cli_.disconnect()->wait();
 
     if (!toks.empty()){
         throw Politocean::mqttException("There are pending delivery tokens.");
