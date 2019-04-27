@@ -2,8 +2,8 @@
  * @author: pettinz
  */
 
-#ifndef POLITOCEAN_PUBLISHER_H
-#define POLITOCEAN_PUBLISHER_H
+#ifndef PUBLISHER_PUBLISHER_H
+#define PUBLISHER_PUBLISHER_H
 
 #include <string>
 
