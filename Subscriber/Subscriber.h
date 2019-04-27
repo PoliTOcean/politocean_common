@@ -4,8 +4,8 @@
  * MQTT Subscriber client definition
  */
 
-#ifndef SUBSCRIBER_SUBSCRIBER_H
-#define SUBSCRIBER_SUBSCRIBER_H
+#ifndef POLITOCEAN_SUBSCRIBER_H
+#define POLITOCEAN_SUBSCRIBER_H
 
 #include <iostream>
 #include <string>
@@ -25,7 +25,6 @@ class Subscriber {
     callback *cb_;
 
 public:
-    static const std::string DFLT_ADDRESS, DFLT_CLIENT_ID, DFLT_TOPIC;
     static const int QOS = 1;
 
     Subscriber(const std::string& address, const std::string& clientID, const std::string& topic)

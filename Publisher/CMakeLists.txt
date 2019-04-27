@@ -16,7 +16,7 @@ target_include_directories(Publisher
             ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(Publisher -lpaho-mqttpp3)
+target_link_libraries(Publisher -lpaho-mqttpp3 PolitoceanCommon::logger)
 
 target_compile_features(Publisher PRIVATE cxx_auto_type)
 target_compile_options(Publisher PRIVATE $<$<CXX_COMPILER_ID:GNU>:-Wall>)

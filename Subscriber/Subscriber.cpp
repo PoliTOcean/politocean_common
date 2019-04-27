@@ -4,16 +4,15 @@
  * Implementation for MQTT Subscriber client.
  */ 
 
+#include "Subscriber.h"
+
 #include <sstream>
 #include <string>
-
-#include "Subscriber.h"
+#include "logger.h"
 
 namespace Politocean {
 
-const std::string Subscriber::DFLT_ADDRESS      { "tcp://localhost:1883" };
-const std::string Subscriber::DFLT_CLIENT_ID    { "JoystickSubscriber" };
-const std::string Subscriber::DFLT_TOPIC        { "JoystickTopic" };
+using namespace std;
 
 void Subscriber::connect()
 {
@@ -24,12 +23,32 @@ void Subscriber::connect()
 	cb_ = new callback(cli_, *connOpts_, clientID_, topic_, QOS);
 	cli_.set_callback(*cb_);
 
-    cli_.connect(*connOpts_, nullptr, *cb_);
+	logger::log(logger::DEBUG, clientID_+string(" is trying to subscribe to ")+topic_);
+	try{
+    	cli_.connect(*connOpts_, nullptr, *cb_);
+	}
+	catch(std::exception& e){
+        stringstream ss;
+        ss << "Error while subscribing: " << e.what();
+		logger::log(logger::ERROR, ss.str().c_str());
+		throw Politocean::mqttException(ss.str());
+	}
+	logger::log(logger::DEBUG, clientID_+string(" is now a subscriber of ")+topic_);
 }
 
 void Subscriber::disconnect()
 {
-    cli_.disconnect()->wait();
+	logger::log(logger::DEBUG, clientID_+string(" is being disconnected from ")+topic_);
+	try{
+    	cli_.disconnect()->wait();
+	}
+	catch(std::exception& e){
+        stringstream ss;
+        ss << "Error while disconnecting: " << e.what();
+		logger::log(logger::ERROR, ss.str().c_str());
+		throw Politocean::exception(ss.str());
+	}
+	logger::log(logger::DEBUG, clientID_+string(" has been disconnected from ")+topic_);
 }
 
 }

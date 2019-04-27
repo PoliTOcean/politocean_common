@@ -11,12 +11,14 @@
 
 #include "mqtt/async_client.h"
 
+namespace Politocean {
+
 class action_listener : public virtual mqtt::iaction_listener
 {
 	std::string name_;
 
 	void on_failure(const mqtt::token& tok) override {
-        /*
+        /* Logger error:
 		std::cout << name_ << " failure";
 		if (tok.get_message_id() != 0)
 			std::cout << " for token: [" << tok.get_message_id() << "]" << std::endl;
@@ -25,7 +27,7 @@ class action_listener : public virtual mqtt::iaction_listener
 	}
 
 	void on_success(const mqtt::token& tok) override {
-        /*
+        /* Logger info:
 		std::cout << name_ << " success";
 		if (tok.get_message_id() != 0)
 			std::cout << " for token: [" << tok.get_message_id() << "]" << std::endl;
@@ -39,5 +41,7 @@ class action_listener : public virtual mqtt::iaction_listener
 public:
 	action_listener(const std::string& name) : name_(name) {}
 };
+
+}
 
 #endif //ACTION_LISTENER_SUBSCRIBER_H
