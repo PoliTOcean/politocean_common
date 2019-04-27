@@ -18,8 +18,8 @@ public:
     static const int MAX_FILE_SIZE;
 
     static void log(const levels level, const std::exception& exc);
-    static void log(const levels level, const char* msg, const std::exception& exc);
-    static void log(const levels level, const char* msg);
+    static void log(const levels level, const std::string& msg, const std::exception& exc);
+    static void log(const levels level, const std::string& msg);
     static void enableLevel(const levels level, const bool mode);
 
 private:

@@ -1,6 +1,7 @@
 #include "mqttLogger.h"
 
 #include <sstream>
+#include <string>
 #include <unistd.h>
 #include "PolitoceanConstants.h"
 
@@ -10,64 +11,72 @@ using namespace Politocean::Constants;
 using namespace Politocean::Constants::Common;
 
 
-mqttLogger::mqttLogger(std::string host, std::string node_id) : mqtt_pub(host, node_id) {
-    mqtt_pub.connect();
+mqttLogger::mqttLogger(const std::string& host, const std::string& node_id) : mqtt_pub(host, node_id) {
+    try{
+        mqtt_pub.connect();
+    }
+    catch(std::exception& e){
+        logger::log(logger::ERROR, "mqttLogger class: Couldn't connect mqtt logger publisher. mqttLogger will be used as a normal logger.", e);
+    }
 }
 
 mqttLogger::~mqttLogger(){
-    mqtt_pub.disconnect();
+    try{
+        mqtt_pub.disconnect();
+    }
+    catch(...){}
 }
 
-void mqttLogger::logError(const char* msg){
+void mqttLogger::logError(const std::string& msg){
     std::stringstream ss;
     ss << msg;
     try{
         mqtt_pub.publish(Topics::ERRORS, msg);
-        ss << " --- [published]";
+        ss << "\t--- [published]";
     }
     catch(std::exception& e){
-        ss << " --- [not published due to: " << e.what() << "]";
+        ss << "\t--- [not published due to: " << e.what() << "]";
     }
     auto str = ss.str();
     logger::log(logger::ERROR, str.c_str());
 }
 
-void mqttLogger::logError(const char* msg, const std::exception& exc){
+void mqttLogger::logError(const std::string& msg, const std::exception& exc){
     std::stringstream ss;
-    ss << msg << " " << exc.what();
+    ss << msg << "\tException: " << exc.what();
     auto str = ss.str();
     logError(str.c_str());
 }
 
 
 void mqttLogger::logError(const std::exception& exc){
-    logError("Error occured due to exception: ", exc);
+    logError("An error occured due to an exception.", exc);
 }
 
-void mqttLogger::logInfo(const char* msg){
+void mqttLogger::logInfo(const std::string& msg){
     std::stringstream ss;
     ss << msg;
     try{
         mqtt_pub.publish(Topics::INFO, msg);
-        ss << " --- [published]";
+        ss << "\t--- [published]";
     }
     catch(std::exception& e){
-        ss << " --- [not published due to: " << e.what() << "]";
+        ss << "\t--- [not published due to: " << e.what() << "]";
     }
     auto str = ss.str();
     logger::log(logger::INFO, str.c_str());
 }
 
-void mqttLogger::logInfo(const char* msg, const std::exception& exc){
+void mqttLogger::logInfo(const std::string& msg, const std::exception& exc){
     std::stringstream ss;
-    ss << msg << " " << exc.what();
+    ss << msg << "\tException: " << exc.what();
     auto str = ss.str();
     logInfo(str.c_str());
 }
 
 
 void mqttLogger::logInfo(const std::exception& exc){
-    logInfo("Error occured due to exception: ", exc);
+    logInfo("An error occured due to an exception.", exc);
 }
 
 }

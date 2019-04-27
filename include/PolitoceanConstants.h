@@ -33,8 +33,8 @@ using namespace std;
             namespace Topics {
                 const string MICRO_ROV_CAMERA { TOPIC_PREFIX + string("camera") };
             }
-            const string HOST_ADDRESS { "127.0.0.1" }; //da togliere
-            const string PUBLISHERID { "MicroRov_Publisher" }; //da cambiare
+            const string HOST_ADDRESS { "127.0.0.1" }; //TODO da togliere
+            const string PUBLISHERID { "MicroRov_Publisher" }; //TODO da cambiare
             const string IP_ADDRESS { "10.0.0.3" };
         }
 
@@ -56,18 +56,6 @@ using namespace std;
             }
 
             const string IP_ADDRESS { "10.0.0.2" };
-        }
-
-        namespace Errors {
-
-            namespace Common {
-                // TODO errori da Publisher e Subscriber
-            }
-
-            namespace MicroRov {
-                const string CAMERA_ERROR { "Error while setup of the camera. Please check." };
-            }
-
         }
 
     }

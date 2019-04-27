@@ -5,6 +5,7 @@
 #include <sstream>
 #include <ctime>
 #include <cstring>
+#include <string>
 #include "PolitoceanConstants.h"
 #include "PolitoceanExceptions.hpp"
 #include <experimental/filesystem>
@@ -29,17 +30,17 @@ std::map<logger::levels, bool> logger::is_enabled = {
 const int logger::MAX_FILE_SIZE = 1048576; // 1 MB
 
 void logger::log(const levels level, const std::exception& exc){
-    log(level, "Error occured due to exception: ", exc);
+    log(level, "An error occured due to an exception.", exc);
 }
 
-void logger::log(const levels level, const char* msg, const std::exception& exc){
+void logger::log(const levels level, const std::string& msg, const std::exception& exc){
     std::stringstream ss;
-    ss << msg << " " << exc.what();
+    ss << msg << "\tException: " << exc.what();
     auto str = ss.str();
     log(level, str.c_str());
 }
 
-void logger::log(const levels level, const char* msg){
+void logger::log(const levels level, const std::string& msg){
     if(!is_enabled.at(level)) return;
 
     std::stringstream ss;
@@ -47,7 +48,7 @@ void logger::log(const levels level, const char* msg){
     tm *l_time = localtime(&now);
     char* time_str = ctime(&now);
     time_str[strlen(time_str)-1]='\0';
-    ss << time_str << " > " << msg;
+    ss << time_str << " >\t" << msg;
     
     std::string level_name = levels_name.at(level);
 
@@ -87,7 +88,7 @@ void logger::log(const levels level, const char* msg){
 
     out << ss.str() << std::endl;
 
-    std::cout << "[" << level_name << "] " << ss.str() << std::endl;
+    std::cout << "[" << level_name << "]\t" << ss.str() << std::endl;
 }
 
 void logger::enableLevel(const logger::levels level, const bool mode){
