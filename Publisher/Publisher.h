@@ -8,6 +8,7 @@
 #include <string>
 
 #include "mqtt/async_client.h"
+//#include "callback.hpp"
 
 namespace Politocean {
 
