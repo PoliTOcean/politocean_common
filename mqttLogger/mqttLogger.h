@@ -12,16 +12,17 @@ protected:
     Publisher mqtt_pub;
 
 public:
-    mqttLogger(const char* node_id, const char* host) : mqtt_pub(host, node_id)
-                                                    { }
+    mqttLogger(std::string node_id, std::string host);
+
+    ~mqttLogger();
 
     void logError(const char* msg);
-    void logError(const char* msg, const std::exception exc);
-    void logError(const std::exception exc);
+    void logError(const char* msg, const std::exception& exc);
+    void logError(const std::exception& exc);
 
     void logInfo(const char* msg);
-    void logInfo(const char* msg, const std::exception exc);
-    void logInfo(const std::exception exc);
+    void logInfo(const char* msg, const std::exception& exc);
+    void logInfo(const std::exception& exc);
 
 };
 

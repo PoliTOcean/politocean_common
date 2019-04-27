@@ -20,9 +20,11 @@ public:
     static void log(const levels level, const std::exception& exc);
     static void log(const levels level, const char* msg, const std::exception& exc);
     static void log(const levels level, const char* msg);
+    static void enableLevel(const levels level, const bool mode);
 
 private:
     static const std::map<levels, std::string> levels_name;
+    static std::map<levels, bool> is_enabled;
 
 };
 

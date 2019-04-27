@@ -20,7 +20,7 @@ void Subscriber::connect()
 	cb_ = new callback(cli_, *connOpts_, clientID_, topic_, QOS);
 	cli_.set_callback(*cb_);
 
-	logger::log(logger::INFO, "Trying to connect to... ...");
+	logger::log(logger::DEBUG, "Trying to connect to... ...");
 	try{
     	cli_.connect(*connOpts_, nullptr, *cb_);
 	}
@@ -30,18 +30,18 @@ void Subscriber::connect()
 		logger::log(logger::ERROR, ss.str().c_str());
 		throw Politocean::mqttException(ss.str());
 	}
-	catch(std::exception e){
+	catch(std::exception& e){
         std::stringstream ss;
         ss << "Generic error while connecting: " << e.what();
 		logger::log(logger::ERROR, ss.str().c_str());
 		throw Politocean::exception(ss.str());
 	}
-	logger::log(logger::INFO, "Connected to... .");
+	logger::log(logger::DEBUG, "Connected to... .");
 }
 
 void Subscriber::disconnect()
 {
-	logger::log(logger::INFO, "Trying to disconnect from... ...");
+	logger::log(logger::DEBUG, "Trying to disconnect from... ...");
 	try{
     	cli_.disconnect()->wait();
 	}
@@ -51,13 +51,13 @@ void Subscriber::disconnect()
 		logger::log(logger::ERROR, ss.str().c_str());
 		throw Politocean::mqttException(ss.str());
 	}
-	catch(std::exception e){
+	catch(std::exception& e){
         std::stringstream ss;
         ss << "Generic error while disconnecting: " << e.what();
 		logger::log(logger::ERROR, ss.str().c_str());
 		throw Politocean::exception(ss.str());
 	}
-	logger::log(logger::INFO, "Disconnected from... .");
+	logger::log(logger::DEBUG, "Disconnected from... .");
 }
 
 }

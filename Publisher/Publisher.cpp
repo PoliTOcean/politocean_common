@@ -23,10 +23,10 @@ Publisher::~Publisher()
 
 void Publisher::connect()
 {
-    logger::log(logger::INFO, "Trying to connect to... ..."); // TODO aggiungere informazioni
+    logger::log(logger::DEBUG, "Trying to connect to... ..."); // TODO aggiungere informazioni
     tok = asyncClient->connect();
     tok->wait();
-    logger::log(logger::INFO, "Connected to... .");
+    logger::log(logger::DEBUG, "Connected to... .");
 }
 
 void Publisher::publish(string topic, string payload)
@@ -40,7 +40,7 @@ void Publisher::disconnect()
 {
     auto toks = asyncClient->get_pending_delivery_tokens();
 
-    logger::log(logger::INFO, "Disconnecting from... ...");
+    logger::log(logger::DEBUG, "Disconnecting from... ...");
     tok = asyncClient->disconnect();
     tok->wait();
 

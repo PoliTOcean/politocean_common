@@ -15,9 +15,15 @@ using namespace std::experimental;
 
 
 const std::map<logger::levels, std::string> logger::levels_name = {
-    {logger::ERROR,     Constants::Logger::Levels::ERROR},
-    {logger::DEBUG,     Constants::Logger::Levels::DEBUG},
-    {logger::INFO,      Constants::Logger::Levels::INFO }
+    { logger::ERROR,     Constants::Logger::Levels::ERROR },
+    { logger::DEBUG,     Constants::Logger::Levels::DEBUG },
+    { logger::INFO,      Constants::Logger::Levels::INFO  }
+};
+
+std::map<logger::levels, bool> logger::is_enabled = {
+    { logger::ERROR,     true  },
+    { logger::DEBUG,     false },
+    { logger::INFO,      true  }
 };
 
 const int logger::MAX_FILE_SIZE = 1048576; // 1 MB
@@ -34,6 +40,8 @@ void logger::log(const levels level, const char* msg, const std::exception& exc)
 }
 
 void logger::log(const levels level, const char* msg){
+    if(!is_enabled.at(level)) return;
+
     std::stringstream ss;
     time_t now = time(0);
     tm *l_time = localtime(&now);
@@ -80,6 +88,10 @@ void logger::log(const levels level, const char* msg){
     out << ss.str() << std::endl;
 
     std::cout << "[" << level_name << "] " << ss.str() << std::endl;
+}
+
+void logger::enableLevel(const logger::levels level, const bool mode){
+    is_enabled.at(level) = mode;
 }
 
 }
