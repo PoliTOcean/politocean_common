@@ -7,9 +7,9 @@
 #ifndef ACTION_LISTENER_SUBSCRIBER_H
 #define ACTION_LISTENER_SUBSCRIBER_H
 
-#include <iostream>
+#include <string>
 
-#include "mqtt/async_client.h"
+#include "mqtt/iaction_listener.h"
 
 namespace Politocean {
 

@@ -7,11 +7,12 @@
 
 #include "Publisher.h"
 
-#include "action_listener.hpp"
 #include "PolitoceanExceptions.hpp"
 #include "logger.h"
 
 namespace Politocean {
+
+#include "action_listener.hpp"
 
 void Publisher::connect()
 {

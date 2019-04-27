@@ -11,7 +11,7 @@
 #include <iostream>
 #include <functional>
 
-#include "mqtt/async_client.h"
+#include "mqtt/callback.h"
 #include "action_listener.hpp"
 #include "PolitoceanExceptions.hpp"
 

@@ -9,6 +9,7 @@
 #include <sstream>
 #include <string>
 #include "logger.h"
+#include "PolitoceanExceptions.hpp"
 
 namespace Politocean {
 

@@ -8,7 +8,21 @@
 #include <string>
 
 #include "mqtt/async_client.h"
-#include "callback.hpp"
+
+class callback : public virtual mqtt::callback {
+public:
+    void connection_lost(const std::string& cause) override {}
+
+    void delivery_complete(mqtt::delivery_token_ptr tok) override {}
+};
+
+class action_listener : public virtual mqtt::iaction_listener
+{
+public:
+    void on_failure(const mqtt::token& tok) override { }
+
+    void on_success(const mqtt::token& tok) override { }
+};
 
 namespace Politocean {
 
