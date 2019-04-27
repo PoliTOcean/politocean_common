@@ -17,7 +17,7 @@ using namespace std;
 
 void Subscriber::connect()
 {
-    connOpts_ = new mqtt::connect_options();
+	connOpts_ = new mqtt::connect_options();
 	connOpts_->set_keep_alive_interval(20);
 	connOpts_->set_clean_session(true);
     
@@ -25,6 +25,7 @@ void Subscriber::connect()
 	cli_.set_callback(*cb_);
 
 	logger::log(logger::DEBUG, clientID_+string(" is trying to subscribe to ")+topic_);
+
 	try{
     	cli_.connect(*connOpts_, nullptr, *cb_);
 	}
@@ -34,12 +35,14 @@ void Subscriber::connect()
 		logger::log(logger::ERROR, ss.str().c_str());
 		throw Politocean::mqttException(ss.str());
 	}
+
 	logger::log(logger::DEBUG, clientID_+string(" is now a subscriber of ")+topic_);
 }
 
 void Subscriber::disconnect()
 {
 	logger::log(logger::DEBUG, clientID_+string(" is being disconnected from ")+topic_);
+
 	try{
     	cli_.disconnect()->wait();
 	}
@@ -49,6 +52,7 @@ void Subscriber::disconnect()
 		logger::log(logger::ERROR, ss.str().c_str());
 		throw Politocean::exception(ss.str());
 	}
+
 	logger::log(logger::DEBUG, clientID_+string(" has been disconnected from ")+topic_);
 }
 
