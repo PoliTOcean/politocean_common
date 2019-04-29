@@ -141,7 +141,7 @@ public:
         this->setCallback(pf);
     }
     
-	~Subscriber() { delete connOpts_; delete cb_; }
+	~Subscriber();
 
     /*
 	 * Creates new client with @clientID listening on the topic @topic on a server with address @address.

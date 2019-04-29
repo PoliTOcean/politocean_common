@@ -66,4 +66,10 @@ void Subscriber::wait(){
 	while(this->isConnected());
 }
 
+Subscriber::~Subscriber() {
+	this->disconnect();
+	delete connOpts_;
+	delete cb_;
+}
+
 }
