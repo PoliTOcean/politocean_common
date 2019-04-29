@@ -150,7 +150,7 @@ public:
     void connect();
 
     /**
-	 * Update 
+	 * Update callback function
 	 */
     template<class T>
     void setCallback(void (T::*pf)(const std::string& payload)){
