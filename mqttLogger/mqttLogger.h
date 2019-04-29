@@ -9,13 +9,10 @@ namespace Politocean {
 class mqttLogger : public logger {
 
 protected:
-    Publisher mqtt_pub;
+    Publisher* mqtt_pub;
 
 public:
-    mqttLogger(const std::string& node_id);
-    mqttLogger(const std::string& node_id, const std::string& host);
-
-    ~mqttLogger();
+    mqttLogger(Publisher *pub);
 
     void logError(const std::string& msg);
     void logError(const std::string& msg, const std::exception& exc);
@@ -25,7 +22,8 @@ public:
     void logInfo(const std::string& msg, const std::exception& exc);
     void logInfo(const std::exception& exc);
 
-    static const std::string DFLT_HOST;
+    void logPublish(const logger::levels level, const std::string& topic, const std::string& msg);
+    void logException(const logger::levels level, const std::string& topic, const std::string& msg, const std::exception& exc);
 };
 
 }

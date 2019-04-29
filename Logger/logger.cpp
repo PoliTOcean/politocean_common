@@ -41,7 +41,7 @@ void logger::log(const levels level, const std::string& msg, const std::exceptio
 }
 
 void logger::log(const levels level, const std::string& msg){
-    if(!is_enabled.at(level)) return;
+    if(is_enabled.find(level)==is_enabled.end() || !is_enabled.at(level)) return;
 
     std::stringstream ss;
     time_t now = time(0);

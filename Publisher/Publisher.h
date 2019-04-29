@@ -5,6 +5,7 @@
 #ifndef POLITOCEAN_PUBLISHER_H
 #define POLITOCEAN_PUBLISHER_H
 
+#include <chrono>
 #include <string>
 
 #include "mqtt/async_client.h"
@@ -34,13 +35,17 @@ class Publisher {
     callback cb_;
     action_listener listener_;
 
+    bool connected;
+
 public:
     const int QOS = 1;
     const std::chrono::seconds TIMEOUT;
 
     // Creates new client with @clientID listening on a server with address @address
     Publisher(std::string address, std::string clientID)
-        : address_(address), clientID_(clientID), cli_(address, clientID), cb_(), listener_("Publication"), TIMEOUT(10) {}
+        : address_(address), clientID_(clientID), cli_(address, clientID), cb_(), listener_("Publication"), TIMEOUT(10), connected(false) {}
+    
+    ~Publisher();
 
     // Connects the client to the server.
     void connect();
@@ -50,6 +55,9 @@ public:
 
     // Sends a message @payload to the topic @topic.
     void publish(std::string topic, std::string payload);
+
+    // States if it's already connected
+    bool is_connected();
 };
 
 }
