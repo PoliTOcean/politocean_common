@@ -62,4 +62,8 @@ bool Subscriber::isConnected(){
 	return connected;
 }
 
+void Subscriber::wait(){
+	while(this->isConnected());
+}
+
 }

@@ -121,7 +121,7 @@ public:
         : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID), connected(false) {
         
         this->connect();
-        cb_->set_callback(pf);
+        this->setCallback(pf);
     }
     
     template<class T, class M>
@@ -130,7 +130,7 @@ public:
         : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID), connected(false) {
         
         this->connect();
-        cb_->set_callback(std::bind(pf, obj, std::placeholders::_1));
+        this->setCallback(pf, obj);
     }
     
 
@@ -138,7 +138,7 @@ public:
         : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID), connected(false) {
         
         this->connect();
-        cb_->set_callback(pf);
+        this->setCallback(pf);
     }
     
 	~Subscriber() { delete connOpts_; delete cb_; }
@@ -175,6 +175,11 @@ public:
 	 * Disconnects the client from the server
 	 */
     void disconnect();
+
+    /**
+     * Listens until it's connected
+     */
+    void wait();
 };
 
 
