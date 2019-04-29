@@ -10,6 +10,9 @@ namespace Politocean {
 using namespace Politocean::Constants;
 using namespace Politocean::Constants::Common;
 
+const std::string mqttLogger::DFLT_HOST = Hmi::IP_ADDRESS;
+
+mqttLogger::mqttLogger(const std::string& node_id) : mqttLogger(DFLT_HOST, node_id) {}
 
 mqttLogger::mqttLogger(const std::string& host, const std::string& node_id) : mqtt_pub(host, node_id) {
     try{

@@ -2,31 +2,16 @@
  * @author: pettinz
  */
 
-#ifndef PUBLISHER_PUBLISHER_H
-#define PUBLISHER_PUBLISHER_H
+#ifndef POLITOCEAN_PUBLISHER_H
+#define POLITOCEAN_PUBLISHER_H
 
 #include <string>
 
 #include "mqtt/async_client.h"
-//#include "callback.hpp"
+#include "include/callback.hpp"
 
 namespace Politocean {
-
-class callback : public virtual mqtt::callback {
-public:
-    void connection_lost(const std::string& cause) override {}
-
-    void delivery_complete(mqtt::delivery_token_ptr tok) override {}
-};
-
-class action_listener : public virtual mqtt::iaction_listener
-{
-public:
-    void on_failure(const mqtt::token& tok) override { }
-
-    void on_success(const mqtt::token& tok) override { }
-};
-
+    
 class Publisher {
     std::string address_, clientID_;
     mqtt::async_client cli_;

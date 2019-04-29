@@ -4,9 +4,10 @@
 
 #include <thread>
 #include <chrono>
+#include <string>
 
 #include "Publisher.h"
-// #include "action_listener.hpp"
+#include "action_listener.hpp"
 
 #include "PolitoceanExceptions.hpp"
 #include "logger.h"
@@ -25,7 +26,7 @@ void Publisher::connect()
 void Publisher::publish(std::string topic, std::string payload)
 {
     action_listener listener;
-    mqtt::message_ptr pubmsg = mqtt::make_message(topic, payload);
+    mqtt::message_ptr pubmsg = mqtt::make_message(topic, clientID_+std::string(":\t")+payload);
     pubmsg->set_qos(QOS);
 
     cli_.publish(pubmsg, nullptr, listener)->wait();

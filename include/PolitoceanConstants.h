@@ -40,6 +40,7 @@ using namespace std;
 
         namespace Hmi {
             const string TOPIC_PREFIX { "hmi/" };
+            const string CLIENT_ID { "hmi_core" };
 
             namespace Topics {
                 const string JOYSTICK { Hmi::TOPIC_PREFIX + string("joystick") };

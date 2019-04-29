@@ -12,6 +12,7 @@ protected:
     Publisher mqtt_pub;
 
 public:
+    mqttLogger(const std::string& node_id);
     mqttLogger(const std::string& node_id, const std::string& host);
 
     ~mqttLogger();
@@ -24,6 +25,7 @@ public:
     void logInfo(const std::string& msg, const std::exception& exc);
     void logInfo(const std::exception& exc);
 
+    static const std::string DFLT_HOST;
 };
 
 }
