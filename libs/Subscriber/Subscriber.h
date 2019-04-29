@@ -111,11 +111,36 @@ class Subscriber {
     mqtt::connect_options *connOpts_;
     callback *cb_;
 
+    bool connected;
+
 public:
     static const int QOS = 1;
 
-    Subscriber(const std::string& address, const std::string& clientID, const std::string& topic)
-        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID) {}
+    template<class T>
+    Subscriber(const std::string& address, const std::string& clientID, const std::string& topic, void (T::*pf)(const std::string& payload))
+        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID), connected(false) {
+        
+        this->connect();
+        cb_->set_callback(pf);
+    }
+    
+    template<class T, class M>
+    Subscriber(const std::string& address, const std::string& clientID, const std::string& topic,
+                void (T::*pf)(const std::string& payload), M* obj)
+        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID), connected(false) {
+        
+        this->connect();
+        cb_->set_callback(std::bind(pf, obj, std::placeholders::_1));
+    }
+    
+
+    Subscriber(const std::string& address, const std::string& clientID, const std::string& topic, void (*pf)(const std::string& payload))
+        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID), connected(false) {
+        
+        this->connect();
+        cb_->set_callback(pf);
+    }
+    
 	~Subscriber() { delete connOpts_; delete cb_; }
 
     /*
@@ -123,19 +148,29 @@ public:
      * It throws a mqtt::exception in case of failure.
 	 */
     void connect();
-    /**
-	 * Listens the topic until the user press q<Enter> on the keyboard.
-	 *  @pf is the pointer to the method function to be execute every time a message arrives
-     *  @obj is the instance object to bind with @pf
-	 */
-    template<class M, class T>
-    std::thread *listen(void (T::*pf)(const std::string& payload), M *obj) {
-        cb_->set_callback(std::bind(pf, obj, std::placeholders::_1));
 
-        return new std::thread([]() {
-            while (std::tolower(std::cin.get()) != 'q');
-        });
+    /**
+	 * Update 
+	 */
+    template<class T>
+    void setCallback(void (T::*pf)(const std::string& payload)){
+        cb_->set_callback(pf);
     }
+
+    template<class T, class M>
+    void setCallback(void (T::*pf)(const std::string& payload), M* obj){
+        cb_->set_callback(std::bind(pf, obj, std::placeholders::_1));
+    }
+
+    void setCallback(void (*pf)(const std::string& payload)){
+        cb_->set_callback(pf);
+    }
+
+    /**
+     * Returns true if it's connected
+     */
+    bool isConnected();
+
     /*
 	 * Disconnects the client from the server
 	 */

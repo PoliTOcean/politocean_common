@@ -37,6 +37,7 @@ void Subscriber::connect()
 	}
 
 	logger::log(logger::DEBUG, clientID_+string(" is now a subscriber of ")+topic_);
+	connected = true;
 }
 
 void Subscriber::disconnect()
@@ -54,6 +55,11 @@ void Subscriber::disconnect()
 	}
 
 	logger::log(logger::DEBUG, clientID_+string(" has been disconnected from ")+topic_);
+	connected = false;
+}
+
+bool Subscriber::isConnected(){
+	return connected;
 }
 
 }
