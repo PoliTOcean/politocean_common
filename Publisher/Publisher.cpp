@@ -17,7 +17,7 @@ namespace Politocean {
 void Publisher::connect()
 {
 	logger::log(logger::DEBUG, clientID_+std::string(" is trying to connect as a publisher to ")+address_);
-    cli_.set_callback(*cb_);
+    cli_.set_callback(cb_);
 
     cli_.connect()->wait();
 	logger::log(logger::DEBUG, clientID_+std::string(" is now connected and can publish to ")+address_);

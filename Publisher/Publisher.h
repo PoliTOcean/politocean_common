@@ -17,7 +17,7 @@ class Publisher {
     mqtt::async_client cli_;
     mqtt::token_ptr tok;
 
-    callback *cb_;
+    callback cb_;
 
 public:
     const int QOS = 1;
@@ -25,7 +25,7 @@ public:
 
     // Creates new client with @clientID listening on a server with address @address
     Publisher(std::string address, std::string clientID)
-        : address_(address), clientID_(clientID), cli_(address, clientID), TIMEOUT(10) {}
+        : address_(address), clientID_(clientID), cli_(address, clientID), cb_(), TIMEOUT(10) {}
 
     // Connects the client to the server.
     void connect();
