@@ -8,16 +8,31 @@
 #include <string>
 
 #include "mqtt/async_client.h"
-#include "include/callback.hpp"
+#include "action_listener.hpp"
+#include "PolitoceanExceptions.hpp"
 
 namespace Politocean {
     
 class Publisher {
+
+    class callback : public virtual mqtt::callback {
+    public:
+        void connection_lost(const std::string& cause) override {
+
+        }
+
+        void delivery_complete(mqtt::delivery_token_ptr tok) override {
+
+        }
+    };
+
     std::string address_, clientID_;
     mqtt::async_client cli_;
     mqtt::token_ptr tok;
 
+    mqtt::connect_options *connOpts_;
     callback cb_;
+    action_listener listener_;
 
 public:
     const int QOS = 1;
@@ -25,7 +40,7 @@ public:
 
     // Creates new client with @clientID listening on a server with address @address
     Publisher(std::string address, std::string clientID)
-        : address_(address), clientID_(clientID), cli_(address, clientID), cb_(), TIMEOUT(10) {}
+        : address_(address), clientID_(clientID), cli_(address, clientID), cb_(), listener_("Publication"), TIMEOUT(10) {}
 
     // Connects the client to the server.
     void connect();

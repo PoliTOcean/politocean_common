@@ -7,7 +7,6 @@
 #include <string>
 
 #include "Publisher.h"
-#include "action_listener.hpp"
 
 #include "PolitoceanExceptions.hpp"
 #include "logger.h"
@@ -17,19 +16,16 @@ namespace Politocean {
 void Publisher::connect()
 {
 	logger::log(logger::DEBUG, clientID_+std::string(" is trying to connect as a publisher to ")+address_);
-    cli_.set_callback(cb_);
-
     cli_.connect()->wait();
 	logger::log(logger::DEBUG, clientID_+std::string(" is now connected and can publish to ")+address_);
 }
 
 void Publisher::publish(std::string topic, std::string payload)
 {
-    action_listener listener;
     mqtt::message_ptr pubmsg = mqtt::make_message(topic, clientID_+std::string(":\t")+payload);
     pubmsg->set_qos(QOS);
 
-    cli_.publish(pubmsg, nullptr, listener)->wait();
+    cli_.publish(pubmsg, nullptr, listener_)->wait();
 }
 
 void Publisher::disconnect()

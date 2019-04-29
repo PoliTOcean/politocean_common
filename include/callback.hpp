@@ -11,7 +11,7 @@
 #include <iostream>
 #include <functional>
 
-#include "mqtt/callback.h"
+#include "mqtt/async_client.h"
 #include "action_listener.hpp"
 #include "PolitoceanExceptions.hpp"
 
@@ -96,12 +96,11 @@ class callback : public virtual mqtt::callback,
 public:
     const int N_RETRY_ATTEMPTS = 5;
 
-	callback(mqtt::async_client& cli, mqtt::connect_options& connOpts, const std::string& clientID, const std::string& topic, int QOS)
-				: nretry_(0), cli_(cli), connOpts_(connOpts), subListener_("Subscription"), clientID_(clientID), topic_(topic), QOS_(QOS), pf_(nullptr) {}
+	callback(mqtt::async_client& cli, mqtt::connect_options& connOpts, const std::string& clientID, const std::string& topic, int QOS, std::function<void(const std::string& payload)> pf)
+				: nretry_(0), cli_(cli), connOpts_(connOpts), subListener_("Subscription"), clientID_(clientID), topic_(topic), QOS_(QOS), pf_(pf) {}
     
-    void set_callback(std::function<void(const std::string& payload)> pf) {
-        pf_ = pf;
-    }
+	callback(mqtt::async_client& cli, mqtt::connect_options& connOpts, const std::string& clientID, int QOS)
+				: nretry_(0), cli_(cli), connOpts_(connOpts), subListener_("Publication"), clientID_(clientID), topic_(""), QOS_(QOS), pf_(nullptr) {}
 };
 
 }
