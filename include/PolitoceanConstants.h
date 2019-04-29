@@ -41,6 +41,7 @@ using namespace std;
         namespace Hmi {
             const string TOPIC_PREFIX { "hmi/" };
             const string CLIENT_ID { "hmi_core" };
+            const string CLIENT_LOG_ID { "hmi_logger" };
 
             namespace Topics {
                 const string JOYSTICK { Hmi::TOPIC_PREFIX + string("joystick") };
