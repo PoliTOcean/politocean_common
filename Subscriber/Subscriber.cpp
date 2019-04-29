@@ -50,7 +50,7 @@ void Subscriber::disconnect()
         stringstream ss;
         ss << "Error while disconnecting: " << e.what();
 		logger::log(logger::ERROR, ss.str().c_str());
-		throw Politocean::exception(ss.str());
+		throw Politocean::mqttException(ss.str());
 	}
 
 	logger::log(logger::DEBUG, clientID_+string(" has been disconnected from ")+topic_);
