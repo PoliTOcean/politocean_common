@@ -27,7 +27,7 @@ void Subscriber::connect()
 	logger::log(logger::DEBUG, clientID_+string(" is trying to subscribe to ")+topic_);
 
 	try{
-    	cli_.connect(*connOpts_, nullptr, *cb_);
+    	cli_.connect(*connOpts_, nullptr, *cb_)->wait();
 
 		if(!(cli_.is_connected()))
 			throw mqttException("client couldn't connect.");
