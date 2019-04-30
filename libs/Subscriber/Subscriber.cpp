@@ -17,12 +17,20 @@ using namespace std;
 
 void Subscriber::connect()
 {
+
+	if(this->is_connected()){
+		logger::log(logger::DEBUG, clientID_+string(" already connected."));
+		return;
+	}
+
 	connOpts_ = new mqtt::connect_options();
 	connOpts_->set_keep_alive_interval(20);
 	connOpts_->set_clean_session(true);
     
 	cb_ = new callback(cli_, *connOpts_, clientID_, topic_, QOS);
 	cli_.set_callback(*cb_);
+
+	cb_->set_callback(std::bind(&Subscriber::callback_wrapper, this, std::placeholders::_1));
 
 	logger::log(logger::DEBUG, clientID_+string(" is trying to subscribe to ")+topic_);
 
@@ -44,6 +52,10 @@ void Subscriber::connect()
 
 void Subscriber::disconnect()
 {
+	if(!(this->is_connected())){
+		logger::log(logger::DEBUG, clientID_+string(" already disconnected."));
+		return;
+	}
 	logger::log(logger::DEBUG, clientID_+string(" is being disconnected from ")+topic_);
 
 	try{
@@ -74,6 +86,16 @@ Subscriber::~Subscriber() {
 	this->disconnect();
 	delete connOpts_;
 	delete cb_;
+}
+
+void Subscriber::callback_wrapper(const std::string& payload){	
+	size_t pos = payload.find_first_of(':');
+
+	if(pos < payload.length())
+		callback_(payload.substr(pos+2));
+	else
+		callback_(payload);
+	
 }
 
 }

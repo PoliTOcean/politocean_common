@@ -111,6 +111,10 @@ class Subscriber {
     mqtt::connect_options *connOpts_;
     callback *cb_;
 
+    std::function<void(const std::string&)> callback_;
+    
+    void callback_wrapper(const std::string& payload);
+
 public:
     static const int QOS = 1;
 
@@ -129,8 +133,7 @@ public:
         
         this->connect();
         this->set_callback(pf, obj);
-    }
-    
+    }   
 
     Subscriber(const std::string& address, const std::string& clientID, const std::string& topic, void (*pf)(const std::string& payload))
         : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID) {
@@ -152,16 +155,16 @@ public:
 	 */
     template<class T>
     void set_callback(void (T::*pf)(const std::string& payload)){
-        cb_->set_callback(pf);
+        callback_ = pf;
     }
 
     template<class T, class M>
     void set_callback(void (T::*pf)(const std::string& payload), M* obj){
-        cb_->set_callback(std::bind(pf, obj, std::placeholders::_1));
+        callback_ = std::bind(pf, obj, std::placeholders::_1);
     }
 
     void set_callback(void (*pf)(const std::string& payload)){
-        cb_->set_callback(pf);
+        callback_ = pf;
     }
 
     /**

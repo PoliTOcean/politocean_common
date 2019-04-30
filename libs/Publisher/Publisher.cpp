@@ -13,6 +13,10 @@ namespace Politocean {
     
 void Publisher::connect()
 {
+	if(this->is_connected()){
+		logger::log(logger::DEBUG, clientID_+std::string(" already connected."));
+		return;
+	}
 	logger::log(logger::DEBUG, clientID_+std::string(" is trying to connect as a publisher to ")+address_);
     cli_.connect()->wait();
 	logger::log(logger::DEBUG, clientID_+std::string(" is now connected and can publish to ")+address_);
@@ -33,6 +37,10 @@ void Publisher::publish(std::string topic, std::string payload)
 
 void Publisher::disconnect()
 {
+	if(!(this->is_connected())){
+		logger::log(logger::DEBUG, clientID_+std::string(" already disconnected."));
+		return;
+	}
     auto toks = cli_.get_pending_delivery_tokens();
 
 	logger::log(logger::DEBUG, clientID_+std::string(" publisher is being disconnected from ")+address_);
