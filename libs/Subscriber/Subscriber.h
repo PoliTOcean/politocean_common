@@ -90,7 +90,7 @@ class Subscriber {
         // Callback for when a message arrives.
         void message_arrived(mqtt::const_message_ptr msg) override {
             if (pf_ != nullptr)
-                pf_(msg->to_string());
+                pf_(msg->get_payload_str());
         }
 
         void delivery_complete(mqtt::delivery_token_ptr token) override {}
