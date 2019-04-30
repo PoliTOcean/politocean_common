@@ -16,6 +16,7 @@
 #include "mqtt/async_client.h"
 #include "action_listener.hpp"
 #include "PolitoceanExceptions.hpp"
+#include "logger.h"
 
 namespace Politocean {
 
@@ -120,25 +121,23 @@ public:
 
     template<class T>
     Subscriber(const std::string& address, const std::string& clientID, const std::string& topic, void (T::*pf)(const std::string& payload))
-        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID) {
-        
-        this->connect();
-        this->set_callback(pf);
-    }
+        : Subscriber(address, clientID, topic, static_cast<void(*)(const std::string&)>(pf)){}
     
     template<class T, class M>
     Subscriber(const std::string& address, const std::string& clientID, const std::string& topic,
                 void (T::*pf)(const std::string& payload), M* obj)
-        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID) {
-        
-        this->connect();
-        this->set_callback(pf, obj);
-    }   
+        : Subscriber(address, clientID, topic, std::bind(pf, obj, std::placeholders::_1)) {}   
 
     Subscriber(const std::string& address, const std::string& clientID, const std::string& topic, void (*pf)(const std::string& payload))
         : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID) {
         
+        if(clientID_.find(':')!=clientID_.length()){
+            logger::log(logger::ERROR, "Invalid characters for clientID. Please, do not use the semicolon ':' character.");
+            throw mqttException("Invalid characters for clientID.");
+        }
+
         this->connect();
+
         this->set_callback(pf);
     }
     
