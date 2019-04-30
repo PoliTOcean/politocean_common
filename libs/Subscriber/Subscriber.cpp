@@ -28,6 +28,9 @@ void Subscriber::connect()
 
 	try{
     	cli_.connect(*connOpts_, nullptr, *cb_);
+
+		if(!(cli_.is_connected()))
+			throw mqttException("client couldn't connect.");
 	}
 	catch(std::exception& e){
         stringstream ss;
@@ -37,7 +40,6 @@ void Subscriber::connect()
 	}
 
 	logger::log(logger::DEBUG, clientID_+string(" is now a subscriber of ")+topic_);
-	connected = true;
 }
 
 void Subscriber::disconnect()
@@ -46,6 +48,9 @@ void Subscriber::disconnect()
 
 	try{
     	cli_.disconnect()->wait();
+
+		if(cli_.is_connected())
+			throw mqttException("client didn't disconnect.");
 	}
 	catch(std::exception& e){
         stringstream ss;
@@ -55,11 +60,10 @@ void Subscriber::disconnect()
 	}
 
 	logger::log(logger::DEBUG, clientID_+string(" has been disconnected from ")+topic_);
-	connected = false;
 }
 
-bool Subscriber::isConnected(){
-	return connected;
+bool Subscriber::is_connected(){
+	return cli_.is_connected();
 }
 
 void Subscriber::wait(){

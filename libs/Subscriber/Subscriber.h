@@ -111,34 +111,32 @@ class Subscriber {
     mqtt::connect_options *connOpts_;
     callback *cb_;
 
-    bool connected;
-
 public:
     static const int QOS = 1;
 
     template<class T>
     Subscriber(const std::string& address, const std::string& clientID, const std::string& topic, void (T::*pf)(const std::string& payload))
-        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID), connected(false) {
+        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID) {
         
         this->connect();
-        this->setCallback(pf);
+        this->set_callback(pf);
     }
     
     template<class T, class M>
     Subscriber(const std::string& address, const std::string& clientID, const std::string& topic,
                 void (T::*pf)(const std::string& payload), M* obj)
-        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID), connected(false) {
+        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID) {
         
         this->connect();
-        this->setCallback(pf, obj);
+        this->set_callback(pf, obj);
     }
     
 
     Subscriber(const std::string& address, const std::string& clientID, const std::string& topic, void (*pf)(const std::string& payload))
-        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID), connected(false) {
+        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID) {
         
         this->connect();
-        this->setCallback(pf);
+        this->set_callback(pf);
     }
     
 	~Subscriber();
@@ -153,23 +151,23 @@ public:
 	 * Update callback function
 	 */
     template<class T>
-    void setCallback(void (T::*pf)(const std::string& payload)){
+    void set_callback(void (T::*pf)(const std::string& payload)){
         cb_->set_callback(pf);
     }
 
     template<class T, class M>
-    void setCallback(void (T::*pf)(const std::string& payload), M* obj){
+    void set_callback(void (T::*pf)(const std::string& payload), M* obj){
         cb_->set_callback(std::bind(pf, obj, std::placeholders::_1));
     }
 
-    void setCallback(void (*pf)(const std::string& payload)){
+    void set_callback(void (*pf)(const std::string& payload)){
         cb_->set_callback(pf);
     }
 
     /**
      * Returns true if it's connected
      */
-    bool isConnected();
+    bool is_connected();
 
     /*
 	 * Disconnects the client from the server

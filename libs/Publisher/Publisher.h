@@ -35,15 +35,13 @@ class Publisher {
     callback cb_;
     action_listener listener_;
 
-    bool connected;
-
 public:
     const int QOS = 1;
     const std::chrono::seconds TIMEOUT;
 
     // Creates new client with @clientID listening on a server with address @address
     Publisher(std::string address, std::string clientID)
-        : address_(address), clientID_(clientID), cli_(address, clientID), cb_(), listener_("Publication"), TIMEOUT(10), connected(false) {}
+        : address_(address), clientID_(clientID), cli_(address, clientID), cb_(), listener_("Publication"), TIMEOUT(10) {}
     
     ~Publisher();
 
