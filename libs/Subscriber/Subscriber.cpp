@@ -63,7 +63,7 @@ bool Subscriber::isConnected(){
 }
 
 void Subscriber::wait(){
-	while(this->isConnected());
+	while(cli_.is_connected());
 }
 
 Subscriber::~Subscriber() {
