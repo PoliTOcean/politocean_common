@@ -52,6 +52,7 @@ using namespace std;
 
         namespace Rov {
             const string TOPIC_PREFIX { "rov/" };
+            const string CLIENT_ID { "rov_core" };
 
             namespace Topics {
             }
