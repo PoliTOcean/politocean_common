@@ -17,8 +17,9 @@ using namespace std;
 
 void Subscriber::connect()
 {
-
-	if(this->is_connected()){
+	// Logging
+	if (this->is_connected())
+	{
 		logger::log(logger::DEBUG, clientID_+string(" already connected."));
 		return;
 	}
@@ -32,15 +33,16 @@ void Subscriber::connect()
 
 	cb_->set_callback(std::bind(&Subscriber::callback_wrapper, this, std::placeholders::_1));
 
+	// Logging
 	logger::log(logger::DEBUG, clientID_+string(" is trying to subscribe to ")+topic_);
 
-	try{
+	try {
     	cli_.connect(*connOpts_, nullptr, *cb_)->wait();
 
 		if(!(cli_.is_connected()))
 			throw mqttException("client couldn't connect.");
-	}
-	catch(std::exception& e){
+	} catch(std::exception& e) {
+		// Logging
         stringstream ss;
         ss << "Error while subscribing: " << e.what();
 		logger::log(logger::ERROR, ss.str().c_str());
@@ -52,19 +54,21 @@ void Subscriber::connect()
 
 void Subscriber::disconnect()
 {
-	if(!(this->is_connected())){
+	// Logging
+	if (!(this->is_connected()))
+	{
 		logger::log(logger::DEBUG, clientID_+string(" already disconnected."));
 		return;
 	}
 	logger::log(logger::DEBUG, clientID_+string(" is being disconnected from ")+topic_);
 
-	try{
+	try {
     	cli_.disconnect()->wait();
 
 		if(cli_.is_connected())
 			throw mqttException("client didn't disconnect.");
-	}
-	catch(std::exception& e){
+	} catch(std::exception& e) {
+		// Logging
         stringstream ss;
         ss << "Error while disconnecting: " << e.what();
 		logger::log(logger::ERROR, ss.str().c_str());
