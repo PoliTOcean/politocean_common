@@ -119,27 +119,14 @@ class Subscriber {
 public:
     static const int QOS = 1;
 
-    template<class T>
-    Subscriber(const std::string& address, const std::string& clientID, const std::string& topic, void (T::*pf)(const std::string& payload))
-        : Subscriber(address, clientID, topic, static_cast<void(*)(const std::string&)>(pf)){}
+    Subscriber(const std::string& address, const std::string& clientID, const std::string& topic,
+                void (*pf)(const std::string& payload))
+        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID), callback_(pf) {}    
     
     template<class T, class M>
     Subscriber(const std::string& address, const std::string& clientID, const std::string& topic,
                 void (T::*pf)(const std::string& payload), M* obj)
-        : Subscriber(address, clientID, topic, std::bind(pf, obj, std::placeholders::_1)) {}   
-
-    Subscriber(const std::string& address, const std::string& clientID, const std::string& topic, void (*pf)(const std::string& payload))
-        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID) {
-        
-        if(clientID_.find(':')!=clientID_.length()){
-            logger::log(logger::ERROR, "Invalid characters for clientID. Please, do not use the semicolon ':' character.");
-            throw mqttException("Invalid characters for clientID.");
-        }
-
-        this->connect();
-
-        this->set_callback(pf);
-    }
+        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID), callback_(std::bind(pf, obj, std::placeholders::_1)) {}
     
 	~Subscriber();
 
