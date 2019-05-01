@@ -95,6 +95,8 @@ Subscriber::~Subscriber() {
 }
 
 void Subscriber::callback_wrapper(const string& payload) {
+	if(callback_==nullptr) return;
+	
 	regex check("\\w+:");
 	size_t pos = payload.find(":");
 
