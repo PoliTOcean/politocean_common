@@ -94,11 +94,11 @@ Subscriber::~Subscriber() {
 	delete cb_;
 }
 
-void Subscriber::callback_wrapper(const std::string& payload) {
+void Subscriber::callback_wrapper(const string& payload) {
 	regex check("\\w+:");
 	size_t pos = payload.find(":");
 
-	if (pos == std::string::npos)
+	if (pos == string::npos)
 		callback_(payload);
 	else {
 		// Check if the string from position 0 to pos+1 (`:` included) matches the regex
