@@ -8,6 +8,8 @@
 
 #include <sstream>
 #include <string>
+#include <regex>
+
 #include "logger.h"
 #include "PolitoceanExceptions.hpp"
 
@@ -92,14 +94,20 @@ Subscriber::~Subscriber() {
 	delete cb_;
 }
 
-void Subscriber::callback_wrapper(const std::string& payload){	
-	size_t pos = payload.find_first_of(':');
+void Subscriber::callback_wrapper(const std::string& payload) {
+	regex check("\\w+:");
+	size_t pos = payload.find(":");
 
-	if(pos < payload.length())
-		callback_(payload.substr(pos+2));
-	else
+	if (pos == std::string::npos)
 		callback_(payload);
-	
+	else {
+		// Check if the string from position 0 to pos+1 (`:` included) matches the regex
+		if (regex_match(payload.substr(0, pos+1), check))
+			// Send the substring from pos+2 (after `:` excluded) to the end of the string to the callback
+			callback_(payload.substr(pos+2));
+		else
+			callback_(payload);
+	}
 }
 
 }
