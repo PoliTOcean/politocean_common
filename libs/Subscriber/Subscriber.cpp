@@ -47,7 +47,7 @@ void Subscriber::connect()
 		// Logging
         stringstream ss;
         ss << "Error while subscribing: " << e.what();
-		logger::log(logger::ERROR, ss.str().c_str());
+		logger::log(logger::ERROR, ss.str());
 		throw Politocean::mqttException(ss.str());
 	}
 

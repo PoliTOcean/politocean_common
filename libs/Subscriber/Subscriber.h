@@ -123,9 +123,14 @@ public:
                 void (*pf)(const std::string& payload))
         : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID), callback_(pf) {}    
     
-    template<class T, class M>
+    template<class T>
     Subscriber(const std::string& address, const std::string& clientID, const std::string& topic,
-                void (T::*pf)(const std::string& payload), M* obj)
+                void (T::*pf)(const std::string& payload))
+        : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID), callback_(pf) {}
+    
+    template<class T>
+    Subscriber(const std::string& address, const std::string& clientID, const std::string& topic,
+                void (T::*pf)(const std::string& payload), T* obj)
         : address_(address), clientID_(clientID), topic_(topic), cli_(address, clientID), callback_(std::bind(pf, obj, std::placeholders::_1)) {}
     
 	~Subscriber();
@@ -144,8 +149,8 @@ public:
         callback_ = pf;
     }
 
-    template<class T, class M>
-    void set_callback(void (T::*pf)(const std::string& payload), M* obj){
+    template<class T>
+    void set_callback(void (T::*pf)(const std::string& payload), T* obj){
         callback_ = std::bind(pf, obj, std::placeholders::_1);
     }
 
