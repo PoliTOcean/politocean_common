@@ -43,7 +43,8 @@ public:
     // Creates new client with @clientID listening on a server with address @address
     Publisher(std::string address, std::string clientID)
         : address_(address), clientID_(clientID), cli_(address, clientID), cb_(), listener_("Publication"), TIMEOUT(10) {
-            if(clientID_.find(':')!=clientID_.length()){
+            if(clientID.find(':') != std::string::npos)
+            {
                 logger::log(logger::ERROR, "Invalid characters for clientID. Please, do not use the semicolon ':' character.");
                 throw mqttException("Invalid characters for clientID.");
             }
