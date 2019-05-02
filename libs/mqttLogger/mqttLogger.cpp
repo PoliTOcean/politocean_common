@@ -9,7 +9,6 @@
 namespace Politocean {
 
 using namespace Politocean::Constants;
-using namespace Politocean::Constants::Common;
 
 
 mqttLogger::mqttLogger(Publisher *pub) {
