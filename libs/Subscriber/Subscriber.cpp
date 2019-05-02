@@ -60,7 +60,8 @@ void Subscriber::connect()
 	logger::log(logger::DEBUG, clientID_+string(" is now connected as a subscriber."));
 }
 
-std::vector<string> Subscriber::getSubscribedTopics(){
+std::vector<string> Subscriber::getSubscribedTopics()
+{
 	std::vector<std::string> topics;
 	for(std::map<std::string, callback_t>::iterator it = topic_to_callback.begin(); it != topic_to_callback.end(); ++it) {
 		topics.push_back(it->first);
@@ -94,53 +95,60 @@ void Subscriber::disconnect()
 	logger::log(logger::DEBUG, clientID_+string(" has been disconnected."));
 }
 
-bool Subscriber::is_connected(){
+bool Subscriber::is_connected()
+{
 	return cli_.is_connected();
 }
 
-void Subscriber::wait(){
+void Subscriber::wait()
+{
 	while(cli_.is_connected());
 }
 
 
-Subscriber::Subscriber(const std::string& address, const std::string& clientID)
-	: address_(address), clientID_(clientID), cli_(address, clientID) {
-		if(clientID.find_first_of(':')!=clientID.size()){
-			throw mqttException("Invalid clientID.");
-		}
+Subscriber::Subscriber(const std::string& address, const std::string& clientID) : address_(address), clientID_(clientID), cli_(address, clientID)
+{
+	if(clientID.find_first_of(':')!=clientID.size())
+		throw mqttException("Invalid clientID.");
 }
     
 
-void Subscriber::subscribeTo(const std::string& topic, void (*pf)(const std::string& payload)){
-	if(is_connected()){
+void Subscriber::subscribeTo(const std::string& topic, void (*pf)(const std::string& payload))
+{
+	if(is_connected())
 		throw mqttException("Cannot subscribe while connected.");
-	}
+
 	topic_to_callback.insert(std::pair<std::string, callback_t>(topic, pf));
 	logger::log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topic);
 }
 
-void Subscriber::unsubscribeFrom(const std::string& topic){
-	if(is_connected()){
+void Subscriber::unsubscribeFrom(const std::string& topic)
+{
+	if(is_connected())
 		throw mqttException("Cannot unsubscribe while connected.");
-	}
+
 	topic_to_callback.erase(topic);
 	logger::log(logger::DEBUG, string("Unsubscribed ")+clientID_+string(" from topic ")+topic);
 }
 
-void Subscriber::unsubscribeFrom(const std::vector<std::string>& topics){
-	for(auto &topic : topics) {
+void Subscriber::unsubscribeFrom(const std::vector<std::string>& topics)
+{
+	for (auto &topic : topics)
 		unsubscribeFrom(topic);
-	}
 }
 
-Subscriber::~Subscriber() {
+Subscriber::~Subscriber()
+{
 	this->disconnect();
+
 	delete connOpts_;
 	delete cb_;
 }
 
-void Subscriber::callback_wrapper(mqtt::const_message_ptr msg) {
-	if(topic_to_callback.empty()) return;
+void Subscriber::callback_wrapper(mqtt::const_message_ptr msg)
+{
+	if(topic_to_callback.empty())
+		return;
 	
 	callback_t callback = topic_to_callback.at(msg->get_topic());
 
