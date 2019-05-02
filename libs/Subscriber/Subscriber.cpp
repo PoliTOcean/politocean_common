@@ -30,11 +30,6 @@ void Subscriber::connect()
 	connOpts_->set_keep_alive_interval(20);
 	connOpts_->set_clean_session(true);
     
-	/*std::vector<std::string> topics = getSubscribedTopics();
-	mqtt::string_collection_ptr::create( getSubscribedTopics()) mqttTopics;
-	for(std::string topic : topics){
-		mqttTopics.push_back()
-	}*/
 	cb_ = new callback(cli_, *connOpts_, clientID_, mqtt::string_collection::create( getSubscribedTopics() ), QOS);
 	cli_.set_callback(*cb_);
 
@@ -115,7 +110,12 @@ void Subscriber::subscribeTo(const std::string& topic, void (*pf)(const std::str
 	if(is_connected()){
 		throw mqttException("Cannot subscribe while connected.");
 	}
-	topic_to_callback.insert(std::pair<std::string, callback_t>(topic, pf));
+	
+	string topicf = topic;
+	if(topicf.at(topicf.size()-1)!='/')
+		topicf = topicf+'/';
+
+	topic_to_callback.insert(std::pair<std::string, callback_t>(topicf+'#', pf));
 	logger::log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topic);
 }
 
