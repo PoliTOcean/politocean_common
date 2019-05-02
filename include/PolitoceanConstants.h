@@ -11,20 +11,20 @@ namespace Politocean
     {
         namespace Topics
         {
-            const string ERRORS { "errors/" };
-            const string INFO   { "info/" };
+            const string ERRORS             { "errors/" };
+            const string INFO               { "info/" };
 
-            const string MICRO_ROV  { "microRov/" };
-            const string MICRO_ROV_CAMERA { MICRO_ROV + string("camera") };
+            const string MICRO_ROV          { "microRov/" };
+            const string MICRO_ROV_CAMERA   { MICRO_ROV + string("camera") };
 
             const string HMI                { "hmi/" };
             const string JOYSTICK           { HMI + string("joystick/") };
-            const string JOYSTICK_AXIS      { JOYSTICK + string("axis/") };
+            const string JOYSTICK_AXES      { JOYSTICK + string("axis/") };
             const string JOYSTICK_BUTTONS   { JOYSTICK + string("buttons/") };
 
-            const string VISION { HMI + string("vision/") };
+            const string VISION             { HMI + string("vision/") };
 
-            const string AUTODRIVE { VISION + string("autodrive") };
+            const string AUTODRIVE          { VISION + string("autodrive") };
 
         }
 
@@ -49,9 +49,9 @@ namespace Politocean
 
         namespace Hmi
         {
-            const string CLIENT_ID      { "hmi_core" };
-            const string AUTODRIVE_ID   { "autodrive" };
-            const string UI_ID          { "ui" };
+            const string CLIENT_ID          { "hmi_core" };
+            const string AUTODRIVE_ID       { "autodrive" };
+            const string UI_ID              { "ui" };
 
             const string IP_ADDRESS         { "10.0.0.1" };
             const string CAMERA_IP_ADDRESS  { "10.0.0.4" };
@@ -62,7 +62,7 @@ namespace Politocean
             const string TOPIC_PREFIX   { "rov/" };
             const string CLIENT_ID      { "rov_core" };
 
-            const string IP_ADDRESS { "10.0.0.2" };
+            const string IP_ADDRESS     { "10.0.0.2" };
         }
 
         namespace Commands
