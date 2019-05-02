@@ -57,7 +57,8 @@ namespace Politocean
             const string CAMERA_IP_ADDRESS  { "10.0.0.4" };
         }
 
-        namespace Rov {
+        namespace Rov
+        {
             const string TOPIC_PREFIX   { "rov/" };
             const string CLIENT_ID      { "rov_core" };
 
