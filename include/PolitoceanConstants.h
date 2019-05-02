@@ -3,6 +3,8 @@
 
 #include <string>
 
+#define N_BUTTONS 8
+
 namespace Politocean {
 using namespace std;
     namespace Constants {
@@ -43,7 +45,10 @@ using namespace std;
             const string CLIENT_ID { "hmi_core" };
 
             namespace Topics {
-                const string JOYSTICK { Hmi::TOPIC_PREFIX + string("joystick") };
+                const string JOYSTICK_AXIS { Hmi::TOPIC_PREFIX + string("JoystickTopicAxis") };
+                const string JOYSTICK_AXES { Hmi::TOPIC_PREFIX + string("JoystickTopicAxes") };
+                const string JOYSTICK_BUTTON {Hmi::TOPIC_PREFIX + string("JoystickTopicButton")};
+                const string JOYSTICK_BUTTONS {Hmi::TOPIC_PREFIX + string("JoystickTopicButtons")};
             }
 
             const string IP_ADDRESS { "10.0.0.1" };
@@ -58,6 +63,19 @@ using namespace std;
             }
 
             const string IP_ADDRESS { "10.0.0.2" };
+        }
+
+        namespace Buttons {
+            enum buttons {
+                MOTOR,
+                RESET,
+                AUTONOMOUS,
+                WRIST,
+                V_UP,
+                V_DOWN,
+                SLOW,
+                MEDIUM_FAST
+            };
         }
 
     }
