@@ -266,8 +266,8 @@ void Subscriber::message_arrived(mqtt::const_message_ptr msg) {
 	std::string payload = msg->get_payload();
 
 	size_t pos = payload.find(":");
-	// Check if the string from position 0 to pos+1 (`:` included) matches the regex
-	if (pos != std::string::npos && regex_match(payload.substr(0, pos+1), std::regex(Constants::CLIENT_ID_REGEX+":")))
+	// Check if the string from position 0 to pos (`:` excluded) matches the regex
+	if (pos != std::string::npos && regex_match(payload.substr(0, pos), std::regex(Constants::CLIENT_ID_REGEX)))
 		// Send the substring from pos+2 (after `:` excluded) to the end of the string to the callback
 		callback(msg->get_topic(), payload.substr(pos+2));
 	else
