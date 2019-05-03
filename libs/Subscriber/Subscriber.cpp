@@ -155,7 +155,7 @@ void Subscriber::callback_wrapper(mqtt::const_message_ptr msg)
 
 	size_t pos = payload.find(":");
 	// Check if the string from position 0 to pos+1 (`:` included) matches the regex
-	if (pos == string::npos && regex_match(payload.substr(0, pos+1), regex("\\w+:")))
+	if (pos != string::npos && regex_match(payload.substr(0, pos+1), regex("\\w+:")))
 		// Send the substring from pos+2 (after `:` excluded) to the end of the string to the callback
 		callback(payload.substr(pos+2));
 	else
