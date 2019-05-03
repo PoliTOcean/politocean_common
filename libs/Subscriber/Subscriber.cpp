@@ -117,8 +117,7 @@ void Subscriber::wait()
 
 /**
  * Subscribe to the given topic with the given callback.
- * Add the '/' at the end if it's missing.
- * Add the '#' wildcard to the end.
+ * Remove traling '/'.
  */
 void Subscriber::subscribeTo(const std::string& topic, callback_t pf)
 {
@@ -126,7 +125,6 @@ void Subscriber::subscribeTo(const std::string& topic, callback_t pf)
 		throw mqttException("Cannot subscribe while connected.");
 
 	string topicf = topic.substr(0, topic.find_last_not_of('/')+1); //trim trailing '/' if they exist
-
 
 	topic_to_callback.insert(std::pair<std::string, callback_t>(topicf, pf));
 	logger::log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topic);
