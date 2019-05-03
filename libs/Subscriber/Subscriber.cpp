@@ -17,6 +17,8 @@
 namespace Politocean {
 
 using namespace std;
+using namespace Politocean;
+using namespace Politocean::Constants;
 
 /**
  * Constructor

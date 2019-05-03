@@ -13,6 +13,9 @@
 
 namespace Politocean {
 
+using namespace Politocean;
+using namespace Politocean::Constants;
+
 Publisher::Publisher(std::string address, std::string clientID)
     : address_(address), clientID_(clientID), cb_(clientID), cli_(address, clientID), TIMEOUT(10)
 {
