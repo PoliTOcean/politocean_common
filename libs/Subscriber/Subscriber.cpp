@@ -1,9 +1,3 @@
-/**
- * @author: pettinz
- * 
- * Implementation for MQTT Subscriber client.
- */ 
-
 #include "Subscriber.h"
 
 #include <sstream>
