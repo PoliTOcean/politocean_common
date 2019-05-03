@@ -134,7 +134,7 @@ void Subscriber::subscribeTo(const std::string& topic, callback_t pf)
 
 void Subscriber::subscribeTo(const std::string& topic, void (*pf)(const std::string& payload))
 {
-	callback_t wrapper_function = [pf](const std::string& topic, const std::string& payload) { (*pf)(payload); };
+	callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) { (*pf)(payload); };
 
 	subscribeTo(topic, wrapper_function);
 }
@@ -269,9 +269,9 @@ void Subscriber::message_arrived(mqtt::const_message_ptr msg) {
 	// Check if the string from position 0 to pos (`:` excluded) matches the regex
 	if (pos != std::string::npos && regex_match(payload.substr(0, pos), std::regex(Constants::CLIENT_ID_REGEX)))
 		// Send the substring from pos+2 (after `:` excluded) to the end of the string to the callback
-		callback(msg->get_topic(), payload.substr(pos+2));
+		callback(payload.substr(pos+2), msg->get_topic());
 	else
-		callback(msg->get_topic(), payload);
+		callback(payload, msg->get_topic());
 
 }
 

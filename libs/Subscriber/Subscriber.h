@@ -88,6 +88,7 @@ public:
      * @throw mqttException if it's connected
      */
     void subscribeTo(const std::string& topic, callback_t pf);
+
     void subscribeTo(const std::string& topic, void (*pf)(const std::string& payload));
     
     template<class T>
@@ -102,13 +103,13 @@ public:
 
     
     template<class T>
-    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& topic, const std::string& payload)){
+    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& payload, const std::string& topic)){
         subscribeTo(topic, pf);
     }
     
     template<class T>
-    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& topic, const std::string& payload), T* obj){
-        subscribeTo(topic, std::bind(pf, obj, std::placeholders::_1));
+    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& payload, const std::string& topic), T* obj){
+        subscribeTo(topic, (callback_t)std::bind(pf, obj, std::placeholders::_1, std::placeholders::_2));
     }
 
     
