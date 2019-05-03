@@ -3,6 +3,8 @@
 
 #include <string>
 
+#define N_BUTTONS 8
+
 namespace Politocean
 {
     using namespace std;
@@ -23,6 +25,9 @@ namespace Politocean
             const string JOYSTICK           { HMI + string("joystick/") };
             const string JOYSTICK_AXES      { JOYSTICK + string("axis/") };
             const string JOYSTICK_BUTTONS   { JOYSTICK + string("buttons/") };
+
+            const string AXES               { HMI + string("axes/") };
+            const string BUTTONS            { HMI + string("buttons/") };
 
             const string VISION             { HMI + string("vision/") };
 
@@ -51,7 +56,8 @@ namespace Politocean
 
         namespace Hmi
         {
-            const string CLIENT_ID          { "hmi_core" };
+            const string CMD_ID_PUB         { "cmd_pub" };
+            const string CMD_ID_SUB         { "cmd_sub" };
             const string AUTODRIVE_ID       { "autodrive" };
             const string UI_ID              { "ui" };
 
@@ -71,8 +77,7 @@ namespace Politocean
         {
             namespace Buttons
             {
-                static const int MOTORS_ON   = 1;
-                static const int MOTORS_OFF  = 2;
+                static const int MOTORS   = 1;
                 static const int VDOWN       = 5;
                 static const int WRIST       = 7;
                 static const int RESET       = 9;
@@ -89,10 +94,28 @@ namespace Politocean
                 static const int WRIST      = 4;
                 static const int RZ         = 5;
             }
+
+            namespace Actions
+            {
+                const string MOTORS_ON          { "MOTORS_ON" };
+                const string MOTORS_OFF         { "MOTORS_OFF" };
+                const string VDOWN              { "VDOWN" };
+                const string VDOWN_STOP         { "VDOWN_STOP" };
+                const string VUP                { "VUP" };
+                const string VUP_STOP           { "VUP_STOP" };
+                const string WRIST              { "WRIST "};
+                const string WRIST_STOP         { "WRIST_STOP "};
+                const string RESET              { "RESET" };
+                const string MEDIUM_FAST        { "MEDIUM_FAST" };
+                const string MEDIUM_FAST_STOP   { "MEDIUM_FAST_STOP" };
+                const string SLOW               { "SLOW" };
+                const string SLOW_STOP          { "SLOW_STOP" };
+
+                const string NONE               { "NONE" };
+            }
         }
+       }
 
     }
-
-}
 
 #endif
