@@ -82,67 +82,58 @@ public:
     /**
      * Subscribe to topic with given callback
      * 
-     * @param topic name
-     * @param callback function
+     * @topic       : topic name
+     * @callback    : callbackfunction
      * 
      * @throw mqttException if it's connected
      */
     void subscribeTo(const std::string& topic, callback_t pf);
-
     void subscribeTo(const std::string& topic, void (*pf)(const std::string& payload));
-    
+
     template<class T>
-    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& payload)){
+    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& payload))
+    {
         subscribeTo(topic, pf);
     }
-    
+
     template<class T>
-    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& payload), T* obj){
+    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& payload), T* obj)
+    {
         subscribeTo(topic, std::bind(pf, obj, std::placeholders::_1));
     }
 
-    
     template<class T>
-    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& payload, const std::string& topic)){
+    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& payload, const std::string& topic))
+    {
         subscribeTo(topic, pf);
     }
-    
+
     template<class T>
-    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& payload, const std::string& topic), T* obj){
+    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& payload, const std::string& topic), T* obj)
+    {
         subscribeTo(topic, (callback_t)std::bind(pf, obj, std::placeholders::_1, std::placeholders::_2));
     }
-
-    
 
     /**
      * Unsubscribe from the topic
      * 
-     * @param topic name
+     * @topic : topic name
      * 
      * @throw mqttException if it's connected
      */
     void unsubscribeFrom(const std::string& topic);
-
     void unsubscribeFrom(const std::vector<std::string>& topics);
 
-    /**
-     * get subscribed topics
-     */
+    // Returns a vector with the subscribed topics.
     std::vector<std::string> getSubscribedTopics();
 
-    /**
-     * Returns true if it's connected
-     */
+    // Returns true if it's connected.
     bool is_connected();
 
-    /*
-	 * Disconnects the client from the server
-	 */
+    // Disconnects the client from the server.
     void disconnect();
 
-    /**
-     * Listens until it's connected
-     */
+    // Listens until it's connected.
     void wait();
 };
 
