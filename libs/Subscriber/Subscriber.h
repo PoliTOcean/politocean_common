@@ -25,22 +25,23 @@
 
 namespace Politocean {
 
-typedef std::function<void(const std::string&)> callback_t;
+typedef std::function<void(const std::string&, const std::string&)> callback_t;
 
 class Subscriber : public virtual mqtt::callback, public virtual mqtt::iaction_listener {
 
-    // Counter for the number of connection retries
-    int nretry_;
 
     // Options to use if we need to reconnect
     mqtt::connect_options connOpts_;
 
     // An action listener to display the result of actions.
-    std::string clientID_;
-    int QOS_;
-    mqtt::string_collection_ptr topics_;
     std::string address_;
+    std::string clientID_;
     mqtt::async_client cli_;
+    
+    // Counter for the number of connection retries
+    int nretry_;
+
+    int QOS_;
 
     std::map<std::string, callback_t> topic_to_callback;
     
@@ -86,6 +87,7 @@ public:
      * 
      * @throw mqttException if it's connected
      */
+    void subscribeTo(const std::string& topic, callback_t pf);
     void subscribeTo(const std::string& topic, void (*pf)(const std::string& payload));
     
     template<class T>

@@ -21,9 +21,9 @@ using namespace std;
  * Constructor
  */
 Subscriber::Subscriber(const std::string& address, const std::string& clientID)
-	: address_(address), clientID_(clientID), cli_(address, clientID), nretry_(0)
+	: address_(address), clientID_(clientID), cli_(address, clientID), nretry_(0), QOS_(QOS)
 {
-	if(clientID.find_first_of(':')!=clientID.size())
+	if(clientID.find_first_of(':')!=std::string::npos)
 		throw mqttException("Invalid clientID.");
 }
 
@@ -116,17 +116,23 @@ void Subscriber::wait()
  * Add the '/' at the end if it's missing.
  * Add the '#' wildcard to the end.
  */
-void Subscriber::subscribeTo(const std::string& topic, void (*pf)(const std::string& payload))
+void Subscriber::subscribeTo(const std::string& topic, callback_t pf)
 {
 	if(is_connected())
 		throw mqttException("Cannot subscribe while connected.");
 
-	string topicf = topic;
-	if(topicf.at(topicf.size()-1)!='/')
-		topicf = topicf+'/';
+	string topicf = topic.substr(0, topic.find_last_not_of('/')+1); //trim trailing '/' if they exist
 
-	topic_to_callback.insert(std::pair<std::string, callback_t>(topicf+'#', pf));
+
+	topic_to_callback.insert(std::pair<std::string, callback_t>(topicf, pf));
 	logger::log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topic);
+}
+
+void Subscriber::subscribeTo(const std::string& topic, void (*pf)(const std::string& payload))
+{
+	callback_t wrapper_function = [pf](const std::string& topic, const std::string& payload) { (*pf)(payload); };
+
+	subscribeTo(topic, wrapper_function);
 }
 
 
@@ -196,14 +202,16 @@ void Subscriber::on_failure(const mqtt::token& tok) {
 void Subscriber::on_success(const mqtt::token& tok) {}
 
 void Subscriber::connected(const std::string& cause) {
+	vector<std::string> topics = getSubscribedTopics();
+
 	std::stringstream ss;
-	ss  << "\nConnection success"
-		<< "\nSubscribing..."
-		<< "\tfor client " << clientID_
-		<< " using QoS" << QOS_;
+	ss  << "Connection success\n"
+		<< "\tSubscribing to " << topics.size() << " topics\n"
+		<< "\tfor client " << clientID_ << std::endl
+		<< "\tusing QoS: " << QOS_;
 	logger::log(logger::DEBUG, ss.str());
 
-	cli_.subscribe(topics_, mqtt::async_client::qos_collection(topics_->size(), QOS_));
+	cli_.subscribe(mqtt::string_collection::create( topics ), mqtt::async_client::qos_collection(topics.size(), QOS_));
 }
 
 // Callback for when the connection is lost.
@@ -226,8 +234,30 @@ void Subscriber::message_arrived(mqtt::const_message_ptr msg) {
 	if(topic_to_callback.empty())
 		return;
 	
-	callback_t callback = topic_to_callback.at(msg->get_topic()); 	// TO DO: sostituire con find
-																	// TO DO: aggiungere gestione #
+	std::string topic = msg->get_topic();
+	std::map<std::string, callback_t>::iterator it;
+
+	it = topic_to_callback.find(topic);
+
+	if(it==topic_to_callback.end()){
+		topic += "/#";
+		for(it = topic_to_callback.find(topic);
+			it==topic_to_callback.end() && topic.find_last_of('/')!=std::string::npos;
+			it = topic_to_callback.find(topic))
+		{
+			size_t pos = topic.find_last_of('/');
+			topic = topic.substr(0, pos);
+			pos = topic.find_last_of('/');
+			topic = topic.substr(0, pos+1) + '#';
+		}
+	}
+
+	if(it == topic_to_callback.end()){
+		logger::log(logger::ERROR, string("Callback's topic ")+msg->get_topic()+string(" not found in subscribed topics of ")+clientID_);
+		return;
+	}
+
+	callback_t callback = it->second;
 
 	std::string payload = msg->get_payload();
 
@@ -235,9 +265,9 @@ void Subscriber::message_arrived(mqtt::const_message_ptr msg) {
 	// Check if the string from position 0 to pos+1 (`:` included) matches the regex
 	if (pos != std::string::npos && regex_match(payload.substr(0, pos+1), std::regex("\\w+:")))
 		// Send the substring from pos+2 (after `:` excluded) to the end of the string to the callback
-		callback(payload.substr(pos+2));
+		callback(msg->get_topic(), payload.substr(pos+2));
 	else
-		callback(payload);
+		callback(msg->get_topic(), payload);
 
 }
 
