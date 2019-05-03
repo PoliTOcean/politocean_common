@@ -17,6 +17,19 @@ namespace Politocean {
 
 using namespace std;
 
+/**
+ * Constructor
+ */
+Subscriber::Subscriber(const std::string& address, const std::string& clientID)
+	: address_(address), clientID_(clientID), cli_(address, clientID), nretry_(0), listener_("Subscription")
+{
+	if(clientID.find_first_of(':')!=clientID.size())
+		throw mqttException("Invalid clientID.");
+}
+
+/**
+ * Connection method
+ */
 void Subscriber::connect()
 {
 	// Logging
@@ -26,20 +39,16 @@ void Subscriber::connect()
 		return;
 	}
 
-	connOpts_ = new mqtt::connect_options();
-	connOpts_->set_keep_alive_interval(20);
-	connOpts_->set_clean_session(true);
+	connOpts_.set_keep_alive_interval(20);
+	connOpts_.set_clean_session(true);
     
-	cb_ = new callback(cli_, *connOpts_, clientID_, mqtt::string_collection::create( getSubscribedTopics() ), QOS);
-	cli_.set_callback(*cb_);
-
-	cb_->set_callback(std::bind(&Subscriber::callback_wrapper, this, std::placeholders::_1));
+	cli_.set_callback(*this);
 
 	// Logging
 	logger::log(logger::DEBUG, clientID_+string(" is trying to connect as a subscriber."));
 
 	try {
-    	cli_.connect(*connOpts_, nullptr, *cb_)->wait();
+    	cli_.connect(connOpts_, nullptr, *this)->wait();
 
 		if(!(cli_.is_connected()))
 			throw mqttException("client couldn't connect.");
@@ -55,15 +64,9 @@ void Subscriber::connect()
 	logger::log(logger::DEBUG, clientID_+string(" is now connected as a subscriber."));
 }
 
-std::vector<string> Subscriber::getSubscribedTopics()
-{
-	std::vector<std::string> topics;
-	for(std::map<std::string, callback_t>::iterator it = topic_to_callback.begin(); it != topic_to_callback.end(); ++it) {
-		topics.push_back(it->first);
-	}
-	return topics;
-}
-
+/** 
+ * Disconnection method
+ */
 void Subscriber::disconnect()
 {
 	// Logging
@@ -90,24 +93,29 @@ void Subscriber::disconnect()
 	logger::log(logger::DEBUG, clientID_+string(" has been disconnected."));
 }
 
+/**
+ * Returns true if connected
+ */
 bool Subscriber::is_connected()
 {
 	return cli_.is_connected();
 }
 
+/**
+ * Wait until client is connected
+ */
 void Subscriber::wait()
 {
-	while(cli_.is_connected());
+	while(cli_.is_connected() || nretry_<N_RETRY_ATTEMPTS);
 }
 
 
-Subscriber::Subscriber(const std::string& address, const std::string& clientID) : address_(address), clientID_(clientID), cli_(address, clientID)
-{
-	if(clientID.find_first_of(':')!=clientID.size())
-		throw mqttException("Invalid clientID.");
-}
-    
 
+/**
+ * Subscribe to the given topic with the given callback.
+ * Add the '/' at the end if it's missing.
+ * Add the '#' wildcard to the end.
+ */
 void Subscriber::subscribeTo(const std::string& topic, void (*pf)(const std::string& payload))
 {
 	if(is_connected())
@@ -121,6 +129,10 @@ void Subscriber::subscribeTo(const std::string& topic, void (*pf)(const std::str
 	logger::log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topic);
 }
 
+
+/**
+ * Unsubscribe from the given topic.
+ */
 void Subscriber::unsubscribeFrom(const std::string& topic)
 {
 	if(is_connected())
@@ -136,30 +148,99 @@ void Subscriber::unsubscribeFrom(const std::vector<std::string>& topics)
 		unsubscribeFrom(topic);
 }
 
+/**
+ * get the topics which it's subscribed to
+ */
+std::vector<string> Subscriber::getSubscribedTopics()
+{
+	std::vector<std::string> topics;
+	for(std::map<std::string, callback_t>::iterator it = topic_to_callback.begin(); it != topic_to_callback.end(); ++it) {
+		topics.push_back(it->first);
+	}
+	return topics;
+}
+
+/**
+ * Destructor
+ */
 Subscriber::~Subscriber()
 {
 	this->disconnect();
-
-	delete connOpts_;
-	delete cb_;
 }
 
-void Subscriber::callback_wrapper(mqtt::const_message_ptr msg)
-{
+
+/**** mqtt::callback and actionlistener methods ovverrided ****/
+
+void Subscriber::reconnect() {
+	std::this_thread::sleep_for(std::chrono::milliseconds(2500));
+	try {
+		cli_.connect(connOpts_, nullptr, *this);
+	}
+	catch (const mqtt::exception& exc) {
+		logger::log(logger::ERROR, exc);
+	}
+}
+
+// Re-connection failure
+void Subscriber::on_failure(const mqtt::token& tok) {
+	logger::log(logger::INFO, "Failed connection attempt. Retrying...");
+
+	if (++nretry_ > N_RETRY_ATTEMPTS){
+		logger::log(logger::ERROR, "Limit of retry attempts reached while trying to reconnect.");
+	}
+	reconnect();
+}
+
+// (Re)connection success
+// Either this or connected() can be used for callbacks.
+void Subscriber::on_success(const mqtt::token& tok) {}
+
+void Subscriber::connected(const std::string& cause) {
+	std::stringstream ss;
+	ss  << "\nConnection success"
+		<< "\nSubscribing..."
+		<< "\tfor client " << clientID_
+		<< " using QoS" << QOS_;
+	logger::log(logger::DEBUG, ss.str());
+
+	cli_.subscribe(topics_, mqtt::async_client::qos_collection(topics_->size(), QOS_));
+}
+
+// Callback for when the connection is lost.
+// This will initiate the attempt to manually reconnect.
+void Subscriber::connection_lost(const std::string& cause) {
+	std::stringstream ss;
+	ss << "\nConnection lost" << std::endl;
+	if (!cause.empty())
+		ss << "\tcause: " << cause << std::endl;
+	ss << "Reconnecting..." << std::endl;
+	logger::log(logger::DEBUG, ss.str());
+	
+	nretry_ = 0;
+	reconnect();
+}
+
+// Callback for when a message arrives.
+void Subscriber::message_arrived(mqtt::const_message_ptr msg) {
+	
 	if(topic_to_callback.empty())
 		return;
 	
-	callback_t callback = topic_to_callback.at(msg->get_topic());
+	callback_t callback = topic_to_callback.at(msg->get_topic()); 	// TO DO: sostituire con find
+																	// TO DO: aggiungere gestione #
 
 	std::string payload = msg->get_payload();
 
 	size_t pos = payload.find(":");
 	// Check if the string from position 0 to pos+1 (`:` included) matches the regex
-	if (pos != string::npos && regex_match(payload.substr(0, pos+1), regex("\\w+:")))
+	if (pos != std::string::npos && regex_match(payload.substr(0, pos+1), std::regex("\\w+:")))
 		// Send the substring from pos+2 (after `:` excluded) to the end of the string to the callback
 		callback(payload.substr(pos+2));
 	else
 		callback(payload);
+
 }
+
+void Subscriber::delivery_complete(mqtt::delivery_token_ptr token) {}
 
 }
