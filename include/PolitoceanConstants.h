@@ -33,7 +33,7 @@ namespace Politocean
 
             const string AUTODRIVE          { VISION + string("autodrive") };
 
-	    const string ROV_ARM            { "ROV_ARM_TOPIC" }
+            const string ROV_ARM            { "ROV_ARM_TOPIC" };
         }
 
         namespace Logger
@@ -72,7 +72,8 @@ namespace Politocean
             const string CLIENT_ID      { "rov_core" };
 
             const string IP_ADDRESS     { "10.0.0.2" };
-	    const string ARM_ID         { "Arm" };
+            
+            const string ARM_ID         { "Arm" };
         }
 
         namespace Commands
