@@ -100,6 +100,19 @@ public:
         subscribeTo(topic, std::bind(pf, obj, std::placeholders::_1));
     }
 
+    
+    template<class T>
+    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& topic, const std::string& payload)){
+        subscribeTo(topic, pf);
+    }
+    
+    template<class T>
+    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& topic, const std::string& payload), T* obj){
+        subscribeTo(topic, std::bind(pf, obj, std::placeholders::_1));
+    }
+
+    
+
     /**
      * Unsubscribe from the topic
      * 

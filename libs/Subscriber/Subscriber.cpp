@@ -12,6 +12,7 @@
 
 #include "logger.h"
 #include "PolitoceanExceptions.hpp"
+#include "PolitoceanConstants.h"
 
 namespace Politocean {
 
@@ -23,8 +24,11 @@ using namespace std;
 Subscriber::Subscriber(const std::string& address, const std::string& clientID)
 	: address_(address), clientID_(clientID), cli_(address, clientID), nretry_(0), QOS_(QOS)
 {
-	if(clientID.find_first_of(':')!=std::string::npos)
-		throw mqttException("Invalid clientID.");
+	if(!regex_match(clientID_, std::regex(Constants::CLIENT_ID_REGEX)))
+    {
+        logger::log(logger::ERROR, "Invalid characters for clientID.");
+        throw mqttException("Invalid clientID.");
+    }
 }
 
 /**
@@ -113,8 +117,7 @@ void Subscriber::wait()
 
 /**
  * Subscribe to the given topic with the given callback.
- * Add the '/' at the end if it's missing.
- * Add the '#' wildcard to the end.
+ * Remove traling '/'.
  */
 void Subscriber::subscribeTo(const std::string& topic, callback_t pf)
 {
@@ -122,7 +125,6 @@ void Subscriber::subscribeTo(const std::string& topic, callback_t pf)
 		throw mqttException("Cannot subscribe while connected.");
 
 	string topicf = topic.substr(0, topic.find_last_not_of('/')+1); //trim trailing '/' if they exist
-
 
 	topic_to_callback.insert(std::pair<std::string, callback_t>(topicf, pf));
 	logger::log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topic);
@@ -262,8 +264,8 @@ void Subscriber::message_arrived(mqtt::const_message_ptr msg) {
 	std::string payload = msg->get_payload();
 
 	size_t pos = payload.find(":");
-	// Check if the string from position 0 to pos+1 (`:` included) matches the regex
-	if (pos != std::string::npos && regex_match(payload.substr(0, pos+1), std::regex("\\w+:")))
+	// Check if the string from position 0 to pos (`:` excluded) matches the regex
+	if (pos != std::string::npos && regex_match(payload.substr(0, pos), std::regex(Constants::CLIENT_ID_REGEX)))
 		// Send the substring from pos+2 (after `:` excluded) to the end of the string to the callback
 		callback(msg->get_topic(), payload.substr(pos+2));
 	else

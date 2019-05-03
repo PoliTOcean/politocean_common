@@ -3,21 +3,23 @@
  */
 
 #include <thread>
+#include <regex>
 
 #include "Publisher.h"
 
 #include "PolitoceanExceptions.hpp"
 #include "logger.h"
+#include "PolitoceanConstants.h"
 
 namespace Politocean {
 
 Publisher::Publisher(std::string address, std::string clientID)
     : address_(address), clientID_(clientID), cb_(clientID), cli_(address, clientID), TIMEOUT(10)
 {
-    if(clientID.find(':') != std::string::npos)
+	if(!regex_match(clientID_, std::regex(Constants::CLIENT_ID_REGEX)))
     {
-        logger::log(logger::ERROR, "Invalid characters for clientID. Please, do not use the semicolon ':' character.");
-        throw mqttException("Invalid characters for clientID.");
+        logger::log(logger::ERROR, "Invalid characters for clientID.");
+        throw mqttException("Invalid clientID.");
     }
     cli_.set_callback(cb_);
 }

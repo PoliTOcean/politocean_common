@@ -11,6 +11,8 @@ namespace Politocean
 
     namespace Constants
     {
+        const string CLIENT_ID_REGEX { "[\\w\\-.\\/]+" };
+        
         namespace Topics
         {
             const string ERRORS             { "errors/" };
