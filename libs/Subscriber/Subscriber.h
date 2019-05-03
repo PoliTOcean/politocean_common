@@ -19,7 +19,7 @@
 
 #include "mqtt/async_client.h"
 #include "mqtt/callback.h"
-#include "action_listener.hpp"
+#include "mqtt/iaction_listener.h"
 #include "PolitoceanExceptions.hpp"
 #include "logger.h"
 
@@ -36,7 +36,6 @@ class Subscriber : public virtual mqtt::callback, public virtual mqtt::iaction_l
     mqtt::connect_options connOpts_;
 
     // An action listener to display the result of actions.
-    action_listener listener_;
     std::string clientID_;
     int QOS_;
     mqtt::string_collection_ptr topics_;

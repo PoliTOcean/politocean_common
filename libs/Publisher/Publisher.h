@@ -7,9 +7,9 @@
 
 #include <chrono>
 #include <string>
+#include <sstream>
 
 #include "mqtt/async_client.h"
-#include "action_listener.hpp"
 #include "PolitoceanExceptions.hpp"
 #include "logger.h"
 
@@ -17,24 +17,44 @@ namespace Politocean {
     
 class Publisher {
 
-    class callback : public virtual mqtt::callback {
+    class callback : public virtual mqtt::callback, public virtual mqtt::iaction_listener {
+        std::string clientID_;
+
     public:
         void connection_lost(const std::string& cause) override {
-
+            std::stringstream ss;
+            ss << "The Publisher " << clientID_ << " lost the connection.";
+            logger::log(logger::ERROR, ss.str());
         }
 
         void delivery_complete(mqtt::delivery_token_ptr tok) override {
-
+            std::stringstream ss;
+            ss << clientID_ << ": message " << tok->get_message_id() << " delivered with return code " << tok->get_return_code();
+            logger::log(logger::DEBUG, ss.str());
         }
+
+        void  on_failure(const mqtt::token& tok) override {
+            std::stringstream ss;
+            ss << clientID_ << ": message " << tok.get_message_id() << " wasn't delivered, return code " << tok.get_return_code();
+            logger::log(logger::ERROR, ss.str());
+        }
+
+        void on_success(const mqtt::token& tok) override {
+            std::stringstream ss;
+            ss << clientID_ << ": message " << tok.get_message_id() << " correctly delivered, return code " << tok.get_return_code();
+            logger::log(logger::DEBUG, ss.str());
+        }
+
+        callback(const std::string& clientID) : clientID_(clientID) {}
     };
 
     std::string address_, clientID_;
+
+    callback cb_;
+    
     mqtt::async_client cli_;
     mqtt::token_ptr tok;
-
     mqtt::connect_options *connOpts_;
-    callback cb_;
-    action_listener listener_;
 
 public:
     const int QOS = 1;

@@ -21,7 +21,7 @@ using namespace std;
  * Constructor
  */
 Subscriber::Subscriber(const std::string& address, const std::string& clientID)
-	: address_(address), clientID_(clientID), cli_(address, clientID), nretry_(0), listener_("Subscription")
+	: address_(address), clientID_(clientID), cli_(address, clientID), nretry_(0)
 {
 	if(clientID.find_first_of(':')!=clientID.size())
 		throw mqttException("Invalid clientID.");

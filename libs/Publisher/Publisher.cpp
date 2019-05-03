@@ -12,13 +12,14 @@
 namespace Politocean {
 
 Publisher::Publisher(std::string address, std::string clientID)
-    : address_(address), clientID_(clientID), cli_(address, clientID), cb_(), listener_("Publication"), TIMEOUT(10)
+    : address_(address), clientID_(clientID), cb_(clientID), cli_(address, clientID), TIMEOUT(10)
 {
     if(clientID.find(':') != std::string::npos)
     {
         logger::log(logger::ERROR, "Invalid characters for clientID. Please, do not use the semicolon ':' character.");
         throw mqttException("Invalid characters for clientID.");
     }
+    cli_.set_callback(cb_);
 }
 
 void Publisher::connect()
@@ -49,7 +50,7 @@ void Publisher::publish(std::string topic, std::string payload)
     mqtt::message_ptr pubmsg = mqtt::make_message(topic, clientID_+std::string(":\t")+payload);
     pubmsg->set_qos(QOS);
 
-    cli_.publish(pubmsg, nullptr, listener_)->wait();
+    cli_.publish(pubmsg, nullptr, cb_)->wait();
 }
 
 void Publisher::disconnect()
