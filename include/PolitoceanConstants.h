@@ -11,12 +11,13 @@ namespace Politocean
 
     namespace Constants
     {
-        const string CLIENT_ID_REGEX { "[\\w_\\-.]+" };
+        const string CLIENT_ID_REGEX { "[\\w_]+" };
 
         namespace Topics
         {
-            const string ERRORS             { "errors/" };
-            const string INFO               { "info/" };
+            const string ERRORS             { "messages/errors/" };
+            const string INFO               { "messages/info/" };
+            const string COMPONENTS         { "messages/components" };
 
             const string MICRO_ROV          { "microRov/" };
             const string MICRO_ROV_CAMERA   { MICRO_ROV + string("camera") };
@@ -60,9 +61,10 @@ namespace Politocean
             const string CMD_ID_PUB         { "cmd_pub" };
             const string CMD_ID_SUB         { "cmd_sub" };
             const string AUTODRIVE_ID       { "autodrive" };
-            const string UI_ID              { "ui" };
+            const string GUI_ID_PUB         { "ui_pub" };
+            const string GUI_ID_SUB         { "ui_sub" };
 
-            const string IP_ADDRESS         { "10.0.0.1" };
+            const string IP_ADDRESS         { "127.0.0.1" }; //{ "10.0.0.1" };
             const string CAMERA_IP_ADDRESS  { "10.0.0.4" };
         }
 

@@ -51,7 +51,7 @@ void Publisher::publish(std::string topic, std::string payload)
         logger::log(logger::ERROR, clientID_+std::string(" is not connected but it's trying to publish."));
         throw Politocean::mqttException("Publisher is not connected.");
     }
-    
+    logger::log(logger::DEBUG, clientID_+std::string(" is string to publish..."));
     mqtt::message_ptr pubmsg = mqtt::make_message(topic, clientID_+std::string(":\t")+payload);
     pubmsg->set_qos(QOS);
 
