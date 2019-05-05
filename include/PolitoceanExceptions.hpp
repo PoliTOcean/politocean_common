@@ -7,6 +7,9 @@ namespace Politocean {
 
 
 class exception : public std::exception {
+    /// an exception object as storage for error messages
+    std::runtime_error m;
+
 public:
     /// returns the explanatory string
     const char* what() const noexcept override
@@ -14,26 +17,34 @@ public:
         return m.what();
     }
 
-    exception(std::string what_arg) : std::exception(), m(what_arg.c_str()) {}
-    exception(const char* what_arg) : std::exception(), m(what_arg) {}
-
-private:
-    /// an exception object as storage for error messages
-    std::runtime_error m;
+    exception(const std::string& msg) : std::exception(), m(msg.c_str()) {}
+    exception(const char *msg) : std::exception(), m(msg) {}
 };
 
 
 
 class mqttException : public exception {
 public:
-    mqttException(std::string what_arg) : exception(what_arg) {}
-    mqttException(const char* what_arg) : exception(what_arg) {}
+    mqttException(const std::string& msg) : exception(msg) {}
+    mqttException(const char *msg) : exception(msg) {}
 };
 
 class loggerException : public exception {
 public:
-    loggerException(std::string what_arg) : exception(what_arg) {}
-    loggerException(const char* what_arg) : exception(what_arg) {}
+    loggerException(const std::string& msg) : exception(msg) {}
+    loggerException(const char *msg) : exception(msg) {}
+};
+
+class controllerException : public exception {
+public:
+    controllerException(const std::string& msg) : exception(msg) {}
+    controllerException(const char *msg) : exception(msg) {}
+};
+
+class JoystickException : public exception {
+public:
+    JoystickException(const std::string& msg) : exception(msg) {}
+    JoystickException(const char *msg) : exception(msg) {}
 };
 
 }
