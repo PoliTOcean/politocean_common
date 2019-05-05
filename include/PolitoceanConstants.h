@@ -17,24 +17,22 @@ namespace Politocean
         {
             const string ERRORS             { "messages/errors/" };
             const string INFO               { "messages/info/" };
-            const string COMPONENTS         { "messages/components" };
+            const string COMPONENTS         { "messages/components/" };
 
-            const string MICRO_ROV          { "microRov/" };
-            const string MICRO_ROV_CAMERA   { MICRO_ROV + string("camera") };
+            const string MICRO_ROV_CAMERA   { "microRovCamera/" };
 
-            const string HMI                { "hmi/" };
-            const string JOYSTICK           { HMI + string("joystick/") };
+            const string JOYSTICK           { "joystick/" };
             const string JOYSTICK_AXES      { JOYSTICK + string("axis/") };
             const string JOYSTICK_BUTTONS   { JOYSTICK + string("buttons/") };
 
-            const string AXES               { HMI + string("axes/") };
-            const string BUTTONS            { HMI + string("buttons/") };
+            const string AXES               { "axes/" };
+            const string BUTTONS            { "buttons/" };
 
-            const string VISION             { HMI + string("vision/") };
+            const string VISION             { "vision/"};
 
             const string AUTODRIVE          { VISION + string("autodrive") };
 
-            const string ROV_ARM            { "ROV_ARM_TOPIC" };
+            const string ROV_ARM            { "rovArmControl" };
         }
 
         namespace Logger
@@ -61,8 +59,10 @@ namespace Politocean
             const string CMD_ID_PUB         { "cmd_pub" };
             const string CMD_ID_SUB         { "cmd_sub" };
             const string AUTODRIVE_ID       { "autodrive" };
-            const string GUI_ID_PUB         { "ui_pub" };
-            const string GUI_ID_SUB         { "ui_sub" };
+            const string GUI_ID_PUB         { "gui_pub" };
+            const string GUI_ID_SUB         { "gui_sub" };
+            const string CMD_PRS_ID_PUB     { "cmd_parser_pub" };
+            const string CMD_PRS_ID_SUB     { "cmd_parser_sub" };
 
             const string IP_ADDRESS         { "127.0.0.1" }; //{ "10.0.0.1" };
             const string CAMERA_IP_ADDRESS  { "10.0.0.4" };
@@ -83,13 +83,14 @@ namespace Politocean
         {
             namespace Buttons
             {
-                static const int MOTORS   = 1;
-                static const int VDOWN       = 5;
-                static const int WRIST       = 7;
-                static const int RESET       = 9;
-                static const int VUP         = 14;
-                static const int MEDIUM_FAST = 24;
-                static const int SLOW        = 25;
+                const int MOTORS            = 1;
+                const int VDOWN             = 5;
+                const int WRIST             = 7;
+                const int RESET             = 9;
+                const int VUP               = 14;
+                const int MEDIUM_FAST       = 24;
+                const int SLOW              = 25;
+                const int AUTONOMOUS        = 66;
             }
             
             namespace Axes
@@ -116,6 +117,8 @@ namespace Politocean
                 const string MEDIUM_FAST_STOP   { "MEDIUM_FAST_STOP" };
                 const string SLOW               { "SLOW" };
                 const string SLOW_STOP          { "SLOW_STOP" };
+                const string AUTONOMOUS_ON      { "AUTONOMOUS_ON" };
+                const string AUTONOMOUS_OFF     { "AUTONOMOUS_OFF" };
 
                 const string NONE               { "NONE" };
             }
