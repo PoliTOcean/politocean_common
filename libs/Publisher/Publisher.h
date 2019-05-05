@@ -76,6 +76,9 @@ public:
 
     // States if it's already connected
     bool is_connected();
+
+    // get client id
+    std::string getClientId();
 };
 
 }

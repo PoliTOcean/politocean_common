@@ -165,6 +165,13 @@ std::vector<string> Subscriber::getSubscribedTopics()
 }
 
 /**
+ * get client id
+ */
+std::string Subscriber::getClientId(){
+    return clientID_;
+}
+
+/**
  * Destructor
  */
 Subscriber::~Subscriber()
@@ -238,7 +245,11 @@ void Subscriber::message_arrived(mqtt::const_message_ptr msg) {
 	it = topic_to_callback.find(topic);
 
 	if(it==topic_to_callback.end()){
-		topic += "/#";
+
+		if(topic[topic.size()-1]!='/')
+			topic += "/";
+		topic += "#";
+
 		for(it = topic_to_callback.find(topic);
 			it==topic_to_callback.end() && topic.find_last_of('/')!=std::string::npos;
 			it = topic_to_callback.find(topic))
@@ -259,14 +270,7 @@ void Subscriber::message_arrived(mqtt::const_message_ptr msg) {
 
 	std::string payload = msg->get_payload();
 
-	size_t pos = payload.find(":");
-	// Check if the string from position 0 to pos (`:` excluded) matches the regex
-	if (pos != std::string::npos && regex_match(payload.substr(0, pos), std::regex(Constants::CLIENT_ID_REGEX)))
-		// Send the substring from pos+2 (after `:` excluded) to the end of the string to the callback
-		callback(payload.substr(pos+2), msg->get_topic());
-	else
-		callback(payload, msg->get_topic());
-
+	callback(payload, msg->get_topic());
 }
 
 void Subscriber::delivery_complete(mqtt::delivery_token_ptr token) {}
