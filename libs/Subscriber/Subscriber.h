@@ -135,6 +135,9 @@ public:
 
     // Listens until it's connected.
     void wait();
+
+    // get client id 
+    std::string getClientId();
 };
 
 

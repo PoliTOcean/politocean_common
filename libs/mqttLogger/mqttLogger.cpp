@@ -44,6 +44,11 @@ void mqttLogger::logInfo(const std::exception& exc){
 void mqttLogger::logPublish(const logger::levels level, const std::string& topic, const std::string& msg){
     std::stringstream ss;
     ss << msg;
+
+    if(topic[topic.size()-1]!='/')
+        topic += "/";
+    topic+=mqtt_pub->getClientId();
+    
     try{
         if(!mqtt_pub->is_connected())
             throw Politocean::mqttException("mqtt_pub is not connected");
