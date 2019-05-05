@@ -41,10 +41,11 @@ void mqttLogger::logInfo(const std::exception& exc){
     logInfo("An error occured due to an exception.", exc);
 }
 
-void mqttLogger::logPublish(const logger::levels level, const std::string& topic, const std::string& msg){
+void mqttLogger::logPublish(const logger::levels level, const std::string& topicName, const std::string& msg){
     std::stringstream ss;
     ss << msg;
 
+    std::string topic = topicName;
     if(topic[topic.size()-1]!='/')
         topic += "/";
     topic+=mqtt_pub->getClientId();
