@@ -69,7 +69,7 @@ namespace Politocean
             const string CMD_PRS_ID_SUB     { "cmd_parser_sub" };
             const string JOYSTICK_ID_PUB    { "joystick_pub" };
 
-            const string IP_ADDRESS         { "127.0.0.1" }; //{ "10.0.0.1" };
+            const string IP_ADDRESS         { "10.0.0.1" };
             const string CAMERA_IP_ADDRESS  { "10.0.0.4" };
         }
 
