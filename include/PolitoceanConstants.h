@@ -112,10 +112,10 @@ namespace Politocean
                 const string MOTORS_SWAP        { "MOTORS" };
                 const string MOTORS_ON          { "MOTORS_ON" };
                 const string MOTORS_OFF         { "MOTORS_OFF" };
-                const string VDOWN              { "VDOWN" };
-                const string VDOWN_STOP         { "VDOWN_STOP" };
-                const string VUP                { "VUP" };
-                const string VUP_STOP           { "VUP_STOP" };
+                const string VDOWN_ON           { "VDOWN_ON" };
+                const string VDOWN_OFF          { "VDOWN_OFF" };
+                const string VUP_ON             { "VUP_ON" };
+                const string VUP_OFF            { "VUP_OFF" };
                 const string WRIST_SWAP         { "WRIST" };
                 const string WRIST_ON           { "WRIST_ON "};
                 const string WRIST_OFF          { "WRIST_OFF "};
