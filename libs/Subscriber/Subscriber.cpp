@@ -15,19 +15,6 @@ using namespace Politocean;
 using namespace Politocean::Constants;
 
 /**
- * Constructor
- */
-Subscriber::Subscriber(const std::string& address, const std::string& clientID)
-	: address_(address), clientID_(clientID), cli_(address, clientID), nretry_(0), QOS_(QOS)
-{
-	if(!regex_match(clientID_, std::regex(Constants::CLIENT_ID_REGEX)))
-    {
-        logger::log(logger::ERROR, "Invalid characters for clientID.");
-        throw mqttException("Invalid clientID.");
-    }
-}
-
-/**
  * Connection method
  */
 void Subscriber::connect()
@@ -38,6 +25,12 @@ void Subscriber::connect()
 		logger::log(logger::DEBUG, clientID_+string(" already connected."));
 		return;
 	}
+
+	if(!regex_match(clientID_, std::regex(Constants::CLIENT_ID_REGEX)))
+    {
+        logger::log(logger::ERROR, "Invalid characters for clientID.");
+        throw mqttException("Invalid clientID.");
+    }
 
 	connOpts_.set_keep_alive_interval(20);
 	connOpts_.set_clean_session(true);
@@ -120,7 +113,7 @@ void Subscriber::subscribeTo(const std::string& topic, callback_t pf)
 	if(is_connected())
 		throw mqttException("Cannot subscribe while connected.");
 
-	string topicf = topic.substr(0, topic.find_last_not_of('/')+1); //trim trailing '/' if they exist
+	string topicf = topic.substr(0, topic.find_last_not_of('/')+1)+"/"; //trim trailing '/' if they exist
 
 	topic_to_callback.insert(std::pair<std::string, callback_t>(topicf, pf));
 	logger::log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topic);
@@ -206,7 +199,8 @@ void Subscriber::on_failure(const mqtt::token& tok) {
 // Either this or connected() can be used for callbacks.
 void Subscriber::on_success(const mqtt::token& tok) {}
 
-void Subscriber::connected(const std::string& cause) {
+void Subscriber::connected(const std::string& cause)
+{
 	vector<std::string> topics = getSubscribedTopics();
 
 	std::stringstream ss;
@@ -221,7 +215,8 @@ void Subscriber::connected(const std::string& cause) {
 
 // Callback for when the connection is lost.
 // This will initiate the attempt to manually reconnect.
-void Subscriber::connection_lost(const std::string& cause) {
+void Subscriber::connection_lost(const std::string& cause)
+{
 	std::stringstream ss;
 	ss << "\nConnection lost" << std::endl;
 	if (!cause.empty())
@@ -234,8 +229,8 @@ void Subscriber::connection_lost(const std::string& cause) {
 }
 
 // Callback for when a message arrives.
-void Subscriber::message_arrived(mqtt::const_message_ptr msg) {
-	
+void Subscriber::message_arrived(mqtt::const_message_ptr msg)
+{	
 	if(topic_to_callback.empty())
 		return;
 	
@@ -244,14 +239,14 @@ void Subscriber::message_arrived(mqtt::const_message_ptr msg) {
 
 	it = topic_to_callback.find(topic);
 
-	if(it==topic_to_callback.end()){
-
+	if(it==topic_to_callback.end())
+	{
 		if(topic[topic.size()-1]!='/')
 			topic += "/";
 		topic += "#";
 
 		for(it = topic_to_callback.find(topic);
-			it==topic_to_callback.end() && topic.find_last_of('/')!=std::string::npos;
+			it == topic_to_callback.end() && topic.find_last_of('/') != std::string::npos;
 			it = topic_to_callback.find(topic))
 		{
 			size_t pos = topic.find_last_of('/');
@@ -261,7 +256,8 @@ void Subscriber::message_arrived(mqtt::const_message_ptr msg) {
 		}
 	}
 
-	if(it == topic_to_callback.end()){
+	if(it == topic_to_callback.end())
+	{
 		logger::log(logger::ERROR, string("Callback's topic ")+msg->get_topic()+string(" not found in subscribed topics of ")+clientID_);
 		return;
 	}

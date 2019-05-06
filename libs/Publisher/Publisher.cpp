@@ -17,15 +17,7 @@ using namespace Politocean;
 using namespace Politocean::Constants;
 
 Publisher::Publisher(std::string address, std::string clientID)
-    : address_(address), clientID_(clientID), cb_(clientID), cli_(address, clientID), TIMEOUT(10)
-{
-	if(!regex_match(clientID_, std::regex(CLIENT_ID_REGEX)))
-    {
-        logger::log(logger::ERROR, "Invalid characters for clientID.");
-        throw mqttException("Invalid clientID.");
-    }
-    cli_.set_callback(cb_);
-}
+    : address_(address), clientID_(clientID), cb_(clientID), cli_(address, clientID), TIMEOUT(10) {}
 
 void Publisher::connect()
 {
@@ -36,6 +28,13 @@ void Publisher::connect()
 		return;
 	}
 	logger::log(logger::DEBUG, clientID_+std::string(" is trying to connect as a publisher to ")+address_);
+
+    if(!regex_match(clientID_, std::regex(Constants::CLIENT_ID_REGEX)))
+    {
+        logger::log(logger::ERROR, "Invalid characters for clientID.");
+        throw mqttException("Invalid clientID.");
+    }
+    cli_.set_callback(cb_);
 
     cli_.connect()->wait();
 
