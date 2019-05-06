@@ -11,7 +11,7 @@ namespace Politocean
 
     namespace Constants
     {
-        const string CLIENT_ID_REGEX { "[\\w_]+" };
+        inline const string CLIENT_ID_REGEX  { "^[^_]\\w+(\\_\\w+)+[^_]$" };
 
         namespace Topics
         {

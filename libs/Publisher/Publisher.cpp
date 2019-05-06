@@ -19,7 +19,7 @@ using namespace Politocean::Constants;
 Publisher::Publisher(std::string address, std::string clientID)
     : address_(address), clientID_(clientID), cb_(clientID), cli_(address, clientID), TIMEOUT(10)
 {
-	if(!regex_match(clientID_, std::regex(Constants::CLIENT_ID_REGEX)))
+	if(!regex_match(clientID_, std::regex(CLIENT_ID_REGEX)))
     {
         logger::log(logger::ERROR, "Invalid characters for clientID.");
         throw mqttException("Invalid clientID.");
