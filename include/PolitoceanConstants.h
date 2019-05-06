@@ -130,8 +130,8 @@ namespace Politocean
                 const unsigned char NONE               = 0x00;
             }
         }
-       }
-
     }
+
+}
 
 #endif
