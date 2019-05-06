@@ -109,25 +109,25 @@ namespace Politocean
 
             namespace Actions
             {
-                const string MOTORS_SWAP        { "MOTORS" };
-                const string MOTORS_ON          { "MOTORS_ON" };
-                const string MOTORS_OFF         { "MOTORS_OFF" };
-                const string VDOWN_ON           { "VDOWN_ON" };
-                const string VDOWN_OFF          { "VDOWN_OFF" };
-                const string VUP_ON             { "VUP_ON" };
-                const string VUP_OFF            { "VUP_OFF" };
-                const string WRIST_SWAP         { "WRIST" };
-                const string WRIST_ON           { "WRIST_ON "};
-                const string WRIST_OFF          { "WRIST_OFF "};
-                const string RESET              { "RESET" };
-                const string MEDIUM_FAST        { "MEDIUM_FAST" };
-                const string MEDIUM_FAST_STOP   { "MEDIUM_FAST_STOP" };
-                const string SLOW               { "SLOW" };
-                const string SLOW_STOP          { "SLOW_STOP" };
-                const string AUTONOMOUS_ON      { "AUTONOMOUS_ON" };
-                const string AUTONOMOUS_OFF     { "AUTONOMOUS_OFF" };
+                const unsigned char MOTORS_SWAP        = 0x01;
+                const unsigned char MOTORS_ON          = 0x02;
+                const unsigned char MOTORS_OFF         = 0x03;
+                const unsigned char VDOWN_ON           = 0x04;
+                const unsigned char VDOWN_OFF          = 0x05;
+                const unsigned char VUP_ON             = 0x06;
+                const unsigned char VUP_OFF            = 0x07;
+                const unsigned char WRIST_SWAP         = 0x08;
+                const unsigned char WRIST_ON           = 0x09;
+                const unsigned char WRIST_OFF          = 0x0A;
+                const unsigned char RESET              = 0x0B;
+                const unsigned char MEDIUM_FAST        = 0x0C;
+                const unsigned char MEDIUM_FAST_STOP   = 0x0D;
+                const unsigned char SLOW               = 0x0E;
+                const unsigned char SLOW_STOP          = 0x0F;
+                const unsigned char AUTONOMOUS_ON      = 0x10;
+                const unsigned char AUTONOMOUS_OFF     = 0x11;
 
-                const string NONE               { "" };
+                const unsigned char NONE               = 0x00;
             }
         }
        }
