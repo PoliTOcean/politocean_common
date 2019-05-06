@@ -3,8 +3,6 @@
 
 #include <string>
 
-#define N_BUTTONS 8
-
 namespace Politocean
 {
     using namespace std;
@@ -111,14 +109,16 @@ namespace Politocean
 
             namespace Actions
             {
+                const string MOTORS_SWAP        { "MOTORS" };
                 const string MOTORS_ON          { "MOTORS_ON" };
                 const string MOTORS_OFF         { "MOTORS_OFF" };
                 const string VDOWN              { "VDOWN" };
                 const string VDOWN_STOP         { "VDOWN_STOP" };
                 const string VUP                { "VUP" };
                 const string VUP_STOP           { "VUP_STOP" };
-                const string WRIST              { "WRIST "};
-                const string WRIST_STOP         { "WRIST_STOP "};
+                const string WRIST_SWAP         { "WRIST" };
+                const string WRIST_ON           { "WRIST_ON "};
+                const string WRIST_OFF          { "WRIST_OFF "};
                 const string RESET              { "RESET" };
                 const string MEDIUM_FAST        { "MEDIUM_FAST" };
                 const string MEDIUM_FAST_STOP   { "MEDIUM_FAST_STOP" };
@@ -127,7 +127,7 @@ namespace Politocean
                 const string AUTONOMOUS_ON      { "AUTONOMOUS_ON" };
                 const string AUTONOMOUS_OFF     { "AUTONOMOUS_OFF" };
 
-                const string NONE               { "NONE" };
+                const string NONE               { "" };
             }
         }
        }
