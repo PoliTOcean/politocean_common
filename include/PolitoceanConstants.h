@@ -11,7 +11,13 @@ namespace Politocean
 
     namespace Constants
     {
-        const string CLIENT_ID_REGEX { "[\\w_]+" };
+        const string CLIENT_ID_REGEX = "[\\w_]+";
+
+        namespace Pinout
+        {
+            static const int RESET  = 7;
+            static const int MOTORS = 12;
+        }
 
         namespace Topics
         {
