@@ -96,6 +96,7 @@ namespace Politocean
                 const int MEDIUM_FAST       = 24;
                 const int SLOW              = 25;
                 const int AUTONOMOUS        = 66;
+                const int START_AND_STOP    = 2;
             }
             
             namespace Axes
@@ -126,6 +127,7 @@ namespace Politocean
                 const unsigned char SLOW_STOP          = 0x0F;
                 const unsigned char AUTONOMOUS_ON      = 0x10;
                 const unsigned char AUTONOMOUS_OFF     = 0x11;
+                const unsigned char START_AND_STOP     = 0x12;
 
                 const unsigned char NONE               = 0x00;
             }
