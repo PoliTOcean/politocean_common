@@ -103,8 +103,9 @@ namespace Politocean
                 const int WRIST             = 7;
                 const int RESET             = 9;
                 const int VUP               = 14;
-                const int MEDIUM_FAST       = 24;
-                const int SLOW              = 25;
+                const int FAST              = 24;
+                const int MEDIUM            = 152;
+                const int SLOW              = 153;
                 const int AUTONOMOUS        = 66;
                 const int START_AND_STOP    = 2;
             }
@@ -131,10 +132,9 @@ namespace Politocean
                 const unsigned char WRIST_ON           = 0x09;
                 const unsigned char WRIST_OFF          = 0x0A;
                 const unsigned char RESET              = 0x0B;
-                const unsigned char MEDIUM_FAST        = 0x0C;
-                const unsigned char MEDIUM_FAST_STOP   = 0x0D;
+                const unsigned char FAST               = 0x0D;
                 const unsigned char SLOW               = 0x0E;
-                const unsigned char SLOW_STOP          = 0x0F;
+                const unsigned char MEDIUM             = 0x0C;
                 const unsigned char AUTONOMOUS_ON      = 0x10;
                 const unsigned char AUTONOMOUS_OFF     = 0x11;
                 const unsigned char START_AND_STOP     = 0x12;
