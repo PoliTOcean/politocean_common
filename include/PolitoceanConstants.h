@@ -13,8 +13,16 @@ namespace Politocean
 
         namespace Pinout
         {
-            static const int RESET  = 7;
-            static const int MOTORS = 12;
+            static const int RESET              = 7;
+            static const int MOTORS             = 12;
+
+            static const int SHOULDER_EN        = 15;
+            static const int SHOULDER_DIR       = 13;
+            static const int SHOULDER_STEPPER   = 11;
+            
+            static const int WRIST_EN             = 40;
+            static const int WRIST_DIR            = 38;
+            static const int WRIST_STEPPER        = 36;
         }
 
         namespace Topics
@@ -36,7 +44,9 @@ namespace Politocean
 
             const string AUTODRIVE          { VISION + string("autodrive") };
 
-            const string ROV_ARM            { "rovArmControl" };
+            const string ARM            { "arm/" };
+            const string ARM_SHOULDER   { ARM + "shoulder/" };
+            const string ARM_WRIST      { ARM + "wrist/" };
         }
 
         namespace Logger
@@ -128,6 +138,8 @@ namespace Politocean
                 const unsigned char AUTONOMOUS_ON      = 0x10;
                 const unsigned char AUTONOMOUS_OFF     = 0x11;
                 const unsigned char START_AND_STOP     = 0x12;
+                const unsigned char SHOULDER_ON        = 0x13;
+                const unsigned char SHOULDER_OFF       = 0x14;
 
                 const unsigned char NONE               = 0x00;
             }
