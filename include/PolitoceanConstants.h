@@ -11,6 +11,14 @@ namespace Politocean
     {
         const string CLIENT_ID_REGEX { "[\\w_]+" };
 
+        namespace Timing
+        {
+            namespace Seconds
+            {
+                static const int SENSORS    = 1;
+            }
+        }
+
         namespace Pinout
         {
             static const int RESET              = 7;
@@ -39,6 +47,7 @@ namespace Politocean
 
             const string AXES               { "axes/" };
             const string BUTTONS            { "buttons/" };
+            const string SENSORS            { "sensors/" };
 
             const string VISION             { "vision/"};
 
@@ -78,6 +87,8 @@ namespace Politocean
             const string CMD_PRS_ID_PUB     { "cmd_parser_pub" };
             const string CMD_PRS_ID_SUB     { "cmd_parser_sub" };
             const string JOYSTICK_ID_PUB    { "joystick_pub" };
+            const string SENSORS_ID_PUB     { "sensors_pub" };
+            const string SENSORS_ID_SUB     { "sensors_sub" };
 
             const string IP_ADDRESS         { "10.0.0.1" };
             const string CAMERA_IP_ADDRESS  { "10.0.0.4" };
