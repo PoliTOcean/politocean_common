@@ -22,7 +22,7 @@ Publisher::Publisher(std::string address, std::string clientID)
 void Publisher::connect()
 {
     // Logging
-	if(this->is_connected())
+	if(cli_.is_connected())
     {
 		logger::log(logger::DEBUG, clientID_+std::string(" already connected."));
 		return;
@@ -46,7 +46,7 @@ void Publisher::connect()
 
 void Publisher::publish(std::string topic, std::string payload)
 {
-    if(!this->is_connected())
+    if(!cli_.is_connected())
     {
         // Logging
         logger::log(logger::ERROR, clientID_+std::string(" is not connected but it's trying to publish."));
@@ -61,7 +61,7 @@ void Publisher::publish(std::string topic, std::string payload)
 
 void Publisher::disconnect()
 {
-	if(!(this->is_connected()))
+	if(!(cli_.is_connected()))
     {
         // Logging 
 		logger::log(logger::DEBUG, clientID_+std::string(" already disconnected."));
@@ -134,7 +134,7 @@ void Publisher::delivery_complete(mqtt::delivery_token_ptr tok) {
 }
 
 void Publisher::on_failure(const mqtt::token& tok) {
-    if(!this->is_connected()){
+    if(!cli_.is_connected()){
         logger::log(logger::INFO, "Failed connection attempt. Retrying...");
         if (++nretry_ > N_RETRY_ATTEMPTS){
             logger::log(logger::ERROR, "Limit of retry attempts reached while trying to reconnect.");
