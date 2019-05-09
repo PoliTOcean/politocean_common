@@ -13,6 +13,10 @@ namespace Politocean
 
         namespace Timing
         {
+            namespace Millisenconds
+            {
+                static const int DFLT_STEPPER   = 10;
+            }
             namespace Seconds
             {
                 static const int SENSORS    = 1;
