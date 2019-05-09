@@ -53,9 +53,9 @@ namespace Politocean
 
             const string AUTODRIVE          { VISION + string("autodrive") };
 
-            const string ARM            { "arm/" };
-            const string ARM_SHOULDER   { ARM + "shoulder/" };
-            const string ARM_WRIST      { ARM + "wrist/" };
+            const string ARM                { "arm/" };
+            const string ARM_SHOULDER       { ARM + "shoulder/" };
+            const string ARM_WRIST          { ARM + "wrist/" };
         }
 
         namespace Logger
@@ -111,14 +111,19 @@ namespace Politocean
             {
                 const int MOTORS            = 1;
                 const int VDOWN             = 5;
-                const int WRIST             = 7;
                 const int RESET             = 9;
                 const int VUP               = 14;
-                const int FAST              = 24;
-                const int MEDIUM            = 152;
-                const int SLOW              = 153;
+                const int MEDIUM_FAST       = 24;
+                const int SLOW              = 25;
                 const int AUTONOMOUS        = 66;
                 const int START_AND_STOP    = 2;
+                const int SHOULDER_ENABLE   = 11;
+                const int SHOULDER_DISABLE  = 10;
+                const int WRIST_ENABLE      = 13;
+                const int WRIST_DISABLE     = 12;
+                const int WRIST             = 7;
+                const int SHOULDER_UP       = 20;
+                const int SHOULDER_DOWN     = 22;
             }
             
             namespace Axes
@@ -151,6 +156,11 @@ namespace Politocean
                 const unsigned char START_AND_STOP     = 0x12;
                 const unsigned char SHOULDER_ON        = 0x13;
                 const unsigned char SHOULDER_OFF       = 0x14;
+                const unsigned char SHOULDER_UP        = 0x15;
+                const unsigned char SHOULDER_DOWN      = 0x16;
+                const unsigned char SHOULDER_STOP      = 0x17;
+                const unsigned char WRIST_START        = 0x18;
+                const unsigned char WRIST_STOP         = 0x19;
 
                 const unsigned char NONE               = 0x00;
             }
