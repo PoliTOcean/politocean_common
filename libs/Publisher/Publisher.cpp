@@ -17,7 +17,7 @@ using namespace Politocean;
 using namespace Politocean::Constants;
 
 Publisher::Publisher(std::string address, std::string clientID)
-    : address_(address), clientID_(clientID), cb_(clientID), cli_(address, clientID), TIMEOUT(10) {}
+    : address_(address), clientID_(clientID), cli_(address, clientID), TIMEOUT(10) {}
 
 void Publisher::connect()
 {
@@ -34,10 +34,12 @@ void Publisher::connect()
         logger::log(logger::ERROR, "Invalid characters for clientID.");
         throw mqttException("Invalid clientID.");
     }
-    cli_.set_callback(cb_);
+    cli_.set_callback(*this);
 
     cli_.connect()->wait();
 
+    nretry_ = N_RETRY_ATTEMPTS;
+	    
     // Logging
 	logger::log(logger::DEBUG, clientID_+std::string(" is now connected and can publish to ")+address_);
 }
@@ -54,7 +56,7 @@ void Publisher::publish(std::string topic, std::string payload)
     mqtt::message_ptr pubmsg = mqtt::make_message(topic, payload);
     pubmsg->set_qos(QOS);
 
-    cli_.publish(pubmsg, nullptr, cb_)->wait();
+    cli_.publish(pubmsg, nullptr, *this)->wait();
 }
 
 void Publisher::disconnect()
@@ -88,7 +90,7 @@ void Publisher::disconnect()
 }
 
 bool Publisher::is_connected(){
-    return cli_.is_connected();
+	return cli_.is_connected() || nretry_<N_RETRY_ATTEMPTS;
 }
 
 std::string Publisher::getClientId(){
@@ -97,6 +99,64 @@ std::string Publisher::getClientId(){
 
 Publisher::~Publisher(){
     this->disconnect();
+}
+
+
+
+void Publisher::reconnect() {
+	std::this_thread::sleep_for(std::chrono::milliseconds(2500));
+	try {
+		cli_.connect(*connOpts_, nullptr, *this);
+	}
+	catch (const mqtt::exception& exc) {
+		logger::log(logger::ERROR, exc);
+	}
+}
+
+/** Inherited functions **/
+void Publisher::connection_lost(const std::string& cause) {
+    std::stringstream ss;
+    ss << "The Publisher " << clientID_ << " lost the connection.";
+    logger::log(logger::ERROR, ss.str());
+	if (!cause.empty())
+		ss << "\tcause: " << cause << std::endl;
+	ss << "Reconnecting..." << std::endl;
+	logger::log(logger::DEBUG, ss.str());
+	
+	nretry_ = 0;
+	reconnect();
+}
+
+void Publisher::delivery_complete(mqtt::delivery_token_ptr tok) {
+    std::stringstream ss;
+    ss << clientID_ << ": message " << tok->get_message_id() << " delivered with return code " << tok->get_return_code();
+    logger::log(logger::DEBUG, ss.str());
+}
+
+void Publisher::on_failure(const mqtt::token& tok) {
+    if(!this->is_connected()){
+        logger::log(logger::INFO, "Failed connection attempt. Retrying...");
+        if (++nretry_ > N_RETRY_ATTEMPTS){
+            logger::log(logger::ERROR, "Limit of retry attempts reached while trying to reconnect.");
+        }
+        reconnect();
+    }else{
+        std::stringstream ss;
+        ss << clientID_ << ": message " << tok.get_message_id() << " wasn't delivered, return code " << tok.get_return_code();
+        logger::log(logger::ERROR, ss.str());
+    }
+}
+
+void Publisher::on_success(const mqtt::token& tok) {
+    std::stringstream ss;
+    ss << clientID_ << ": message " << tok.get_message_id() << " correctly delivered, return code " << tok.get_return_code();
+    logger::log(logger::DEBUG, ss.str());
+}
+
+void Publisher::connected(const std::string& cause) {
+    std::stringstream ss;
+    ss << "The Publisher " << clientID_ << " successfully connected.";
+    logger::log(logger::DEBUG, ss.str());
 }
 
 }

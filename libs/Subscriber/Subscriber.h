@@ -29,7 +29,6 @@ typedef std::function<void(const std::string&, const std::string&)> callback_t;
 
 class Subscriber : public virtual mqtt::callback, public virtual mqtt::iaction_listener {
 
-
     // Options to use if we need to reconnect
     mqtt::connect_options connOpts_;
 
@@ -62,8 +61,6 @@ class Subscriber : public virtual mqtt::callback, public virtual mqtt::iaction_l
 
     // Callback for when a message arrives.
     void message_arrived(mqtt::const_message_ptr msg) override;
-
-    void delivery_complete(mqtt::delivery_token_ptr token) override;
 
 public:
     static const int QOS = 1;

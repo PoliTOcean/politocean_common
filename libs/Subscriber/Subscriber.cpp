@@ -20,7 +20,7 @@ using namespace Politocean::Constants;
 void Subscriber::connect()
 {
 	// Logging
-	if (this->is_connected())
+	if (cli_.is_connected())
 	{
 		logger::log(logger::DEBUG, clientID_+string(" already connected."));
 		return;
@@ -54,6 +54,8 @@ void Subscriber::connect()
 		throw Politocean::mqttException(ss.str());
 	}
 
+	nretry_ = N_RETRY_ATTEMPTS;
+
 	logger::log(logger::DEBUG, clientID_+string(" is now connected as a subscriber."));
 }
 
@@ -63,7 +65,7 @@ void Subscriber::connect()
 void Subscriber::disconnect()
 {
 	// Logging
-	if (!(this->is_connected()))
+	if (!(cli_.is_connected()))
 	{
 		logger::log(logger::DEBUG, clientID_+string(" already disconnected."));
 		return;
@@ -91,7 +93,7 @@ void Subscriber::disconnect()
  */
 bool Subscriber::is_connected()
 {
-	return cli_.is_connected();
+	return cli_.is_connected() || nretry_<N_RETRY_ATTEMPTS;
 }
 
 /**
@@ -99,7 +101,7 @@ bool Subscriber::is_connected()
  */
 void Subscriber::wait()
 {
-	while(cli_.is_connected() || nretry_<N_RETRY_ATTEMPTS);
+	while(is_connected());
 }
 
 
@@ -110,7 +112,7 @@ void Subscriber::wait()
  */
 void Subscriber::subscribeTo(const std::string& topic, callback_t pf)
 {
-	if(is_connected())
+	if(cli_.is_connected())
 		throw mqttException("Cannot subscribe while connected.");
 
 	string topicf = topic.substr(0, topic.find_last_not_of('/')+1)+"/"; //trim trailing '/' if they exist
@@ -132,7 +134,7 @@ void Subscriber::subscribeTo(const std::string& topic, void (*pf)(const std::str
  */
 void Subscriber::unsubscribeFrom(const std::string& topic)
 {
-	if(is_connected())
+	if(cli_.is_connected())
 		throw mqttException("Cannot unsubscribe while connected.");
 
 	topic_to_callback.erase(topic);
@@ -268,7 +270,5 @@ void Subscriber::message_arrived(mqtt::const_message_ptr msg)
 
 	callback(payload, msg->get_topic());
 }
-
-void Subscriber::delivery_complete(mqtt::delivery_token_ptr token) {}
 
 }

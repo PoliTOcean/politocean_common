@@ -14,43 +14,24 @@
 #include "logger.h"
 
 namespace Politocean {
-    
-class Publisher {
 
-    class callback : public virtual mqtt::callback, public virtual mqtt::iaction_listener {
-        std::string clientID_;
+class Publisher : public virtual mqtt::callback, public virtual mqtt::iaction_listener {
 
-    public:
-        void connection_lost(const std::string& cause) override {
-            std::stringstream ss;
-            ss << "The Publisher " << clientID_ << " lost the connection.";
-            logger::log(logger::ERROR, ss.str());
-        }
+    void connection_lost(const std::string& cause) override;
 
-        void delivery_complete(mqtt::delivery_token_ptr tok) override {
-            std::stringstream ss;
-            ss << clientID_ << ": message " << tok->get_message_id() << " delivered with return code " << tok->get_return_code();
-            logger::log(logger::DEBUG, ss.str());
-        }
+    void delivery_complete(mqtt::delivery_token_ptr tok) override;
 
-        void  on_failure(const mqtt::token& tok) override {
-            std::stringstream ss;
-            ss << clientID_ << ": message " << tok.get_message_id() << " wasn't delivered, return code " << tok.get_return_code();
-            logger::log(logger::ERROR, ss.str());
-        }
+    void on_failure(const mqtt::token& tok) override;
 
-        void on_success(const mqtt::token& tok) override {
-            std::stringstream ss;
-            ss << clientID_ << ": message " << tok.get_message_id() << " correctly delivered, return code " << tok.get_return_code();
-            logger::log(logger::DEBUG, ss.str());
-        }
+    void on_success(const mqtt::token& tok) override;
 
-        callback(const std::string& clientID) : clientID_(clientID) {}
-    };
+    void connected(const std::string& cause) override;
+
+    void reconnect();
+
+    int nretry_;
 
     std::string address_, clientID_;
-
-    callback cb_;
     
     mqtt::async_client cli_;
     mqtt::token_ptr tok;
@@ -58,6 +39,7 @@ class Publisher {
 
 public:
     const int QOS = 1;
+    static const int N_RETRY_ATTEMPTS = 5;
     const std::chrono::seconds TIMEOUT;
 
     // Creates new client with @clientID listening on a server with address @address
