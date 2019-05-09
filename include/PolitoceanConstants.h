@@ -54,8 +54,12 @@ namespace Politocean
             const string AUTODRIVE          { VISION + string("autodrive") };
 
             const string ARM                { "arm/" };
-            const string ARM_SHOULDER       { ARM + "shoulder/" };
-            const string ARM_WRIST          { ARM + "wrist/" };
+            const string SHOULDER           { ARM + "shoulder/" };
+            const string WRIST              { ARM + "wrist/" };
+            const string SHOULDER_VELOCITY  { SHOULDER + "velocity/" };
+            const string WRIST_VELOCITY     { WRIST + "velocity/" };
+            const string HAND               { ARM + "hand/" };
+            const string HAND_VELOCITY      { HAND + "velocity/" };
         }
 
         namespace Logger
@@ -122,17 +126,18 @@ namespace Politocean
                 const int WRIST_ENABLE      = 13;
                 const int WRIST_DISABLE     = 12;
                 const int WRIST             = 7;
-                const int SHOULDER_UP       = 20;
-                const int SHOULDER_DOWN     = 22;
+                const int SHOULDER_UP       = 19;
+                const int SHOULDER_DOWN     = 21;
             }
             
             namespace Axes
             {
                 static const int X          = 0;
                 static const int Y          = 1;
-                static const int SHOULDER   = 2;
+                static const int SHOULDER   = 6;
                 static const int WRIST      = 4;
                 static const int RZ         = 5;
+                static const int HAND       = 3;
             }
 
             namespace Actions
