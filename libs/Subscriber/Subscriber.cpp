@@ -22,7 +22,7 @@ void Subscriber::connect()
 	// Logging
 	if (cli_.is_connected())
 	{
-		logger::log(logger::DEBUG, clientID_+string(" already connected."));
+		logger::log(logger::INFO, clientID_+string(" already connected."));
 		return;
 	}
 
@@ -38,7 +38,7 @@ void Subscriber::connect()
 	cli_.set_callback(*this);
 
 	// Logging
-	logger::log(logger::DEBUG, clientID_+string(" is trying to connect as a subscriber."));
+	logger::log(logger::INFO, clientID_+string(" is trying to connect as a subscriber to ")+address_);
 
 	try {
     	cli_.connect(connOpts_, nullptr, *this)->wait();
@@ -56,7 +56,7 @@ void Subscriber::connect()
 
 	nretry_ = N_RETRY_ATTEMPTS;
 
-	logger::log(logger::DEBUG, clientID_+string(" is now connected as a subscriber."));
+	logger::log(logger::INFO, clientID_+string(" is now connected as a subscriber to ")+address_);
 }
 
 /** 

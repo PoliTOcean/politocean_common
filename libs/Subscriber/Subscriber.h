@@ -66,7 +66,7 @@ public:
     static const int QOS = 1;
     static const int N_RETRY_ATTEMPTS = 5;
 
-    Subscriber(const std::string& address, const std::string& clientID) : address_(address), clientID_(clientID), cli_(address, clientID), nretry_(0), QOS_(QOS) {}
+    Subscriber(const std::string& address, const std::string& clientID) : address_(address), clientID_(clientID+"_sub"), cli_(address, clientID), nretry_(0), QOS_(QOS) {}
     
 	~Subscriber();
 

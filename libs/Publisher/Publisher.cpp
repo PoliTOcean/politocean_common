@@ -17,17 +17,17 @@ using namespace Politocean;
 using namespace Politocean::Constants;
 
 Publisher::Publisher(std::string address, std::string clientID)
-    : address_(address), clientID_(clientID), cli_(address, clientID), TIMEOUT(10) {}
+    : address_(address), clientID_(clientID+"_pub"), cli_(address, clientID), TIMEOUT(10) {}
 
 void Publisher::connect()
 {
     // Logging
 	if(cli_.is_connected())
     {
-		logger::log(logger::DEBUG, clientID_+std::string(" already connected."));
+		logger::log(logger::INFO, clientID_+std::string(" already connected."));
 		return;
 	}
-	logger::log(logger::DEBUG, clientID_+std::string(" is trying to connect as a publisher to ")+address_);
+	logger::log(logger::INFO, clientID_+std::string(" is trying to connect as a publisher to ")+address_);
 
     if(!regex_match(clientID_, std::regex(Constants::CLIENT_ID_REGEX)))
     {
@@ -41,7 +41,7 @@ void Publisher::connect()
     nretry_ = N_RETRY_ATTEMPTS;
 	    
     // Logging
-	logger::log(logger::DEBUG, clientID_+std::string(" is now connected and can publish to ")+address_);
+	logger::log(logger::INFO, clientID_+std::string(" is now connected and can publish to ")+address_);
 }
 
 void Publisher::publish(std::string topic, std::string payload)
