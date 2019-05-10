@@ -87,19 +87,14 @@ namespace Politocean
 
         namespace Hmi
         {
-            const string CMD_ID_PUB         { "cmd_pub" };
-            const string CMD_ID_SUB         { "cmd_sub" };
+            const string CMD_ID             { "cmd" };
             const string AUTODRIVE_ID       { "autodrive" };
-            const string GUI_ID_PUB         { "gui_pub" };
-            const string GUI_ID_SUB         { "gui_sub" };
-            const string CMD_PRS_ID_PUB     { "cmd_parser_pub" };
-            const string CMD_PRS_ID_SUB     { "cmd_parser_sub" };
-            const string JOYSTICK_ID_PUB    { "joystick_pub" };
-            const string SENSORS_ID_PUB     { "sensors_pub" };
-            const string SENSORS_ID_SUB     { "sensors_sub" };
+            const string GUI_ID             { "gui" };
+            const string JOYSTICK           { "joystick" };
+            const string SENSORS_ID         { "sensors" };
 
             const string IP_ADDRESS         { "10.0.0.1" };
-            const string CAMERA_IP_ADDRESS  { "10.0.0.4" };
+            const string CAMERA_IP_ADDRESS  { "10.0.0.5" };
         }
 
         namespace Rov
