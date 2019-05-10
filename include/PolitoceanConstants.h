@@ -90,7 +90,7 @@ namespace Politocean
             const string CMD_ID             { "cmd" };
             const string AUTODRIVE_ID       { "autodrive" };
             const string GUI_ID             { "gui" };
-            const string JOYSTICK           { "joystick" };
+            const string JOYSTICK_ID        { "joystick" };
             const string SENSORS_ID         { "sensors" };
 
             const string IP_ADDRESS         { "10.0.0.1" };
