@@ -172,7 +172,7 @@ namespace Politocean
                     const string FAST               { "FAST" };
                     const string SLOW               { "SLOW" };
                     const string MEDIUM             { "MEDIUM" };
-                    const string START_AND_STOP     { "START_AND_STOP" };
+                    const string START_AND_STOP     { "START_AND_STOP" };                
                 }
 
                 namespace Arm {
