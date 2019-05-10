@@ -100,8 +100,7 @@ namespace Politocean
         namespace Rov
         {
             const string TOPIC_PREFIX   { "rov/" };
-            const string SPI_ID_PUB     { "spi_pub" };
-            const string SPI_ID_SUB     { "spi_sub" };
+            const string SPI_ID         { "spi" };
 
             const string IP_ADDRESS     { "10.0.0.2" };
             
