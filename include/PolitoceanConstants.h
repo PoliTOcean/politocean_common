@@ -165,14 +165,14 @@ namespace Politocean
                 const string RESET  { "RESET" };
 
                 namespace AtMega {
-                    const string VDOWN_ON           { "VDOWN_ON" }
-                    const string VDOWN_OFF          { "VDOWN_OFF" }
-                    const string VUP_ON             { "VUP_ON" }
-                    const string VUP_OFF            { "VUP_OFF" }
-                    const string FAST               { "FAST" }
-                    const string SLOW               { "SLOW" }
-                    const string MEDIUM             { "MEDIUM" }
-                    const string START_AND_STOP     { "START_AND_STOP" }                
+                    const string VDOWN_ON           { "VDOWN_ON" };
+                    const string VDOWN_OFF          { "VDOWN_OFF" };
+                    const string VUP_ON             { "VUP_ON" };
+                    const string VUP_OFF            { "VUP_OFF" };
+                    const string FAST               { "FAST" };
+                    const string SLOW               { "SLOW" };
+                    const string MEDIUM             { "MEDIUM" };
+                    const string START_AND_STOP     { "START_AND_STOP" };
                 }
 
                 namespace Arm {
