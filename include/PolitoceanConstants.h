@@ -93,7 +93,7 @@ namespace Politocean
             const string JOYSTICK_ID        { "joystick" };
             const string SENSORS_ID         { "sensors" };
 
-            const string IP_ADDRESS         { "10.0.0.1" };
+            const string IP_ADDRESS         { "127.0.0.1" };
             const string CAMERA_IP_ADDRESS  { "10.0.0.5" };
         }
 
@@ -126,6 +126,7 @@ namespace Politocean
                 const int WRIST             = 7;
                 const int SHOULDER_UP       = 19;
                 const int SHOULDER_DOWN     = 21;
+                const int HAND              = 29;
             }
             
             namespace Axes
@@ -164,6 +165,8 @@ namespace Politocean
                 const unsigned char SHOULDER_STOP      = 0x17;
                 const unsigned char WRIST_START        = 0x18;
                 const unsigned char WRIST_STOP         = 0x19;
+                const unsigned char HAND_START         = 0x1A;
+                const unsigned char HAND_STOP          = 0x1B;
 
                 const unsigned char NONE               = 0x00;
             }
