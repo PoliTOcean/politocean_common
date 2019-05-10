@@ -16,6 +16,8 @@ namespace Politocean
             namespace Millisenconds
             {
                 static const int DFLT_STEPPER   = 10;
+                static const int MIN_WRIST      = 100;
+                static const int MAX_WRIST      = 1;
             }
             namespace Seconds
             {
