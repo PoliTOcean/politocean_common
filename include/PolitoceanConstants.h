@@ -23,20 +23,6 @@ namespace Politocean
             }
         }
 
-        namespace Pinout
-        {
-            static const int RESET              = 7;
-            static const int MOTORS             = 12;
-
-            static const int SHOULDER_EN        = 15;
-            static const int SHOULDER_DIR       = 13;
-            static const int SHOULDER_STEPPER   = 11;
-            
-            static const int WRIST_EN             = 40;
-            static const int WRIST_DIR            = 38;
-            static const int WRIST_STEPPER        = 36;
-        }
-
         namespace Topics
         {
             const string ERRORS             { "messages/errors/" };
