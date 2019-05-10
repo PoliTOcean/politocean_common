@@ -93,7 +93,7 @@ namespace Politocean
             const string JOYSTICK_ID        { "joystick" };
             const string SENSORS_ID         { "sensors" };
 
-            const string IP_ADDRESS         { "127.0.0.1" };
+            const string IP_ADDRESS         { "10.0.0.1" };
             const string CAMERA_IP_ADDRESS  { "10.0.0.5" };
         }
 
@@ -169,6 +169,32 @@ namespace Politocean
                 const unsigned char HAND_STOP          = 0x1B;
 
                 const unsigned char NONE               = 0x00;
+            }
+
+            namespace newActions {
+                const string ON     { "ON" };
+                const string OFF    { "OFF" };
+                const string START  { "START" };
+                const string STOP   { "STOP" };
+                const string RESET  { "RESET" };
+
+                namespace AtMega {
+                    const string VDOWN_ON           { "VDOWN_ON" }
+                    const string VDOWN_OFF          { "VDOWN_OFF" }
+                    const string VUP_ON             { "VUP_ON" }
+                    const string VUP_OFF            { "VUP_OFF" }
+                    const string FAST               { "FAST" }
+                    const string SLOW               { "SLOW" }
+                    const string MEDIUM             { "MEDIUM" }
+                    const string START_AND_STOP     { "START_AND_STOP" }                
+                }
+
+                namespace Arm {
+                    const string SHOULDER_UP        { "UP" };
+                    const string SHOULDER_DOWN      { "DOWN" };
+                }
+
+                const string NONE   { "NONE" };
             }
         }
     }
