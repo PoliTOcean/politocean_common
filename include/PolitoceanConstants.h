@@ -92,7 +92,7 @@ namespace Politocean
 
             const string IP_ADDRESS     { "10.0.0.2" };
             
-            const string ARM_ID         { "Arm" };
+            const string SKELETON_ID         { "Arm" };
         }
 
         namespace Commands
@@ -137,8 +137,6 @@ namespace Politocean
                 const unsigned char VUP_ON             = 0x06;
                 const unsigned char VUP_OFF            = 0x07;
                 const unsigned char WRIST_SWAP         = 0x08;
-                const unsigned char WRIST_ON           = 0x09;
-                const unsigned char WRIST_OFF          = 0x0A;
                 const unsigned char RESET              = 0x0B;
                 const unsigned char FAST               = 0x0D;
                 const unsigned char SLOW               = 0x0E;
@@ -146,17 +144,22 @@ namespace Politocean
                 const unsigned char AUTONOMOUS_ON      = 0x10;
                 const unsigned char AUTONOMOUS_OFF     = 0x11;
                 const unsigned char START_AND_STOP     = 0x12;
-                const unsigned char SHOULDER_ON        = 0x13;
-                const unsigned char SHOULDER_OFF       = 0x14;
-                const unsigned char SHOULDER_UP        = 0x15;
-                const unsigned char SHOULDER_DOWN      = 0x16;
-                const unsigned char SHOULDER_STOP      = 0x17;
-                const unsigned char WRIST_START        = 0x18;
-                const unsigned char WRIST_STOP         = 0x19;
-                const unsigned char HAND_START         = 0x1A;
-                const unsigned char HAND_STOP          = 0x1B;
 
-                const unsigned char NONE               = 0x00;
+                const string SHOULDER_ON    = "SHOULDER_ON";
+                const string SHOULDER_OFF   = "SHOULDER_OFF";
+                const string SHOULDER_UP    = "SHOULDER_UP";
+                const string SHOULDER_DOWN  = "SHOULDER_DOWN";
+                const string SHOULDER_STOP  = "SHOULDER_STOP";
+
+                const string WRIST_ON       = "WRIST_ON";
+                const string WRIST_OFF      = "WRIST_OFF";
+                const string WRIST_START    = "WRIST_START";
+                const string WRIST_STOP     = "WRIST_STOP";
+
+                const string HAND_START     = "HAND_START";
+                const string HAND_STOP      = "HAND_STOP";
+
+                const string NONE           = "NONE";
             }
 
             namespace newActions {
