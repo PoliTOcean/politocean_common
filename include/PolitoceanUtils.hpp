@@ -1,5 +1,7 @@
 #include <climits>
 
+#define ABS(N) ((N<0)?(-N):(N))
+
 namespace Politocean {
 
 static long map(long x, long in_min, long in_max, long out_min = 0, long out_max = UCHAR_MAX) {
