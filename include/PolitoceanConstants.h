@@ -88,7 +88,7 @@ namespace Politocean
         namespace Rov
         {
             const string TOPIC_PREFIX   { "rov/" };
-            const string SPI_ID         { "spi" };
+            const string ATMEGA_ID      { "ATMegaController" };
 
             const string IP_ADDRESS     { "10.0.0.2" };
             
