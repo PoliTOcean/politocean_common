@@ -52,6 +52,10 @@ namespace Politocean
             const string WRIST_VELOCITY     { WRIST + "velocity/" };
             const string HAND               { ARM + "hand/" };
             const string HAND_VELOCITY      { HAND + "velocity/" };
+
+            const string MICROROV           { "microRov/" };
+            const string MICROROV_VELOCITY  { MICROROV + "velocity/"};
+            const string MICROROV_COMMANDS  { MICROROV + "commands/" };
         }
 
         namespace Logger
@@ -71,6 +75,7 @@ namespace Politocean
             const string HOST_ADDRESS   { "127.0.0.1" }; //TODO da togliere
             const string PUBLISHERID    { "MicroRov_Publisher" }; //TODO da cambiare
             const string IP_ADDRESS     { "10.0.0.3" };
+            const string MICRO_ROV_ID {"Rov_id"};
         }
 
         namespace Hmi
