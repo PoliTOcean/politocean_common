@@ -34,6 +34,7 @@ void Subscriber::connect()
 
 	connOpts_.set_keep_alive_interval(20);
 	connOpts_.set_clean_session(true);
+	connOpts_.set_automatic_reconnect(true);
     
 	cli_.set_callback(*this);
 
@@ -180,7 +181,7 @@ Subscriber::~Subscriber()
 void Subscriber::reconnect() {
 	std::this_thread::sleep_for(std::chrono::milliseconds(2500));
 	try {
-		cli_.connect(connOpts_, nullptr, *this);
+    	cli_.reconnect()->wait();
 	}
 	catch (const mqtt::exception& exc) {
 		logger::log(logger::ERROR, exc);
@@ -223,7 +224,7 @@ void Subscriber::connection_lost(const std::string& cause)
 	ss << "\nConnection lost" << std::endl;
 	if (!cause.empty())
 		ss << "\tcause: " << cause << std::endl;
-	ss << "Reconnecting..." << std::endl;
+	ss << "\tReconnecting..." << std::endl;
 	logger::log(logger::DEBUG, ss.str());
 	
 	nretry_ = 0;

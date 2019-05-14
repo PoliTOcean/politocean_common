@@ -35,7 +35,7 @@ class Publisher : public virtual mqtt::callback, public virtual mqtt::iaction_li
     
     mqtt::async_client cli_;
     mqtt::token_ptr tok;
-    mqtt::connect_options *connOpts_;
+    mqtt::connect_options connOpts_;
 
 public:
     const int QOS = 1;
