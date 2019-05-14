@@ -20,9 +20,9 @@ using namespace Politocean::Constants;
 void Subscriber::connect()
 {
 	// Logging
-	if (this->is_connected())
+	if (cli_.is_connected())
 	{
-		logger::log(logger::DEBUG, clientID_+string(" already connected."));
+		logger::log(logger::INFO, clientID_+string(" already connected."));
 		return;
 	}
 
@@ -34,11 +34,12 @@ void Subscriber::connect()
 
 	connOpts_.set_keep_alive_interval(20);
 	connOpts_.set_clean_session(true);
+	connOpts_.set_automatic_reconnect(true);
     
 	cli_.set_callback(*this);
 
 	// Logging
-	logger::log(logger::DEBUG, clientID_+string(" is trying to connect as a subscriber."));
+	logger::log(logger::INFO, clientID_+string(" is trying to connect as a subscriber to ")+address_);
 
 	try {
     	cli_.connect(connOpts_, nullptr, *this)->wait();
@@ -54,7 +55,9 @@ void Subscriber::connect()
 		throw Politocean::mqttException(ss.str());
 	}
 
-	logger::log(logger::DEBUG, clientID_+string(" is now connected as a subscriber."));
+	nretry_ = N_RETRY_ATTEMPTS;
+
+	logger::log(logger::INFO, clientID_+string(" is now connected as a subscriber to ")+address_);
 }
 
 /** 
@@ -63,7 +66,7 @@ void Subscriber::connect()
 void Subscriber::disconnect()
 {
 	// Logging
-	if (!(this->is_connected()))
+	if (!(cli_.is_connected()))
 	{
 		logger::log(logger::DEBUG, clientID_+string(" already disconnected."));
 		return;
@@ -91,7 +94,7 @@ void Subscriber::disconnect()
  */
 bool Subscriber::is_connected()
 {
-	return cli_.is_connected();
+	return cli_.is_connected() || nretry_<N_RETRY_ATTEMPTS;
 }
 
 /**
@@ -99,7 +102,7 @@ bool Subscriber::is_connected()
  */
 void Subscriber::wait()
 {
-	while(cli_.is_connected() || nretry_<N_RETRY_ATTEMPTS);
+	while(is_connected());
 }
 
 
@@ -110,7 +113,7 @@ void Subscriber::wait()
  */
 void Subscriber::subscribeTo(const std::string& topic, callback_t pf)
 {
-	if(is_connected())
+	if(cli_.is_connected())
 		throw mqttException("Cannot subscribe while connected.");
 
 	string topicf = topic.substr(0, topic.find_last_not_of('/')+1)+"/"; //trim trailing '/' if they exist
@@ -132,7 +135,7 @@ void Subscriber::subscribeTo(const std::string& topic, void (*pf)(const std::str
  */
 void Subscriber::unsubscribeFrom(const std::string& topic)
 {
-	if(is_connected())
+	if(cli_.is_connected())
 		throw mqttException("Cannot unsubscribe while connected.");
 
 	topic_to_callback.erase(topic);
@@ -178,7 +181,7 @@ Subscriber::~Subscriber()
 void Subscriber::reconnect() {
 	std::this_thread::sleep_for(std::chrono::milliseconds(2500));
 	try {
-		cli_.connect(connOpts_, nullptr, *this);
+    	cli_.reconnect()->wait();
 	}
 	catch (const mqtt::exception& exc) {
 		logger::log(logger::ERROR, exc);
@@ -221,7 +224,7 @@ void Subscriber::connection_lost(const std::string& cause)
 	ss << "\nConnection lost" << std::endl;
 	if (!cause.empty())
 		ss << "\tcause: " << cause << std::endl;
-	ss << "Reconnecting..." << std::endl;
+	ss << "\tReconnecting..." << std::endl;
 	logger::log(logger::DEBUG, ss.str());
 	
 	nretry_ = 0;
@@ -268,7 +271,5 @@ void Subscriber::message_arrived(mqtt::const_message_ptr msg)
 
 	callback(payload, msg->get_topic());
 }
-
-void Subscriber::delivery_complete(mqtt::delivery_token_ptr token) {}
 
 }
