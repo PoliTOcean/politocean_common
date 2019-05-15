@@ -168,14 +168,16 @@ namespace Politocean
                 const string NONE           = "NONE";
             }*/
 
-            namespace Actions {
+            namespace Actions
+            {
                 const string ON     { "ON" };
                 const string OFF    { "OFF" };
                 const string START  { "START" };
                 const string STOP   { "STOP" };
                 const string RESET  { "RESET" };
 
-                namespace AtMega {
+                namespace AtMega
+                {
                     const string VDOWN_ON           { "VDOWN_ON" };
                     const string VDOWN_OFF          { "VDOWN_OFF" };
                     const string VUP_ON             { "VUP_ON" };
@@ -183,15 +185,21 @@ namespace Politocean
                     const string FAST               { "FAST" };
                     const string SLOW               { "SLOW" };
                     const string MEDIUM             { "MEDIUM" };
-                    const string START_AND_STOP     { "START_AND_STOP" };                
+                    const string START_AND_STOP     { "START_AND_STOP" };
                 }
 
-                namespace Arm {
+                namespace Arm
+                {
                     const string SHOULDER_UP        { "UP" };
                     const string SHOULDER_DOWN      { "DOWN" };
                 }
 
                 const string NONE   { "NONE" };
+            }
+
+            namespace Control
+            {
+                const string MOTORS     { "motors" };
             }
         }
     }
