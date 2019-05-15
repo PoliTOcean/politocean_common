@@ -37,7 +37,7 @@ namespace Politocean
             const string JOYSTICK_AXES      { JOYSTICK + string("axis/") };
             const string JOYSTICK_BUTTONS   { JOYSTICK + string("buttons/") };
 
-            const string ATMEGA             { "ATmega/ "};
+            const string ATMEGA             { "ATmega/"};
             const string AXES               { ATMEGA + "axes/" };
             const string COMMANDS           { ATMEGA + "commands/ "};
             const string SENSORS            { "sensors/" };
