@@ -37,8 +37,9 @@ namespace Politocean
             const string JOYSTICK_AXES      { JOYSTICK + string("axis/") };
             const string JOYSTICK_BUTTONS   { JOYSTICK + string("buttons/") };
 
-            const string AXES               { "axes/" };
-            const string BUTTONS            { "buttons/" };
+            const string ATMEGA             { "ATmega/ "};
+            const string AXES               { ATMEGA + "axes/" };
+            const string COMMANDS           { ATMEGA + "commands/ "};
             const string SENSORS            { "sensors/" };
 
             const string VISION             { "vision/"};
@@ -132,7 +133,7 @@ namespace Politocean
                 static const int HAND       = 3;
             }
 
-            namespace Actions
+            /*namespace Actions
             {
                 const unsigned char MOTORS_SWAP        = 0x01;
                 const unsigned char MOTORS_ON          = 0x02;
@@ -165,9 +166,9 @@ namespace Politocean
                 const string HAND_STOP      = "HAND_STOP";
 
                 const string NONE           = "NONE";
-            }
+            }*/
 
-            namespace newActions {
+            namespace Actions {
                 const string ON     { "ON" };
                 const string OFF    { "OFF" };
                 const string START  { "START" };
