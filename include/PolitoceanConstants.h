@@ -54,6 +54,7 @@ namespace Politocean
             const string WRIST_VELOCITY     { WRIST + "velocity/" };
             const string HAND               { ARM + "hand/" };
             const string HAND_VELOCITY      { HAND + "velocity/" };
+            const string HEAD               { ARM + "head/" };
 
             const string MICROROV           { "microRov/" };
             const string MICROROV_VELOCITY  { MICROROV + "velocity/"};
@@ -109,7 +110,7 @@ namespace Politocean
                 const int VUP               = 0;
                 const int MOTORS            = 1;
                 const int VDOWN             = 5;
-                const int RESET             = 9;
+                const int RESET             = 3;
                 const int VUP_FAST          = 14;
                 const int MEDIUM_FAST       = 24;
                 const int SLOW              = 25;
@@ -119,6 +120,8 @@ namespace Politocean
                 const int SHOULDER_DISABLE  = 10;
                 const int WRIST_ENABLE      = 13;
                 const int WRIST_DISABLE     = 12;
+                const int HEAD_ENABLE       = 9;
+                const int HEAD_DISABLE      = 8;
                 const int WRIST             = 7;
                 const int SHOULDER_UP       = 19;
                 const int SHOULDER_DOWN     = 21;
@@ -157,10 +160,10 @@ namespace Politocean
                     const string START_AND_STOP     { "START_AND_STOP" };
                 }
 
-                namespace Arm
+                namespace Stepper
                 {
-                    const string SHOULDER_UP        { "UP" };
-                    const string SHOULDER_DOWN      { "DOWN" };
+                    const string UP     { "UP" };
+                    const string DOWN   { "DOWN" };
                 }
 
                 const string NONE   { "NONE" };
