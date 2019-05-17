@@ -126,6 +126,8 @@ namespace Politocean
                 const int SHOULDER_UP       = 19;
                 const int SHOULDER_DOWN     = 21;
                 const int HAND              = 29;
+                const int HEAD_UP           = 15;
+                const int HEAD_DOWN         = 17;
             }
             
             namespace Axes
