@@ -9,10 +9,13 @@ static long map(long x, long in_min, long in_max, long out_min = 0, long out_max
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-static void publish(Publisher publisher,  const string topic, const string status)
+static void publish(Publisher&git publisher, const std::string& topic, const std::string& status)
 {
-    //nlohmann::json json[topic] = status;
-    //publisher.publish(topic, json.dump());
+    nlohmann::json json;
+
+    json[topic] = status;
+
+    publisher.publish(topic, json.dump());
 }
 
 }
