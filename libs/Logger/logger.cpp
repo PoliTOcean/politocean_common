@@ -88,12 +88,16 @@ void logger::log(const levels level, const std::string& msg){
 
     out << ss.str() << std::endl;
 
-    std::cout << "[" << level_name << "]\t" << ss.str() << std::endl;
     
     if(level == levels::ERROR)
     {
         std::cerr << ss.str() << std::endl;
     }
+    else
+    {
+        std::cout << "[" << level_name << "]\t" << ss.str() << std::endl;  
+    }
+    
 }
 
 void logger::enableLevel(const logger::levels level, const bool mode){
