@@ -162,8 +162,8 @@ namespace Politocean
 
                 namespace Stepper
                 {
-                    const string STEPPER_UP     { "UP" };
-                    const string STEPPER_DOWN   { "DOWN" };
+                    const string UP     { "UP" };
+                    const string DOWN   { "DOWN" };
                 }
 
                 const string NONE   { "NONE" };
