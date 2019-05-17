@@ -106,10 +106,11 @@ namespace Politocean
         {
             namespace Buttons
             {
+                const int VUP               = 0;
                 const int MOTORS            = 1;
                 const int VDOWN             = 5;
                 const int RESET             = 9;
-                const int VUP               = 14;
+                const int VUP_FAST          = 14;
                 const int MEDIUM_FAST       = 24;
                 const int SLOW              = 25;
                 const int AUTONOMOUS        = 66;
@@ -148,6 +149,8 @@ namespace Politocean
                     const string VDOWN_OFF          { "VDOWN_OFF" };
                     const string VUP_ON             { "VUP_ON" };
                     const string VUP_OFF            { "VUP_OFF" };
+                    const string VUP_FAST_ON        { "VUP_FAST_ON" };
+                    const string VUP_FAST_OFF       { "VUP_FAST_OFF" };
                     const string FAST               { "FAST" };
                     const string SLOW               { "SLOW" };
                     const string MEDIUM             { "MEDIUM" };
