@@ -11,8 +11,8 @@ static long map(long x, long in_min, long in_max, long out_min = 0, long out_max
 
 static void publish(Publisher publisher,  const string topic, const string status)
 {
-    nlohmann::json json[topic] = status;
-    publisher.publish(topic, json->dump());
+    //nlohmann::json json[topic] = status;
+    //publisher.publish(topic, json.dump());
 }
 
 }
