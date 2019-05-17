@@ -58,7 +58,7 @@ void logger::log(const levels level, const std::string& msg){
     std::stringstream folders;
     std::string fileName;
 
-    folders << (1900 + l_time->tm_year) << "-" << l_time->tm_mon << "-" << l_time->tm_mday << "/" << level_name << "/";
+    folders << (1900 + l_time->tm_year) << "-" << (l_time->tm_mon+1) << "-" << l_time->tm_mday << "/" << level_name << "/";
 
     fullPath << Constants::Logger::LOGS_PATH << folders.str();
 
