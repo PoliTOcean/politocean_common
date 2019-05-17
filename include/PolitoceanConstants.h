@@ -47,14 +47,14 @@ namespace Politocean
 
             const string AUTODRIVE          { VISION + string("autodrive") };
 
-            const string ARM                { "arm/" };
-            const string SHOULDER           { ARM + "shoulder/" };
-            const string WRIST              { ARM + "wrist/" };
+            const string SKELETON           { "skeleton/" };
+            const string SHOULDER           { SKELETON + "shoulder/" };
+            const string WRIST              { SKELETON + "wrist/" };
             const string SHOULDER_VELOCITY  { SHOULDER + "velocity/" };
             const string WRIST_VELOCITY     { WRIST + "velocity/" };
-            const string HAND               { ARM + "hand/" };
+            const string HAND               { SKELETON + "hand/" };
             const string HAND_VELOCITY      { HAND + "velocity/" };
-            const string HEAD               { ARM + "head/" };
+            const string HEAD               { SKELETON + "head/" };
 
             const string MICROROV           { "microRov/" };
             const string MICROROV_VELOCITY  { MICROROV + "velocity/"};
@@ -100,7 +100,7 @@ namespace Politocean
 
             const string IP_ADDRESS     { "10.0.0.2" };
             
-            const string SKELETON_ID         { "Arm" };
+            const string SKELETON_ID    { "skeleton" };
         }
 
         namespace Commands
