@@ -1,5 +1,5 @@
 #include <climits>
-#include <nlohmann/json.hpp>
+#include "json.hpp"
 #include "../libs/Publisher/Publisher.h"
 
 #define ABS(N) ((N<0)?(-N):(N))
