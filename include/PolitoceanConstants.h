@@ -171,6 +171,13 @@ namespace Politocean
                 const string MOTORS     { "motors" };
             }
         }
+
+        namespace Components
+        {
+            const string POWER      { "power" };
+            const string SHOULDER   { "shoulder" };
+            const string WRIST      { "wrist" };
+        }
     }
 
 }
