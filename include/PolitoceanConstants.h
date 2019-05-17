@@ -41,6 +41,7 @@ namespace Politocean
             const string AXES               { ATMEGA + "axes/" };
             const string COMMANDS           { ATMEGA + "commands/"};
             const string SENSORS            { "sensors/" };
+            const string POWER              { "power/" };
 
             const string VISION             { "vision/"};
 
