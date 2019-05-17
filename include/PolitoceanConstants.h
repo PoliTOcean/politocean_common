@@ -37,9 +37,9 @@ namespace Politocean
             const string JOYSTICK_AXES      { JOYSTICK + string("axis/") };
             const string JOYSTICK_BUTTONS   { JOYSTICK + string("buttons/") };
 
-            const string ATMEGA             { "ATmega/ "};
+            const string ATMEGA             { "ATmega/"};
             const string AXES               { ATMEGA + "axes/" };
-            const string COMMANDS           { ATMEGA + "commands/ "};
+            const string COMMANDS           { ATMEGA + "commands/"};
             const string SENSORS            { "sensors/" };
 
             const string VISION             { "vision/"};
@@ -133,7 +133,8 @@ namespace Politocean
                 static const int HAND       = 3;
             }
 
-            namespace Actions {
+            namespace Actions
+            {
                 const string ON     { "ON" };
                 const string OFF    { "OFF" };
                 const string START  { "START" };
@@ -141,6 +142,7 @@ namespace Politocean
                 const string RESET  { "RESET" };
 
                 namespace ATMega
+                {
                     const string VDOWN_ON           { "VDOWN_ON" };
                     const string VDOWN_OFF          { "VDOWN_OFF" };
                     const string VUP_ON             { "VUP_ON" };
@@ -148,15 +150,21 @@ namespace Politocean
                     const string FAST               { "FAST" };
                     const string SLOW               { "SLOW" };
                     const string MEDIUM             { "MEDIUM" };
-                    const string START_AND_STOP     { "START_AND_STOP" };                
+                    const string START_AND_STOP     { "START_AND_STOP" };
                 }
 
-                namespace Arm {
+                namespace Arm
+                {
                     const string SHOULDER_UP        { "UP" };
                     const string SHOULDER_DOWN      { "DOWN" };
                 }
 
                 const string NONE   { "NONE" };
+            }
+
+            namespace Control
+            {
+                const string MOTORS     { "motors" };
             }
         }
     }

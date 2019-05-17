@@ -16,11 +16,12 @@ namespace Politocean {
 enum class sensor_t {
     ROLL,
     PITCH,
-    TEMPERATURE,
-    PRESSION,
+    TEMPERATURE_INT,
+    TEMPERATURE_PWR,
+    PRESSURE,
 
     First=ROLL,
-    Last=PRESSION
+    Last=PRESSURE
 };
 
 inline sensor_t operator++ (sensor_t &s) { return s = (sensor_t)(((int)(s) +1)); }

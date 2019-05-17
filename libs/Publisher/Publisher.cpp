@@ -109,7 +109,6 @@ Publisher::~Publisher(){
 }
 
 
-
 void Publisher::reconnect() {
 	try {
 		cli_.reconnect()->wait_for(std::chrono::seconds(5));
