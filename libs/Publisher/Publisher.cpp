@@ -17,7 +17,7 @@ using namespace Politocean;
 using namespace Politocean::Constants;
 
 Publisher::Publisher(std::string address, std::string clientID)
-    : address_(address), clientID_(clientID+"_pub"), cli_(address, clientID), TIMEOUT(10) {}
+    : address_(address), clientID_(clientID+"_pub"), cli_(address, clientID_), TIMEOUT(10) {}
 
 void Publisher::connect()
 {
