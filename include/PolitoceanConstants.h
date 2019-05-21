@@ -13,13 +13,14 @@ namespace Politocean
 
         namespace Timing
         {
-            namespace Millisenconds
+            namespace Milliseconds
             {
                 static const int DFLT_STEPPER           = 10;
                 static const int MIN_WRIST              = 100;
                 static const int MAX_WRIST              = 1;
                 static const int AXES_DELAY             = 50;
                 static const int SENSORS_UPDATE_DELAY   = 2000;
+                static const int JOYSTICK_AXIS          = 100;
             }
             namespace Seconds
             {
