@@ -15,9 +15,11 @@ namespace Politocean
         {
             namespace Millisenconds
             {
-                static const int DFLT_STEPPER   = 10;
-                static const int MIN_WRIST      = 100;
-                static const int MAX_WRIST      = 1;
+                static const int DFLT_STEPPER           = 10;
+                static const int MIN_WRIST              = 100;
+                static const int MAX_WRIST              = 1;
+                static const int AXES_DELAY             = 50;
+                static const int SENSORS_UPDATE_DELAY   = 2000;
             }
             namespace Seconds
             {
