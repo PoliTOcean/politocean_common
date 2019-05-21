@@ -10,6 +10,7 @@ add_subdirectory(libs/mqttLogger)
 add_subdirectory(libs/Publisher)
 add_subdirectory(libs/Subscriber)
 add_subdirectory(libs/Sensor)
+add_subdirectory(libs/MqttClient)
 
 
 # Install and export (do not touch this part)
