@@ -116,7 +116,9 @@ void Subscriber::subscribeTo(const std::string& topic, callback_t pf)
 	if(cli_.is_connected())
 		throw mqttException("Cannot subscribe while connected.");
 
-	string topicf = topic.substr(0, topic.find_last_not_of('/')+1)+"/"; //trim trailing '/' if they exist
+	string topicf = topic;
+	if(topicf[topicf.size()-1]!='#')
+		topicf = topicf.substr(0, topicf.find_last_not_of(" /")+1)+"/"; //trim trailing '/' if they exist
 
 	topic_to_callback.insert(std::pair<std::string, callback_t>(topicf, pf));
 	logger::log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topic);
@@ -195,7 +197,7 @@ void Subscriber::on_failure(const mqtt::token& tok) {
 	if (++nretry_ > N_RETRY_ATTEMPTS){
 		logger::log(logger::ERROR, "Limit of retry attempts reached while trying to reconnect.");
 	}
-	reconnect();
+//	reconnect();
 }
 
 // (Re)connection success
@@ -227,8 +229,8 @@ void Subscriber::connection_lost(const std::string& cause)
 	ss << "\tReconnecting..." << std::endl;
 	logger::log(logger::DEBUG, ss.str());
 	
-	nretry_ = 0;
-	reconnect();
+	//nretry_ = 0;
+	//reconnect();
 }
 
 // Callback for when a message arrives.

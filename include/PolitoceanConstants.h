@@ -13,11 +13,14 @@ namespace Politocean
 
         namespace Timing
         {
-            namespace Millisenconds
+            namespace Milliseconds
             {
-                static const int DFLT_STEPPER   = 10;
-                static const int MIN_WRIST      = 100;
-                static const int MAX_WRIST      = 1;
+                static const int DFLT_STEPPER           = 10;
+                static const int MIN_WRIST              = 100;
+                static const int MAX_WRIST              = 1;
+                static const int AXES_DELAY             = 50;
+                static const int SENSORS_UPDATE_DELAY   = 2000;
+                static const int JOYSTICK_AXIS          = 100;
             }
             namespace Seconds
             {
@@ -37,21 +40,24 @@ namespace Politocean
             const string JOYSTICK_AXES      { JOYSTICK + string("axis/") };
             const string JOYSTICK_BUTTONS   { JOYSTICK + string("buttons/") };
 
-            const string AXES               { "axes/" };
-            const string BUTTONS            { "buttons/" };
+            const string ATMEGA             { "ATmega/"};
+            const string AXES               { ATMEGA + "axes/" };
+            const string COMMANDS           { ATMEGA + "commands/"};
             const string SENSORS            { "sensors/" };
+            const string POWER              { "power/" };
 
             const string VISION             { "vision/"};
 
             const string AUTODRIVE          { VISION + string("autodrive") };
 
-            const string ARM                { "arm/" };
-            const string SHOULDER           { ARM + "shoulder/" };
-            const string WRIST              { ARM + "wrist/" };
+            const string SKELETON           { "skeleton/" };
+            const string SHOULDER           { SKELETON + "shoulder/" };
+            const string WRIST              { SKELETON + "wrist/" };
             const string SHOULDER_VELOCITY  { SHOULDER + "velocity/" };
             const string WRIST_VELOCITY     { WRIST + "velocity/" };
-            const string HAND               { ARM + "hand/" };
+            const string HAND               { SKELETON + "hand/" };
             const string HAND_VELOCITY      { HAND + "velocity/" };
+            const string HEAD               { SKELETON + "head/" };
 
             const string MICROROV           { "microRov/" };
             const string MICROROV_VELOCITY  { MICROROV + "velocity/"};
@@ -97,17 +103,18 @@ namespace Politocean
 
             const string IP_ADDRESS     { "10.0.0.2" };
             
-            const string SKELETON_ID         { "Arm" };
+            const string SKELETON_ID    { "skeleton" };
         }
 
         namespace Commands
         {
             namespace Buttons
             {
+                const int VUP               = 0;
                 const int MOTORS            = 1;
                 const int VDOWN             = 5;
-                const int RESET             = 9;
-                const int VUP               = 14;
+                const int RESET             = 3;
+                const int VUP_FAST          = 14;
                 const int MEDIUM_FAST       = 24;
                 const int SLOW              = 25;
                 const int AUTONOMOUS        = 66;
@@ -116,10 +123,14 @@ namespace Politocean
                 const int SHOULDER_DISABLE  = 10;
                 const int WRIST_ENABLE      = 13;
                 const int WRIST_DISABLE     = 12;
+                const int HEAD_ENABLE       = 9;
+                const int HEAD_DISABLE      = 8;
                 const int WRIST             = 7;
                 const int SHOULDER_UP       = 19;
                 const int SHOULDER_DOWN     = 21;
                 const int HAND              = 29;
+                const int HEAD_UP           = 15;
+                const int HEAD_DOWN         = 17;
             }
             
             namespace Axes
@@ -134,64 +145,46 @@ namespace Politocean
 
             namespace Actions
             {
-                const unsigned char MOTORS_SWAP        = 0x01;
-                const unsigned char MOTORS_ON          = 0x02;
-                const unsigned char MOTORS_OFF         = 0x03;
-                const unsigned char VDOWN_ON           = 0x04;
-                const unsigned char VDOWN_OFF          = 0x05;
-                const unsigned char VUP_ON             = 0x06;
-                const unsigned char VUP_OFF            = 0x07;
-                const unsigned char WRIST_SWAP         = 0x08;
-                const unsigned char RESET              = 0x0B;
-                const unsigned char FAST               = 0x0D;
-                const unsigned char SLOW               = 0x0E;
-                const unsigned char MEDIUM             = 0x0C;
-                const unsigned char AUTONOMOUS_ON      = 0x10;
-                const unsigned char AUTONOMOUS_OFF     = 0x11;
-                const unsigned char START_AND_STOP     = 0x12;
-
-                const string SHOULDER_ON    = "SHOULDER_ON";
-                const string SHOULDER_OFF   = "SHOULDER_OFF";
-                const string SHOULDER_UP    = "SHOULDER_UP";
-                const string SHOULDER_DOWN  = "SHOULDER_DOWN";
-                const string SHOULDER_STOP  = "SHOULDER_STOP";
-
-                const string WRIST_ON       = "WRIST_ON";
-                const string WRIST_OFF      = "WRIST_OFF";
-                const string WRIST_START    = "WRIST_START";
-                const string WRIST_STOP     = "WRIST_STOP";
-
-                const string HAND_START     = "HAND_START";
-                const string HAND_STOP      = "HAND_STOP";
-
-                const string NONE           = "NONE";
-            }
-
-            namespace newActions {
                 const string ON     { "ON" };
                 const string OFF    { "OFF" };
                 const string START  { "START" };
                 const string STOP   { "STOP" };
                 const string RESET  { "RESET" };
 
-                namespace AtMega {
+                namespace ATMega
+                {
                     const string VDOWN_ON           { "VDOWN_ON" };
                     const string VDOWN_OFF          { "VDOWN_OFF" };
                     const string VUP_ON             { "VUP_ON" };
                     const string VUP_OFF            { "VUP_OFF" };
+                    const string VUP_FAST_ON        { "VUP_FAST_ON" };
+                    const string VUP_FAST_OFF       { "VUP_FAST_OFF" };
                     const string FAST               { "FAST" };
                     const string SLOW               { "SLOW" };
                     const string MEDIUM             { "MEDIUM" };
-                    const string START_AND_STOP     { "START_AND_STOP" };                
+                    const string START_AND_STOP     { "START_AND_STOP" };
                 }
 
-                namespace Arm {
-                    const string SHOULDER_UP        { "UP" };
-                    const string SHOULDER_DOWN      { "DOWN" };
+                namespace Stepper
+                {
+                    const string UP     { "UP" };
+                    const string DOWN   { "DOWN" };
                 }
 
                 const string NONE   { "NONE" };
             }
+
+            namespace Control
+            {
+                const string MOTORS     { "motors" };
+            }
+        }
+
+        namespace Components
+        {
+            const string POWER      { "power" };
+            const string SHOULDER   { "shoulder" };
+            const string WRIST      { "wrist" };
         }
     }
 

@@ -34,11 +34,14 @@ public:
             case sensor_t::PITCH:
                 os << "PITCH";
                 break;
-            case sensor_t::TEMPERATURE:
-                os << "TEMPERATURE";
+            case sensor_t::TEMPERATURE_INT:
+                os << "INTERNAL TEMPERATURE";
                 break;
-            case sensor_t::PRESSION:
-                os << "PRESSION";
+            case sensor_t::TEMPERATURE_PWR:
+                os << "12V POWER TEMPERATURE";
+                break;
+            case sensor_t::PRESSURE:
+                os << "PRESSURE";
                 break;
         }
         os << ": " << static_cast<unsigned>(s.value_);

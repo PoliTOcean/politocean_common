@@ -17,7 +17,7 @@ using namespace Politocean;
 using namespace Politocean::Constants;
 
 Publisher::Publisher(std::string address, std::string clientID)
-    : address_(address), clientID_(clientID+"_pub"), cli_(address, clientID), TIMEOUT(10) {}
+    : address_(address), clientID_(clientID+"_pub"), cli_(address, clientID_), TIMEOUT(10) {}
 
 void Publisher::connect()
 {
@@ -59,6 +59,10 @@ void Publisher::publish(std::string topic, std::string payload)
         //throw Politocean::mqttException("Publisher is not connected.");
         return;
     }
+    
+    std::string topicf = topic;
+    topicf = topicf.substr(0, topicf.find_last_not_of(" /")+1)+"/"; //trim trailing '/' if they exist
+
     logger::log(logger::DEBUG, clientID_+std::string(" is trying to publish..."));
     mqtt::message_ptr pubmsg = mqtt::make_message(topic, payload);
     pubmsg->set_qos(QOS);
@@ -109,7 +113,6 @@ Publisher::~Publisher(){
 }
 
 
-
 void Publisher::reconnect() {
 	try {
 		cli_.reconnect()->wait_for(std::chrono::seconds(5));
@@ -129,8 +132,8 @@ void Publisher::connection_lost(const std::string& cause) {
 	ss << "\tReconnecting..." << std::endl;
 	logger::log(logger::DEBUG, ss.str());
 	
-	nretry_ = 0;
-	reconnect();
+//	nretry_ = 0;
+//	reconnect();
 }
 
 void Publisher::delivery_complete(mqtt::delivery_token_ptr tok) {
@@ -140,17 +143,17 @@ void Publisher::delivery_complete(mqtt::delivery_token_ptr tok) {
 }
 
 void Publisher::on_failure(const mqtt::token& tok) {
-    if(!cli_.is_connected()){
+   /* if(!cli_.is_connected()){
         logger::log(logger::INFO, "Failed connection attempt. Retrying...");
         if (++nretry_ > N_RETRY_ATTEMPTS){
             logger::log(logger::ERROR, "Limit of retry attempts reached while trying to reconnect.");
         }
         else reconnect();
-    }else{
+    }else{*/
         std::stringstream ss;
         ss << clientID_ << ": message " << tok.get_message_id() << " wasn't delivered, return code " << tok.get_return_code();
         logger::log(logger::ERROR, ss.str());
-    }
+   // }
 }
 
 void Publisher::on_success(const mqtt::token& tok) {
