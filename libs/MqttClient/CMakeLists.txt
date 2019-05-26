@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(MqttClient VERSION 1.0.0 LANGUAGES CXX)
 
-add_library(MqttClient
+add_library(MqttClient SHARED
         MqttClient.cpp)
 
 add_library(PolitoceanCommon::MqttClient ALIAS MqttClient)

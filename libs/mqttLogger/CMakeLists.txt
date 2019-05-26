@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(mqttLogger VERSION 1.0.0 LANGUAGES CXX)
 
-add_library(mqttLogger
+add_library(mqttLogger SHARED
         mqttLogger.cpp)
 
 add_library(PolitoceanCommon::mqttLogger ALIAS mqttLogger)
