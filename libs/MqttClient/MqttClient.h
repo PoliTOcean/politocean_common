@@ -34,6 +34,8 @@ protected:
     void on_connect(int rc);
     void on_publish(int mid);
 
+    std::string formatTopic(const std::string& topic);
+
 public:
 
     MqttClient(const std::string& clientID, const std::string& address, const int& port);

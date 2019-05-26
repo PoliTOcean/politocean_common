@@ -42,8 +42,7 @@ void MqttClient::wait()
 void MqttClient::subscribeTo(const std::string& topic, callback_t pf)
 {
 	string topicf = topic;
-	if(topicf[topicf.size()-1]=='/')
-		topicf = topicf.substr(0, topicf.find_last_not_of(" /")+1)+"/"; //trim trailing '/' if they exist
+	topicf = formatTopic(topic);
 
 	topic_to_callback.insert(std::pair<std::string, callback_t>(topicf, pf));
 
@@ -63,7 +62,13 @@ void MqttClient::subscribeTo(const std::string& topic, void (*pf)(const std::str
 
 void MqttClient::publish(const string& topic, const string& message)
 {
-    mosqpp::mosquittopp::publish(NULL, topic.c_str(), message.length(), message.c_str(), this->qos, false);
+    mosqpp::mosquittopp::publish(NULL, formatTopic(topic).c_str(), message.length(), message.c_str(), this->qos, false);
+}
+
+
+string MqttClient::formatTopic(const string& topic)
+{
+	return topic.substr(0, topic.find_first_not_of(" /")+1)+"/";
 }
 
 
