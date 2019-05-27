@@ -27,6 +27,8 @@ protected:
 
     static const int keepalive = 60;
     static const int qos = 1;
+    static std::string clientID;
+    static std::map<std::string, MqttClient> instances;
 
     void on_message(const struct mosquitto_message *msg);
 
@@ -39,7 +41,17 @@ protected:
     std::string formatTopic(const std::string& topic);
 
 public:
+    /** static methods **/
 
+    static MqttClient& getInstance(std::string clientID, std::string ipAddress, int port = DEF_MOSQUITTO_PORT);
+
+    static MqttClient& getInstance(std::string ipAddress, int port = DEF_MOSQUITTO_PORT){
+        return getInstance(MqttClient::clientID, ipAddress);
+    }
+
+    static void setClientId(std::string clientID);
+
+    /** implementation **/
     MqttClient(const std::string& clientID, const std::string& address, const int& port = DEF_MOSQUITTO_PORT);
 
     ~MqttClient();

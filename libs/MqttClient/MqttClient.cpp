@@ -6,13 +6,33 @@ using namespace Politocean;
 using namespace std;
 
 
+/**
+ * Singletons
+ */
+std::string MqttClient::clientID = "Default";
+std::map<std::string, MqttClient> MqttClient::instances;
+
+void MqttClient::setClientId(std::string clientID)
+{
+	MqttClient::clientID = clientID;
+}
+
+MqttClient& MqttClient::getInstance(std::string clientID, std::string ipAddress, int port)
+{
+	if (instances.find(clientID) != instances.end())
+		return instances.at(clientID);
+
+	static MqttClient newInstance(clientID, ipAddress, port);
+	instances.insert(std::pair<std::string, MqttClient>(clientID, newInstance));
+	return newInstance;	
+}
+
 MqttClient::MqttClient(const std::string& clientID, const std::string& address, const int& port)
     :  mosqpp::mosquittopp(clientID.c_str()), clientID_(clientID), address_(address)
 {
     port_ = port;
     mosqpp::lib_init();
 }
-
 
 MqttClient::~MqttClient()
 {
