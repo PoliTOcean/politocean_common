@@ -10,6 +10,8 @@
 
 #define TAG "MqttClient: "
 
+#define DEF_MOSQUITTO_PORT 1883
+
 namespace Politocean {
 
 typedef std::function<void(const std::string&, const std::string&)> callback_t;
@@ -38,7 +40,7 @@ protected:
 
 public:
 
-    MqttClient(const std::string& clientID, const std::string& address, const int& port);
+    MqttClient(const std::string& clientID, const std::string& address, const int& port = DEF_MOSQUITTO_PORT);
 
     ~MqttClient();
 
