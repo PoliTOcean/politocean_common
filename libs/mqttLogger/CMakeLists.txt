@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(mqttLogger VERSION 1.0.0 LANGUAGES CXX)
 
-add_library(mqttLogger
+add_library(mqttLogger SHARED
         mqttLogger.cpp)
 
 add_library(PolitoceanCommon::mqttLogger ALIAS mqttLogger)
@@ -14,7 +14,7 @@ target_include_directories(mqttLogger
             ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(mqttLogger PolitoceanCommon::logger PolitoceanCommon::Publisher)
+target_link_libraries(mqttLogger PolitoceanCommon::logger PolitoceanCommon::MqttClient)
 
 target_compile_features(mqttLogger PRIVATE cxx_auto_type)
 target_compile_options(mqttLogger PRIVATE $<$<CXX_COMPILER_ID:GNU>:-Wall>)
