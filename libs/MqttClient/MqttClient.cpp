@@ -50,6 +50,7 @@ void MqttClient::connect()
 {
     connect_async(this->address_.c_str(), this->port_, this->keepalive);
     loop_start();
+	connected = true;
 }
 
 
@@ -66,9 +67,9 @@ void MqttClient::subscribeTo(const std::string& topic, callback_t pf)
 
 	topic_to_callback.insert(std::pair<std::string, callback_t>(topicf, pf));
 
-    mosquittopp::subscribe(NULL, topic.c_str());
+    mosquittopp::subscribe(NULL, topicf.c_str());
 
-	logger::log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topic);
+	logger::log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topicf);
 }
 
 
@@ -88,7 +89,7 @@ void MqttClient::publish(const string& topic, const string& message)
 
 string MqttClient::formatTopic(const string& topic)
 {
-	return topic.substr(0, topic.find_first_not_of(" /")+1)+"/";
+	return topic.substr(0, topic.find_last_not_of(" /")+1)+"/";
 }
 
 
