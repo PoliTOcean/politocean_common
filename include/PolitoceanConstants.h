@@ -16,6 +16,7 @@ namespace Politocean
             namespace Milliseconds
             {
                 static const int DFLT_STEPPER           = 10;
+                static const int DFLT_HEAD              = 20;
                 static const int MIN_WRIST              = 100;
                 static const int MAX_WRIST              = 1;
                 static const int AXES_DELAY             = 50;

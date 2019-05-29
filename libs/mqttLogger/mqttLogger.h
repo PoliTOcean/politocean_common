@@ -2,17 +2,17 @@
 #define POLITOCEAN_MQTT_LOGGER_H
 
 #include "logger.h"
-#include "Publisher.h"
+#include "MqttClient.h"
 
 namespace Politocean {
 
 class mqttLogger : public logger {
 
 protected:
-    Publisher* mqtt_pub;
+    MqttClient* mqtt_pub;
 
 public:
-    mqttLogger(Publisher *pub);
+    mqttLogger(MqttClient *pub);
 
     void logError(const std::string& msg);
     void logError(const std::string& msg, const std::exception& exc);

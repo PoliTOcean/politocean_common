@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(Subscriber VERSION 1.0.0 LANGUAGES CXX)
 
-add_library(Subscriber
+add_library(Subscriber SHARED
         Subscriber.cpp)
 
 add_library(PolitoceanCommon::Subscriber ALIAS Subscriber)
