@@ -6,13 +6,33 @@ using namespace Politocean;
 using namespace std;
 
 
+/**
+ * Singletons
+ */
+std::string MqttClient::clientID = "Default";
+std::map<std::string, MqttClient> MqttClient::instances;
+
+void MqttClient::setClientId(std::string clientID)
+{
+	MqttClient::clientID = clientID;
+}
+
+MqttClient& MqttClient::getInstance(std::string clientID, std::string ipAddress, int port)
+{
+	if (instances.find(clientID) != instances.end())
+		return instances.at(clientID);
+
+	static MqttClient newInstance(clientID, ipAddress, port);
+	instances.insert(std::pair<std::string, MqttClient>(clientID, newInstance));
+	return newInstance;	
+}
+
 MqttClient::MqttClient(const std::string& clientID, const std::string& address, const int& port)
     :  mosqpp::mosquittopp(clientID.c_str()), clientID_(clientID), address_(address)
 {
     port_ = port;
     mosqpp::lib_init();
 }
-
 
 MqttClient::~MqttClient()
 {
@@ -30,6 +50,7 @@ void MqttClient::connect()
 {
     connect_async(this->address_.c_str(), this->port_, this->keepalive);
     loop_start();
+	connected = true;
 }
 
 
@@ -42,14 +63,13 @@ void MqttClient::wait()
 void MqttClient::subscribeTo(const std::string& topic, callback_t pf)
 {
 	string topicf = topic;
-	if(topicf[topicf.size()-1]=='/')
-		topicf = topicf.substr(0, topicf.find_last_not_of(" /")+1)+"/"; //trim trailing '/' if they exist
+	topicf = formatTopic(topic);
 
 	topic_to_callback.insert(std::pair<std::string, callback_t>(topicf, pf));
 
-    mosquittopp::subscribe(NULL, topic.c_str());
+    mosquittopp::subscribe(NULL, topicf.c_str());
 
-	logger::log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topic);
+	logger::log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topicf);
 }
 
 
@@ -63,7 +83,13 @@ void MqttClient::subscribeTo(const std::string& topic, void (*pf)(const std::str
 
 void MqttClient::publish(const string& topic, const string& message)
 {
-    mosqpp::mosquittopp::publish(NULL, topic.c_str(), message.length(), message.c_str(), this->qos, false);
+    mosqpp::mosquittopp::publish(NULL, formatTopic(topic).c_str(), message.length(), message.c_str(), this->qos, false);
+}
+
+
+string MqttClient::formatTopic(const string& topic)
+{
+	return topic.substr(0, topic.find_last_not_of(" /")+1)+"/";
 }
 
 

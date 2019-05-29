@@ -11,7 +11,7 @@ namespace Politocean {
 using namespace Politocean::Constants;
 
 
-mqttLogger::mqttLogger(Publisher *pub) {
+mqttLogger::mqttLogger(MqttClient *pub) {
     mqtt_pub = pub;
 }
 
@@ -45,15 +45,11 @@ void mqttLogger::logPublish(const logger::levels level, const std::string& topic
     std::stringstream ss;
     ss << msg;
 
-    std::string topic = topicName;
-    if(topic[topic.size()-1]!='/')
-        topic += "/";
-    topic+=mqtt_pub->getClientId();
-    
+    std::string topic = topicName;    
     try{
         if(!mqtt_pub->is_connected())
             throw Politocean::mqttException("mqtt_pub is not connected");
-        mqtt_pub->publish(topic, msg);
+        mqtt_pub->publish(topic, mqtt_pub->getClientId()+msg);
         ss << "\t--- [published]";
     }
     catch(std::exception& e){

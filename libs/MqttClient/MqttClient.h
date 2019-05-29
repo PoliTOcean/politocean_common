@@ -10,6 +10,8 @@
 
 #define TAG "MqttClient: "
 
+#define DEF_MOSQUITTO_PORT 1883
+
 namespace Politocean {
 
 typedef std::function<void(const std::string&, const std::string&)> callback_t;
@@ -25,6 +27,8 @@ protected:
 
     static const int keepalive = 60;
     static const int qos = 1;
+    static std::string clientID;
+    static std::map<std::string, MqttClient> instances;
 
     void on_message(const struct mosquitto_message *msg);
 
@@ -34,9 +38,21 @@ protected:
     void on_connect(int rc);
     void on_publish(int mid);
 
-public:
+    std::string formatTopic(const std::string& topic);
 
-    MqttClient(const std::string& clientID, const std::string& address, const int& port);
+public:
+    /** static methods **/
+
+    static MqttClient& getInstance(std::string clientID, std::string ipAddress, int port = DEF_MOSQUITTO_PORT);
+
+    static MqttClient& getInstance(std::string ipAddress, int port = DEF_MOSQUITTO_PORT){
+        return getInstance(MqttClient::clientID, ipAddress);
+    }
+
+    static void setClientId(std::string clientID);
+
+    /** implementation **/
+    MqttClient(const std::string& clientID, const std::string& address, const int& port = DEF_MOSQUITTO_PORT);
 
     ~MqttClient();
 

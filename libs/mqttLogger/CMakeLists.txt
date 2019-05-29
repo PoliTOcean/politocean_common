@@ -14,7 +14,7 @@ target_include_directories(mqttLogger
             ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(mqttLogger PolitoceanCommon::logger PolitoceanCommon::Publisher)
+target_link_libraries(mqttLogger PolitoceanCommon::logger PolitoceanCommon::MqttClient)
 
 target_compile_features(mqttLogger PRIVATE cxx_auto_type)
 target_compile_options(mqttLogger PRIVATE $<$<CXX_COMPILER_ID:GNU>:-Wall>)
