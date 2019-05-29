@@ -1,6 +1,6 @@
 #include <climits>
 #include "json.hpp"
-#include "../libs/Publisher/MqttClient.h"
+#include "../libs/MqttClient/MqttClient.h"
 #include "PolitoceanConstants.h"
 
 #define ABS(N) ((N<0)?(-N):(N))
