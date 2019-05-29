@@ -63,7 +63,8 @@ void MqttClient::wait()
 void MqttClient::subscribeTo(const std::string& topic, callback_t pf)
 {
 	string topicf = topic;
-	topicf = formatTopic(topic);
+	if(topicf.at(topicf.size()-1) != '#')
+		topicf = formatTopic(topic);
 
 	topic_to_callback.insert(std::pair<std::string, callback_t>(topicf, pf));
 
