@@ -20,6 +20,7 @@ MqttClient& MqttClient::getInstance(std::string clientID, std::string ipAddress,
 
 	static MqttClient newInstance(clientID, ipAddress, port);
 	instances.insert(std::pair<mqttID_t, MqttClient&>(myKey, newInstance));
+	newInstance.connect();
 	return newInstance;	
 }
 
@@ -43,6 +44,7 @@ bool MqttClient::is_connected()
 
 void MqttClient::connect()
 {
+	if(connected) return;
     connect_async(this->address_.c_str(), this->port_, this->keepalive);
     loop_start();
 	connected = true;
