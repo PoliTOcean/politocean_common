@@ -7,6 +7,7 @@
 #include <map>
 #include <iostream>
 #include <functional>
+#include <logger.h>
 
 #define TAG "MqttClient: "
 
@@ -15,6 +16,25 @@
 namespace Politocean {
 
 typedef std::function<void(const std::string&, const std::string&)> callback_t;
+typedef struct mqttID_t {
+    std::string clientID;
+    std::string ipAddress;
+    int port = DEF_MOSQUITTO_PORT;
+    
+    mqttID_t(std::string cId, std::string ipAddr, int p = DEF_MOSQUITTO_PORT)
+    {
+        clientID = cId;
+        ipAddress = ipAddr;
+        port = p;
+    }
+    bool operator==(const mqttID_t &o) const {
+        return clientID == o.clientID && ipAddress == o.ipAddress && port == o.port;
+    }
+
+    bool operator<(const mqttID_t &o) const {
+        return clientID < o.clientID;
+    }
+} mqttID_t;
 
 class MqttClient : public mosqpp::mosquittopp
 {
@@ -22,13 +42,13 @@ protected:
     std::string clientID_, address_;
     int port_;
     bool connected;
+    logger& LOGGER;
     
     std::map<std::string, callback_t> topic_to_callback;
 
     static const int keepalive = 60;
     static const int qos = 1;
-    static std::string clientID;
-    static std::map<std::string, MqttClient> instances;
+    static std::map<mqttID_t, MqttClient&> instances;
 
     void on_message(const struct mosquitto_message *msg);
 
@@ -42,12 +62,8 @@ protected:
 
 public:
     /** static methods **/
-
+    
     static MqttClient& getInstance(std::string clientID, std::string ipAddress, int port = DEF_MOSQUITTO_PORT);
-
-    static MqttClient& getInstance(std::string ipAddress, int port = DEF_MOSQUITTO_PORT){
-        return getInstance(MqttClient::clientID, ipAddress);
-    }
 
     static void setClientId(std::string clientID);
 
@@ -124,6 +140,10 @@ public:
 
     // get client id 
     std::string getClientId();
+
+    std::string getIpAddress();
+
+    int getPort();
 };
 
 }

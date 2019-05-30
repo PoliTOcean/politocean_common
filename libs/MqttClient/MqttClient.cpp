@@ -9,28 +9,23 @@ using namespace std;
 /**
  * Singletons
  */
-std::string MqttClient::clientID = "Default";
-std::map<std::string, MqttClient> MqttClient::instances;
-
-void MqttClient::setClientId(std::string clientID)
-{
-	MqttClient::clientID = clientID;
-}
+std::map<mqttID_t, MqttClient&> MqttClient::instances;
 
 MqttClient& MqttClient::getInstance(std::string clientID, std::string ipAddress, int port)
 {
-	if (instances.find(clientID) != instances.end())
-		return instances.at(clientID);
+	mqttID_t myKey(clientID, ipAddress, port);
+
+	if (instances.find(myKey) != instances.end())
+		return instances.at(myKey);
 
 	static MqttClient newInstance(clientID, ipAddress, port);
-	instances.insert(std::pair<std::string, MqttClient>(clientID, newInstance));
+	instances.insert(std::pair<mqttID_t, MqttClient&>(myKey, newInstance));
 	return newInstance;	
 }
 
 MqttClient::MqttClient(const std::string& clientID, const std::string& address, const int& port)
-    :  mosqpp::mosquittopp(clientID.c_str()), clientID_(clientID), address_(address)
+    :  mosqpp::mosquittopp(clientID.c_str()), clientID_(clientID), address_(address), port_(port), LOGGER(logger::getInstance(clientID))
 {
-    port_ = port;
     mosqpp::lib_init();
 }
 
@@ -70,7 +65,7 @@ void MqttClient::subscribeTo(const std::string& topic, callback_t pf)
 
     mosquittopp::subscribe(NULL, topicf.c_str());
 
-	logger::log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topicf);
+	LOGGER.log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topicf);
 }
 
 
@@ -100,7 +95,7 @@ void MqttClient::unsubscribeFrom(const std::string& topic)
 
     mosquittopp::unsubscribe(NULL, topic.c_str());
 
-	logger::log(logger::DEBUG, string("Unsubscribed ")+clientID_+string(" from topic ")+topic);
+	LOGGER.log(logger::DEBUG, string("Unsubscribed ")+clientID_+string(" from topic ")+topic);
 }
 
 
@@ -125,6 +120,17 @@ std::vector<string> MqttClient::getSubscribedTopics()
 std::string MqttClient::getClientId()
 {
     return clientID_;
+}
+
+
+std::string MqttClient::getIpAddress()
+{
+	return address_;
+}
+
+int MqttClient::getPort()
+{
+	return port_;
 }
 
 
@@ -157,7 +163,7 @@ void MqttClient::on_message(const struct mosquitto_message *msg)
 
 	if(it == topic_to_callback.end())
 	{
-		logger::log(logger::ERROR, string("Callback's topic ")+msg->topic+string(" not found in subscribed topics of ")+clientID_);
+		LOGGER.log(logger::ERROR, string("Callback's topic ")+msg->topic+string(" not found in subscribed topics of ")+clientID_);
 		return;
 	}
 
@@ -178,7 +184,7 @@ void MqttClient::on_subscribe(int, int, const int *)
 {
 	stringstream ss;
     ss << TAG << "Subscription succeeded.";
-	logger::log(logger::DEBUG, ss.str());
+	LOGGER.log(logger::DEBUG, ss.str());
 }
 
 
@@ -186,7 +192,7 @@ void MqttClient::on_disconnect(int rc)
 {
 	stringstream ss;
     ss << TAG << "disconnection (" << rc << "). Reconnecting...";
-	logger::log(logger::ERROR, ss.str());
+	LOGGER.log(logger::ERROR, ss.str());
 }
 
 
@@ -195,11 +201,11 @@ void MqttClient::on_connect(int rc)
 	stringstream ss;
     if ( rc == 0 ) {
         ss << TAG << "connected with server";
-		logger::log(logger::DEBUG, ss.str());
+		LOGGER.log(logger::DEBUG, ss.str());
 		connected = true;
     } else {
 		ss << TAG << "impossible to connect with server(" << rc << ")";
-		logger::log(logger::ERROR, ss.str());
+		LOGGER.log(logger::ERROR, ss.str());
     }
 }
 
@@ -208,5 +214,5 @@ void MqttClient::on_publish(int mid)
 {
 	stringstream ss;
 	ss << TAG << "Message (" << mid << ") succeed to be published ";
-	logger::log(logger::DEBUG, ss.str());
+	LOGGER.log(logger::DEBUG, ss.str());
 }

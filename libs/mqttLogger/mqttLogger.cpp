@@ -6,50 +6,60 @@
 #include "PolitoceanConstants.h"
 #include "PolitoceanExceptions.hpp"
 
-namespace Politocean {
+#define UNDEFINED "undefined"
+
+using namespace Politocean;
 
 using namespace Politocean::Constants;
 
+std::string mqttLogger::def_clientID = UNDEFINED;
 
-mqttLogger::mqttLogger(MqttClient *pub) {
-    mqtt_pub = pub;
+mqttLogger::mqttLogger(std::string clientID, std::string ipAddress, int port)
+ : logger(logger::getInstance(clientID)), mqtt_pub(MqttClient::getInstance(clientID, ipAddress, port))
+{}
+
+std::map<mqttID_t, mqttLogger&> mqttLogger::instances;
+
+mqttLogger& mqttLogger::getInstance(const std::string& ipAddress, const int& port) {
+    return getInstance(def_clientID, ipAddress, port);
 }
 
-void mqttLogger::logError(const std::string& msg){
-    logPublish(logger::ERROR, Topics::ERRORS, msg);
+mqttLogger& mqttLogger::getInstance(MqttClient& client) {
+    return getInstance(client.getClientId(), client.getIpAddress(), client.getPort());
 }
 
-void mqttLogger::logError(const std::string& msg, const std::exception& exc){
-    logException(logger::ERROR, Topics::ERRORS, msg, exc);
+mqttLogger& mqttLogger::getInstance(const std::string& clientID, const std::string& ipAddress, const int& port) {
+	mqttID_t myKey(clientID, ipAddress, port);
+    if (def_clientID==UNDEFINED)
+        def_clientID = clientID;
+	else if (instances.find(myKey) != instances.end())
+		return instances.at(myKey);
+        
+	static mqttLogger newInstance(clientID, ipAddress, port);
+	instances.insert(std::pair<mqttID_t, mqttLogger&>(myKey, newInstance));
+	return newInstance;
 }
 
-
-void mqttLogger::logError(const std::exception& exc){
-    logError("An error occured due to an exception.", exc);
+void mqttLogger::log(const levels level, const std::exception& exc) {
+    log(level, "An error occured due to an exception.", exc);
 }
 
-void mqttLogger::logInfo(const std::string& msg){
-    logPublish(logger::INFO, Topics::INFO, msg);
+void mqttLogger::log(const levels level, const std::string& msg, const std::exception& exc) {
+    std::stringstream ss;
+    ss << msg << "\tException: " << exc.what();
+    auto str = ss.str();
+    log(level, msg);
 }
 
-void mqttLogger::logInfo(const std::string& msg, const std::exception& exc){
-    logException(logger::INFO, Topics::INFO, msg, exc);
-}
-
-
-void mqttLogger::logInfo(const std::exception& exc){
-    logInfo("An error occured due to an exception.", exc);
-}
-
-void mqttLogger::logPublish(const logger::levels level, const std::string& topicName, const std::string& msg){
+void mqttLogger::log(const levels level, const std::string& msg) {
     std::stringstream ss;
     ss << msg;
 
-    std::string topic = topicName;    
+    std::string topic = "logs/"+logger::levels_name.at(level);    
     try{
-        if(!mqtt_pub->is_connected())
+        if(!mqtt_pub.is_connected())
             throw Politocean::mqttException("mqtt_pub is not connected");
-        mqtt_pub->publish(topic, mqtt_pub->getClientId()+msg);
+        mqtt_pub.publish(topic, "["+mqtt_pub.getClientId()+"]"+msg);
         ss << "\t--- [published]";
     }
     catch(std::exception& e){
@@ -57,13 +67,4 @@ void mqttLogger::logPublish(const logger::levels level, const std::string& topic
     }
     auto str = ss.str();
     logger::log(level, str.c_str());
-}
-
-void mqttLogger::logException(const logger::levels level, const std::string& topic, const std::string& msg, const std::exception& exc){
-    std::stringstream ss;
-    ss << msg << "\tException: " << exc.what();
-    auto str = ss.str();
-    logPublish(level, topic, msg);
-}
-
 }

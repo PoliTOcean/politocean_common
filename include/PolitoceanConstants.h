@@ -71,9 +71,11 @@ namespace Politocean
 
             namespace Levels
             {
-                const string ERROR  { "error" };
-                const string INFO   { "info" };
-                const string DEBUG  { "debug" };
+                const string ERROR      { "error" };
+                const string WARNING    { "warning" };
+                const string CONFIG     { "config" };
+                const string INFO       { "info" };
+                const string DEBUG      { "debug" };
             }
         }
         
