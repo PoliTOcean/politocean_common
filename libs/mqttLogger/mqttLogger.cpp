@@ -66,7 +66,7 @@ void mqttLogger::log(const levels level, const std::string& msg) {
         if (level < publisher_activation_level)
             throw Politocean::loggerException("Publisher activation level lower than "+logger::levels_name.at(level));
 
-        MqttClient mqtt_pub = MqttClient::getInstance(clientID_, ipAddress_, port_);
+        MqttClient& mqtt_pub = MqttClient::getInstance(clientID_, ipAddress_, port_);
 
         if(!mqtt_pub.is_connected())
             throw Politocean::mqttException("mqtt_pub is not connected");
