@@ -1,29 +1,34 @@
 #ifndef POLITOCEAN_MQTT_LOGGER_H
 #define POLITOCEAN_MQTT_LOGGER_H
 
-#include "logger.h"
-#include "MqttClient.h"
+#include <logger.h>
+#include <MqttClient.h>
 
 namespace Politocean {
 
 class mqttLogger : public logger {
 
 protected:
-    MqttClient* mqtt_pub;
-
+    std::string clientID_, ipAddress_;
+    int port_;
+    
 public:
-    mqttLogger(MqttClient *pub);
+    mqttLogger(std::string clientID, std::string ipAddress, int port = DEF_MOSQUITTO_PORT);
 
-    void logError(const std::string& msg);
-    void logError(const std::string& msg, const std::exception& exc);
-    void logError(const std::exception& exc);
+    void log(const levels level, const std::exception& exc) override;
+    void log(const levels level, const std::string& msg, const std::exception& exc) override;
+    void log(const levels level, const std::string& msg) override;
 
-    void logInfo(const std::string& msg);
-    void logInfo(const std::string& msg, const std::exception& exc);
-    void logInfo(const std::exception& exc);
+    void setPublishLevel(const levels level);
 
-    void logPublish(const logger::levels level, const std::string& topic, const std::string& msg);
-    void logException(const logger::levels level, const std::string& topic, const std::string& msg, const std::exception& exc);
+    static mqttLogger& getInstance(const std::string& ipAddress, const int& port = DEF_MOSQUITTO_PORT);
+    static mqttLogger& getInstance(const std::string& clientID, const std::string& ipAddress, const int& port = DEF_MOSQUITTO_PORT);
+    static mqttLogger& getInstance(MqttClient& client);
+
+private:
+    static std::map<mqttID_t, mqttLogger*> instances;
+    static std::string def_clientID;
+    int publisher_activation_level;
 };
 
 }

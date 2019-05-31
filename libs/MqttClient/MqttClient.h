@@ -7,6 +7,9 @@
 #include <map>
 #include <iostream>
 #include <functional>
+#include <logger.h>
+#include <thread>
+#include <chrono>
 
 #define TAG "MqttClient: "
 
@@ -15,41 +18,57 @@
 namespace Politocean {
 
 typedef std::function<void(const std::string&, const std::string&)> callback_t;
+typedef struct mqttID_t {
+    std::string clientID;
+    std::string ipAddress;
+    int port = DEF_MOSQUITTO_PORT;
+    
+    mqttID_t(std::string cId, std::string ipAddr, int p = DEF_MOSQUITTO_PORT)
+    : clientID(cId), ipAddress(ipAddr), port(p)
+    {
+    }
+
+    bool operator==(const mqttID_t &o) const {
+        return clientID == o.clientID && ipAddress == o.ipAddress && port == o.port;
+    }
+
+    bool operator<(const mqttID_t &o) const {
+        return  clientID < o.clientID ||
+                ( clientID == o.clientID && ipAddress < o.ipAddress ) ||
+                ( clientID == o.clientID && ipAddress == o.ipAddress && port < o.port );
+    }
+} mqttID_t;
 
 class MqttClient : public mosqpp::mosquittopp
 {
-protected:
+private:
     std::string clientID_, address_;
     int port_;
-    bool connected;
-    
+    std::thread *reconnectingThread;
     std::map<std::string, callback_t> topic_to_callback;
+    static std::map<mqttID_t, MqttClient*> instances;
 
-    static const int keepalive = 60;
-    static const int qos = 1;
-    static std::string clientID;
-    static std::map<std::string, MqttClient> instances;
+protected:
+    bool connected, reconnecting;
+    logger& LOGGER;
+    
+    const int keepalive = 300; // 5 mins
+    const int delay = 500;     // milliseconds
+    const int qos = 0;
 
-    void on_message(const struct mosquitto_message *msg);
+    virtual void on_message(const struct mosquitto_message *msg);
+    virtual void on_subscribe(int, int, const int *);
+    virtual void on_disconnect(int rc);
+    virtual void on_connect(int rc);
+    virtual void on_publish(int mid);
 
+    virtual std::string formatTopic(const std::string& topic);
 
-    void on_subscribe(int, int, const int *);
-    void on_disconnect(int rc);
-    void on_connect(int rc);
-    void on_publish(int mid);
-
-    std::string formatTopic(const std::string& topic);
+    void reconnect();
 
 public:
     /** static methods **/
-
-    static MqttClient& getInstance(std::string clientID, std::string ipAddress, int port = DEF_MOSQUITTO_PORT);
-
-    static MqttClient& getInstance(std::string ipAddress, int port = DEF_MOSQUITTO_PORT){
-        return getInstance(MqttClient::clientID, ipAddress);
-    }
-
-    static void setClientId(std::string clientID);
+    static MqttClient &getInstance(const std::string& clientID, const std::string& ipAddress, const int& port = DEF_MOSQUITTO_PORT);
 
     /** implementation **/
     MqttClient(const std::string& clientID, const std::string& address, const int& port = DEF_MOSQUITTO_PORT);
@@ -122,8 +141,10 @@ public:
     // Listens until it's connected.
     void wait();
 
-    // get client id 
+    // getters
     std::string getClientId();
+    std::string getIpAddress();
+    int getPort();
 };
 
 }

@@ -29,11 +29,27 @@ namespace Politocean
             }
         }
 
+        namespace Logger
+        {
+            const string LOGS_PATH { "logs/" };
+
+            namespace Levels
+            {
+                const string ERROR      { "error" };
+                const string WARNING    { "warning" };
+                const string CONFIG     { "config" };
+                const string INFO       { "info" };
+                const string DEBUG      { "debug" };
+            }
+        }
+        
+
         namespace Topics
         {
-            const string ERRORS             { "messages/errors/" };
-            const string INFO               { "messages/info/" };
-            const string COMPONENTS         { "messages/components/" };
+            const string LOGS               { "logs/" };
+            const string ERRORS             { LOGS + Logger::Levels::ERROR };
+            
+            const string COMPONENTS         { "components/" };
 
             const string MICRO_ROV_CAMERA   { "microRovCamera/" };
 
@@ -65,18 +81,6 @@ namespace Politocean
             const string MICROROV_COMMANDS  { MICROROV + "commands/" };
         }
 
-        namespace Logger
-        {
-            const string LOGS_PATH { "logs/" };
-
-            namespace Levels
-            {
-                const string ERROR  { "error" };
-                const string INFO   { "info" };
-                const string DEBUG  { "debug" };
-            }
-        }
-        
         namespace MicroRov
         {
             const string HOST_ADDRESS   { "127.0.0.1" }; //TODO da togliere
