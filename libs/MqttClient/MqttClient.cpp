@@ -31,7 +31,7 @@ MqttClient &MqttClient::getInstance(const std::string& clientID, const std::stri
 
 MqttClient::MqttClient(const std::string& clientID, const std::string& address, const int& port)
     :   mosqpp::mosquittopp(clientID.c_str()), clientID_(clientID), address_(address), port_(port),
-		reconnectingThread(nullptr), LOGGER(logger::getInstance(clientID))
+		reconnectingThread(nullptr), connected(false), reconnecting(false), LOGGER(logger::getInstance(clientID))
 {
     mosqpp::lib_init();
 	connect();
