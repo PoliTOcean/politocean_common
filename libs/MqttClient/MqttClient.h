@@ -24,17 +24,18 @@ typedef struct mqttID_t {
     int port = DEF_MOSQUITTO_PORT;
     
     mqttID_t(std::string cId, std::string ipAddr, int p = DEF_MOSQUITTO_PORT)
+    : clientID(cId), ipAddress(ipAddr), port(p)
     {
-        clientID = cId;
-        ipAddress = ipAddr;
-        port = p;
     }
+
     bool operator==(const mqttID_t &o) const {
         return clientID == o.clientID && ipAddress == o.ipAddress && port == o.port;
     }
 
     bool operator<(const mqttID_t &o) const {
-        return clientID < o.clientID;
+        return  clientID < o.clientID ||
+                ( clientID == o.clientID && ipAddress < o.ipAddress ) ||
+                ( clientID == o.clientID && ipAddress == o.ipAddress && port < o.port );
     }
 } mqttID_t;
 
@@ -67,9 +68,7 @@ protected:
 
 public:
     /** static methods **/
-    static MqttClient &getInstance(std::string clientID, std::string ipAddress, int port = DEF_MOSQUITTO_PORT);
-
-    static void setClientId(std::string clientID);
+    static MqttClient &getInstance(const std::string& clientID, const std::string& ipAddress, const int& port = DEF_MOSQUITTO_PORT);
 
     /** implementation **/
     MqttClient(const std::string& clientID, const std::string& address, const int& port = DEF_MOSQUITTO_PORT);

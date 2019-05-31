@@ -11,15 +11,13 @@ using namespace std;
  */
 std::map<mqttID_t, MqttClient*> MqttClient::instances;
 
-MqttClient &MqttClient::getInstance(std::string clientID, std::string ipAddress, int port)
+MqttClient &MqttClient::getInstance(const std::string& clientID, const std::string& ipAddress, const int& port)
 {
 	mqttID_t myKey(clientID, ipAddress, port);
 
 	if (instances.find(myKey) != instances.end())
 	{
 		auto it = instances.find(myKey);
-		std::cout << myKey.clientID << " " << myKey.ipAddress << " " << myKey.port << std::endl;
-		std::cout << it->first.clientID << " " << it->first.ipAddress << " " << it->first.port << std::endl;
 		if(instances.at(myKey)==nullptr)
 			instances.erase(myKey);
 		else{
@@ -103,7 +101,7 @@ void MqttClient::subscribeTo(const std::string& topic, void (*pf)(const std::str
 
 void MqttClient::publish(const string& topic, const string& message)
 {
-	LOGGER.log(logger::CONFIG, "trying to publish to "+topic+ " from "+address_+"-"+clientID_);
+	LOGGER.log(logger::DEBUG, "Trying to publish to "+topic+ " from "+address_+"-"+clientID_);
     mosqpp::mosquittopp::publish(NULL, formatTopic(topic).c_str(), message.length(), message.c_str(), this->qos, false);
 }
 
