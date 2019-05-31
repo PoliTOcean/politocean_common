@@ -9,8 +9,9 @@ namespace Politocean {
 class mqttLogger : public logger {
 
 protected:
-    MqttClient& mqtt_pub;
-
+    std::string clientID_, ipAddress_;
+    int port_;
+    
 public:
     mqttLogger(std::string clientID, std::string ipAddress, int port = DEF_MOSQUITTO_PORT);
 

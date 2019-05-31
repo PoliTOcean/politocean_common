@@ -142,11 +142,9 @@ public:
     // Listens until it's connected.
     void wait();
 
-    // get client id 
+    // getters
     std::string getClientId();
-
     std::string getIpAddress();
-
     int getPort();
 };
 

@@ -51,6 +51,7 @@ bool MqttClient::is_connected()
 
 void MqttClient::connect()
 {
+	std::cout << "Fino a qui pure!\n";
 	if(is_connected()) return;
 
 	LOGGER.log(logger::CONFIG, "Trying to connect to " + this->address_ + ":" + to_string(this->port_) + " as " + clientID_);

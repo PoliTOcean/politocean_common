@@ -36,7 +36,6 @@ private:
     static int activation_level;
     std::string tag;
     static std::string def_tag;
-
 };
 
 }

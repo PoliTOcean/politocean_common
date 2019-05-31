@@ -15,7 +15,7 @@ using namespace Politocean::Constants;
 std::string mqttLogger::def_clientID = UNDEFINED;
 
 mqttLogger::mqttLogger(std::string clientID, std::string ipAddress, int port)
- :  logger(logger::getInstance(clientID)), mqtt_pub(MqttClient::getInstance(clientID, ipAddress, port)),
+ :  logger(logger::getInstance(clientID)), clientID_(clientID), ipAddress_(ipAddress), port_(port),
     publisher_activation_level(logger::WARNING)
 {}
 
@@ -65,6 +65,8 @@ void mqttLogger::log(const levels level, const std::string& msg) {
     try{
         if (level < publisher_activation_level)
             throw Politocean::loggerException("Publisher activation level lower than "+logger::levels_name.at(level));
+
+        MqttClient mqtt_pub = MqttClient::getInstance(clientID_, ipAddress_, port_);
 
         if(!mqtt_pub.is_connected())
             throw Politocean::mqttException("mqtt_pub is not connected");
