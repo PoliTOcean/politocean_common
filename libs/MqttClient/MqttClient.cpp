@@ -17,7 +17,6 @@ MqttClient &MqttClient::getInstance(const std::string& clientID, const std::stri
 
 	if (instances.find(myKey) != instances.end())
 	{
-		auto it = instances.find(myKey);
 		if(instances.at(myKey)==nullptr)
 			instances.erase(myKey);
 		else{
