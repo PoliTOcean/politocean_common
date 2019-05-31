@@ -15,10 +15,11 @@ using namespace Politocean::Constants;
 std::string mqttLogger::def_clientID = UNDEFINED;
 
 mqttLogger::mqttLogger(std::string clientID, std::string ipAddress, int port)
- : logger(logger::getInstance(clientID)), mqtt_pub(MqttClient::getInstance(clientID, ipAddress, port))
+ :  logger(logger::getInstance(clientID)), mqtt_pub(MqttClient::getInstance(clientID, ipAddress, port)),
+    publisher_activation_level(logger::WARNING)
 {}
 
-std::map<mqttID_t, mqttLogger&> mqttLogger::instances;
+std::map<mqttID_t, mqttLogger*> mqttLogger::instances;
 
 mqttLogger& mqttLogger::getInstance(const std::string& ipAddress, const int& port) {
     return getInstance(def_clientID, ipAddress, port);
@@ -33,11 +34,15 @@ mqttLogger& mqttLogger::getInstance(const std::string& clientID, const std::stri
     if (def_clientID==UNDEFINED)
         def_clientID = clientID;
 	else if (instances.find(myKey) != instances.end())
-		return instances.at(myKey);
-        
-	static mqttLogger newInstance(clientID, ipAddress, port);
-	instances.insert(std::pair<mqttID_t, mqttLogger&>(myKey, newInstance));
-	return newInstance;
+	{
+		if(instances.at(myKey)==nullptr)
+			instances.erase(myKey);
+		else
+			return *instances.at(myKey);
+	}
+
+	instances.insert(std::pair<mqttID_t, mqttLogger*>(myKey, new mqttLogger(clientID, ipAddress, port)));
+	return *instances.at(myKey);
 }
 
 void mqttLogger::log(const levels level, const std::exception& exc) {
@@ -52,11 +57,15 @@ void mqttLogger::log(const levels level, const std::string& msg, const std::exce
 }
 
 void mqttLogger::log(const levels level, const std::string& msg) {
+
     std::stringstream ss;
     ss << msg;
 
-    std::string topic = "logs/"+logger::levels_name.at(level);    
+    std::string topic = Topics::LOGS+logger::levels_name.at(level);    
     try{
+        if (level < publisher_activation_level)
+            throw Politocean::loggerException("Publisher activation level lower than "+logger::levels_name.at(level));
+
         if(!mqtt_pub.is_connected())
             throw Politocean::mqttException("mqtt_pub is not connected");
         mqtt_pub.publish(topic, "["+mqtt_pub.getClientId()+"]"+msg);
@@ -67,4 +76,9 @@ void mqttLogger::log(const levels level, const std::string& msg) {
     }
     auto str = ss.str();
     logger::log(level, str.c_str());
+}
+
+void mqttLogger::setPublishLevel(const levels level)
+{
+    publisher_activation_level = level;
 }

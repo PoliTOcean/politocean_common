@@ -23,8 +23,8 @@ public:
     virtual void log(const levels level, const std::exception& exc);
     virtual void log(const levels level, const std::string& msg, const std::exception& exc);
     virtual void log(const levels level, const std::string& msg);
-    void enableLevel(const levels level);
-    
+
+    static void enableLevel(const levels level);
     static logger& getInstance();
     static logger& getInstance(const std::string& tag);
 
@@ -32,8 +32,8 @@ protected:
     static const std::map<levels, std::string> levels_name;
 
 private:
-    static std::map<std::string, logger&> instances;
-    int activation_level;
+    static std::map<std::string, logger*> instances;
+    static int activation_level;
     std::string tag;
     static std::string def_tag;
 

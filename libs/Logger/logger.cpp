@@ -15,6 +15,7 @@ using namespace Politocean;
 using namespace std::experimental;
 
 std::string logger::def_tag = UNDEFINED;
+int logger::activation_level = logger::WARNING;
 
 const std::map<logger::levels, std::string> logger::levels_name = {
     { logger::ERROR,     Constants::Logger::Levels::ERROR   },
@@ -24,7 +25,7 @@ const std::map<logger::levels, std::string> logger::levels_name = {
     { logger::DEBUG,     Constants::Logger::Levels::DEBUG   }
 };
 
-std::map<std::string, logger&> logger::instances;
+std::map<std::string, logger*> logger::instances;
 
 const int logger::MAX_FILE_SIZE = 1048576; // 1 MB
 
@@ -39,11 +40,15 @@ logger& logger::getInstance(const std::string& tag) {
     if (def_tag==UNDEFINED)
         def_tag = tag;
 	else if (instances.find(tag) != instances.end())
-		return instances.at(tag);
+	{
+		if(instances.at(tag)==nullptr)
+			instances.erase(tag);
+		else
+			return *instances.at(tag);
+	}
 
-	static logger newInstance(tag);
-	instances.insert(std::pair<std::string, logger&>(tag, newInstance));
-	return newInstance;
+	instances.insert(std::pair<std::string, logger*>(tag, new logger(tag)));
+	return *instances.at(tag);
 }
 
 void logger::log(const levels level, const std::exception& exc){
@@ -58,7 +63,7 @@ void logger::log(const levels level, const std::string& msg, const std::exceptio
 }
 
 void logger::log(const levels level, const std::string& msg){
-    if(activation_level >= level) return;
+    if(activation_level < level) return;
 
     std::string level_name = levels_name.at(level);
 
@@ -107,17 +112,17 @@ void logger::log(const levels level, const std::string& msg){
     out << ss.str() << std::endl;
 
     
-    if(level == levels::ERROR)
+    if(level <= levels::ERROR)
     {
-        std::cerr << "[" << level_name << "]\t" << ss.str() << std::endl;
+        std::cerr << ss.str() << std::endl;
     }
     else
     {
-        std::cout << "[" << level_name << "]\t" << ss.str() << std::endl;  
+        std::cout << ss.str() << std::endl;  
     }
     
 }
 
 void logger::enableLevel(const logger::levels level){
-    activation_level = level;
+    logger::activation_level = level;
 }

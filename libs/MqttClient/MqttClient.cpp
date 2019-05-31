@@ -9,25 +9,32 @@ using namespace std;
 /**
  * Singletons
  */
-std::map<mqttID_t, MqttClient&> MqttClient::instances;
+std::map<mqttID_t, MqttClient*> MqttClient::instances;
 
-MqttClient& MqttClient::getInstance(std::string clientID, std::string ipAddress, int port)
+MqttClient &MqttClient::getInstance(std::string clientID, std::string ipAddress, int port)
 {
 	mqttID_t myKey(clientID, ipAddress, port);
 
 	if (instances.find(myKey) != instances.end())
-		return instances.at(myKey);
+	{
+		if(instances.at(myKey)==nullptr)
+			instances.erase(myKey);
+		else{
+			instances.at(myKey)->connect();
+			return *instances.at(myKey);
+		}
+	}
 
-	static MqttClient newInstance(clientID, ipAddress, port);
-	instances.insert(std::pair<mqttID_t, MqttClient&>(myKey, newInstance));
-	newInstance.connect();
-	return newInstance;	
+	instances.insert(std::pair<mqttID_t, MqttClient*>(myKey, new MqttClient(clientID, ipAddress, port)));
+	return *instances.at(myKey);
 }
 
 MqttClient::MqttClient(const std::string& clientID, const std::string& address, const int& port)
-    :  mosqpp::mosquittopp(clientID.c_str()), clientID_(clientID), address_(address), port_(port), LOGGER(logger::getInstance(clientID))
+    :   mosqpp::mosquittopp(clientID.c_str()), clientID_(clientID), address_(address), port_(port),
+		reconnectingThread(nullptr), LOGGER(logger::getInstance(clientID))
 {
     mosqpp::lib_init();
+	connect();
 }
 
 MqttClient::~MqttClient()
@@ -39,21 +46,31 @@ MqttClient::~MqttClient()
 
 bool MqttClient::is_connected()
 {
-    return connected;
+    return connected || reconnecting;
 }
 
 void MqttClient::connect()
 {
-	if(connected) return;
-    connect_async(this->address_.c_str(), this->port_, this->keepalive);
-    loop_start();
-	connected = true;
+	if(is_connected()) return;
+
+	reconnecting = true;
+	reconnectingThread = new std::thread([&]() {
+		while (!connected && reconnecting)
+		{
+    		mosquittopp::connect(this->address_.c_str(), this->port_, this->keepalive);
+    		loop_start();
+			std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+		}
+	});
 }
 
 
 void MqttClient::wait()
 {
-	while(is_connected());
+	while(is_connected())
+	{
+		std::this_thread::sleep_for(std::chrono::seconds(delay));
+	}
 }
 
 
@@ -67,7 +84,7 @@ void MqttClient::subscribeTo(const std::string& topic, callback_t pf)
 
     mosquittopp::subscribe(NULL, topicf.c_str());
 
-	LOGGER.log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topicf);
+	LOGGER.log(logger::CONFIG, string("Subscribing ")+clientID_+string(" to topic ")+topicf);
 }
 
 
@@ -97,7 +114,7 @@ void MqttClient::unsubscribeFrom(const std::string& topic)
 
     mosquittopp::unsubscribe(NULL, topic.c_str());
 
-	LOGGER.log(logger::DEBUG, string("Unsubscribed ")+clientID_+string(" from topic ")+topic);
+	LOGGER.log(logger::INFO, string("Unsubscribed ")+clientID_+string(" from topic ")+topic);
 }
 
 
@@ -146,6 +163,7 @@ void MqttClient::on_message(const struct mosquitto_message *msg)
 
 	it = topic_to_callback.find(topic);
 
+
 	if(it==topic_to_callback.end())
 	{
 		if(topic[topic.size()-1]!='/')
@@ -186,7 +204,7 @@ void MqttClient::on_subscribe(int, int, const int *)
 {
 	stringstream ss;
     ss << TAG << "Subscription succeeded.";
-	LOGGER.log(logger::DEBUG, ss.str());
+	LOGGER.log(logger::INFO, ss.str());
 }
 
 
@@ -197,14 +215,32 @@ void MqttClient::on_disconnect(int rc)
 	LOGGER.log(logger::ERROR, ss.str());
 }
 
+void MqttClient::reconnect()
+{
+	if (connected || reconnecting) return;
+	reconnecting = true;
+	reconnectingThread = new std::thread([&]() {
+		std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+		while (!connected && reconnecting)
+		{
+			mosquittopp::reconnect();
+			std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+		}
+	});
+}
+
 
 void MqttClient::on_connect(int rc)
 {
 	stringstream ss;
     if ( rc == 0 ) {
         ss << TAG << "connected with server";
-		LOGGER.log(logger::DEBUG, ss.str());
+		LOGGER.log(logger::CONFIG, ss.str());
 		connected = true;
+		reconnecting = false;
+		for(std::map<std::string, callback_t>::iterator it = topic_to_callback.begin(); it != topic_to_callback.end(); ++it) {
+    		mosquittopp::subscribe(NULL, it->first.c_str());
+		}
     } else {
 		ss << TAG << "impossible to connect with server(" << rc << ")";
 		LOGGER.log(logger::ERROR, ss.str());

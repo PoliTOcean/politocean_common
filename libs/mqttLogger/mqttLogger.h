@@ -18,13 +18,16 @@ public:
     void log(const levels level, const std::string& msg, const std::exception& exc) override;
     void log(const levels level, const std::string& msg) override;
 
-    mqttLogger& getInstance(const std::string& ipAddress, const int& port = DEF_MOSQUITTO_PORT);
-    mqttLogger& getInstance(const std::string& clientID, const std::string& ipAddress, const int& port = DEF_MOSQUITTO_PORT);
-    mqttLogger& getInstance(MqttClient& client);
+    void setPublishLevel(const levels level);
+
+    static mqttLogger& getInstance(const std::string& ipAddress, const int& port = DEF_MOSQUITTO_PORT);
+    static mqttLogger& getInstance(const std::string& clientID, const std::string& ipAddress, const int& port = DEF_MOSQUITTO_PORT);
+    static mqttLogger& getInstance(MqttClient& client);
 
 private:
-    static std::map<mqttID_t, mqttLogger&> instances;
+    static std::map<mqttID_t, mqttLogger*> instances;
     static std::string def_clientID;
+    int publisher_activation_level;
 };
 
 }
