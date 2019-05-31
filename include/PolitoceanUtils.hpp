@@ -12,7 +12,7 @@ static long map(long x, long in_min, long in_max, long out_min = 0, long out_max
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-static void publishComponents(const std::string& clientID, const std::string& components, const std::string& status)
+static void publishComponents(const std::string& clientID, const std::string& components, Components::Status status)
 {
     nlohmann::json json;
 
@@ -27,6 +27,6 @@ static void publishComponents(const std::string& clientID, const std::string& co
 /*
  * {
  *          'Components' : 'POWER',
- *          'Status'     : 'ON'
+ *          'Status'     : 0-1-2 (have a look to Status enum in PolitoceanConstants.h)
  * }
  */
