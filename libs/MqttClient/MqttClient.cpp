@@ -53,6 +53,8 @@ void MqttClient::connect()
 {
 	if(is_connected()) return;
 
+	LOGGER.log(logger::CONFIG, "Trying to connect to " + this->address_ + ":" + to_string(this->port_) + " as " + clientID_);
+
 	reconnecting = true;
 	reconnectingThread = new std::thread([&]() {
 		while (!connected && reconnecting)
@@ -69,7 +71,7 @@ void MqttClient::wait()
 {
 	while(is_connected())
 	{
-		std::this_thread::sleep_for(std::chrono::seconds(delay));
+		std::this_thread::sleep_for(std::chrono::milliseconds(delay));
 	}
 }
 
