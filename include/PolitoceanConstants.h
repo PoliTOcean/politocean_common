@@ -97,7 +97,7 @@ namespace Politocean
             const string JOYSTICK_ID        { "joystick" };
             const string SENSORS_ID         { "sensors" };
 
-            const string IP_ADDRESS         { "127.0.0.1" };
+            const string IP_ADDRESS         { "10.0.0.1" };
             const string CAMERA_IP_ADDRESS  { "10.0.0.5" };
         }
 
@@ -106,7 +106,7 @@ namespace Politocean
             const string TOPIC_PREFIX   { "rov/" };
             const string ATMEGA_ID      { "ATMegaController" };
 
-            const string IP_ADDRESS     { "127.0.0.1" };
+            const string IP_ADDRESS     { "10.0.0.2" };
             
             const string SKELETON_ID    { "skeleton" };
         }
