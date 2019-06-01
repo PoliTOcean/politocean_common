@@ -29,6 +29,10 @@ private:
     static std::map<mqttID_t, mqttLogger*> instances;
     static std::string def_clientID;
     int publisher_activation_level;
+
+
+    mqttLogger(const mqttLogger&);
+    mqttLogger operator=(const mqttLogger&);
 };
 
 }

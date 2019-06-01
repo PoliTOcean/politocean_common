@@ -48,6 +48,9 @@ private:
     std::map<std::string, callback_t> topic_to_callback;
     static std::map<mqttID_t, MqttClient*> instances;
 
+    MqttClient(const MqttClient&);
+    MqttClient operator=(const MqttClient&);
+
 protected:
     bool connected, reconnecting;
     logger& LOGGER;
