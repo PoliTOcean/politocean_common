@@ -190,6 +190,7 @@ namespace Politocean
             const string POWER      { "power" };
             const string SHOULDER   { "shoulder" };
             const string WRIST      { "wrist" };
+            const string HEAD       { "head" };
             const string JOYSTICK   { "joytick" };
             
             enum Status {
