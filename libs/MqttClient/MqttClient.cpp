@@ -20,7 +20,6 @@ MqttClient &MqttClient::getInstance(const std::string& clientID, const std::stri
 		if(instances.at(myKey)==nullptr)
 			instances.erase(myKey);
 		else{
-			instances.at(myKey)->reconnect();
 			return *instances.at(myKey);
 		}
 	}
@@ -199,6 +198,7 @@ void MqttClient::on_message(const struct mosquitto_message *msg)
 void MqttClient::disconnect()
 {
     mosquittopp::disconnect();
+	MqttClient::instances.erase(mqttID_t(clientID_, address_, port_));
 	connected = false;
 }
 
@@ -220,21 +220,6 @@ void MqttClient::on_disconnect(int rc)
 	else
 		LOGGER.log(logger::INFO, ss.str());	
 }
-
-void MqttClient::reconnect()
-{
-	if (connected || reconnecting) return;
-	reconnecting = true;
-	reconnectingThread = new std::thread([&]() {
-		std::this_thread::sleep_for(std::chrono::milliseconds(delay));
-		while (!connected && reconnecting)
-		{
-			mosquittopp::reconnect();
-			std::this_thread::sleep_for(std::chrono::milliseconds(delay));
-		}
-	});
-}
-
 
 void MqttClient::on_connect(int rc)
 {
