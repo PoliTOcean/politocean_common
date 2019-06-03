@@ -66,9 +66,7 @@ protected:
     virtual void on_publish(int mid);
 
     virtual std::string formatTopic(const std::string& topic);
-
-    void reconnect();
-
+    
 public:
     /** static methods **/
     static MqttClient &getInstance(const std::string& clientID, const std::string& ipAddress, const int& port = DEF_MOSQUITTO_PORT);
