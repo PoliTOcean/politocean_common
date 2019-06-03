@@ -20,7 +20,7 @@ MqttClient &MqttClient::getInstance(const std::string& clientID, const std::stri
 		if(instances.at(myKey)==nullptr)
 			instances.erase(myKey);
 		else{
-			instances.at(myKey)->connect();
+			instances.at(myKey)->reconnect();
 			return *instances.at(myKey);
 		}
 	}
