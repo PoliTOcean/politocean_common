@@ -214,8 +214,11 @@ void MqttClient::on_subscribe(int, int, const int *)
 void MqttClient::on_disconnect(int rc)
 {
 	stringstream ss;
-    ss << TAG << "disconnection (" << rc << "). Reconnecting...";
-	LOGGER.log(logger::ERROR, ss.str());
+    ss << TAG << "disconnection (" << rc << ").";
+	if (connected)
+		LOGGER.log(logger::ERROR, ss.str()+" Reconnecting...");
+	else
+		LOGGER.log(logger::INFO, ss.str());	
 }
 
 void MqttClient::reconnect()
