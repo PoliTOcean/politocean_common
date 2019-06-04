@@ -136,6 +136,7 @@ namespace Politocean
                 const int HAND              = 29;
                 const int HEAD_UP           = 15;
                 const int HEAD_DOWN         = 17;
+                const int PITCH_CONTROL     = 6;
             }
             
             namespace Axes
@@ -146,6 +147,7 @@ namespace Politocean
                 static const int WRIST      = 4;
                 static const int RZ         = 5;
                 static const int HAND       = 3;
+                static const int PITCH      = 2;
             }
 
             namespace Actions
@@ -168,6 +170,7 @@ namespace Politocean
                     const string SLOW               { "SLOW" };
                     const string MEDIUM             { "MEDIUM" };
                     const string START_AND_STOP     { "START_AND_STOP" };
+                    const string PITCH_CONTROL      { "PITCH_CONTROL" };
                 }
 
                 namespace Stepper
