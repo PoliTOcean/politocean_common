@@ -1,32 +1,102 @@
 #ifndef REFLECTABLE_INTEGER_H
 #define REFLECTABLE_INTEGER_H
 
+#include <iostream>
+#include <exception>
+
 #include "../Reflectable.hpp"
-namespace Reflectable {
-    
-class Integer : public Reflectable {
-    int value;
 
-public:
-    Integer(int value) : value(value) {}
+namespace MQTT
+{
+    class Integer : public Reflectable
+    {
+        int value_;
 
-    static Integer parse(std::string stringified) {
-        // TODO catch exception
-        return Integer(std::stoi(stringified));
-    }
+    public:
+        Integer(int value) : value_(value) {}
 
-    static Integer valueOf(int value) {
-        return Integer(value);
-    }
+        static Integer parse(std::string stringified)
+        {
+            int value;
+            try
+            {
+                value = std::stoi(stringified);
+            }
+            catch (const std::exception& e)
+            {
+                throw IntegerExcpetion("An error occurred parsing integer value.");
+            }
+            
+            return Integer(value);
+        }
 
-    std::string stringify() {
-        return std::to_string(value);
-    }
+        static Integer valueOf(int value)
+        {
+            return Integer(value);
+        }
 
-    int getInt() {
-        return value;
-    }
-};
+        std::string stringify()
+        {
+            return std::to_string(value_);
+        }
 
+        int getInt() {
+            return value_;
+        }
+
+        void operator= (const int& i)
+        {
+            value_ = i;
+        }
+        
+        friend std::ostream& operator<< (std::ostream& output, const Integer& I)
+        {
+            output << I.value_;
+            return output;            
+        }
+
+        Integer& operator++ () { ++value_; }
+        Integer operator++ (int)
+        {
+            Integer I(value_);
+            ++value_;
+
+            return I;
+        }
+
+        Integer& operator-- () { --value_; }
+        Integer operator-- (int)
+        { 
+            Integer I(value_);
+            --value_;
+            
+            return I;
+        }
+
+        Integer& operator+= (const Integer& rhs) { value_ += rhs.value_; }
+        Integer& operator-= (const Integer& rhs) { value_ -= rhs.value_; }
+        
+        inline friend bool operator< (const Integer& lhs, const Integer& rhs) { return (lhs.value_ < rhs.value_); }
+        inline friend bool operator> (const Integer& lhs, const Integer& rhs) { return rhs < lhs; }
+        inline friend bool operator<= (const Integer& lhs, const Integer& rhs) { return !(lhs > rhs); }
+        inline friend bool operator>= (const Integer& lhs, const Integer& rhs) { return !(lhs < rhs); }
+
+        inline friend bool operator== (const Integer& lhs, const Integer& rhs){ return (lhs.value_ == rhs.value_); }
+        inline friend bool operator!= (const Integer& lhs, const Integer& rhs){ return !(lhs == rhs); }
+    };
+
+    class IntegerExcpetion : public std::exception
+    {
+        std::string msg_;
+
+    public:
+        IntegerExcpetion(const std::string& msg) : msg_(msg) {}
+
+        virtual char const* what() const throw()
+        {
+            return msg_.c_str();
+        }
+    };
 }
-#endif
+
+#endif // REFLECTABLE_INTEGER_H
