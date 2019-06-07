@@ -1,3 +1,6 @@
+#ifndef POLITOCEAN_UTILS_H
+#define POLITOCEAN_UTILS_H
+
 #include <climits>
 #include "json.hpp"
 #include "../libs/MqttClient/MqttClient.h"
@@ -30,3 +33,5 @@ static void publishComponents(const std::string& clientID, const std::string& co
  *          'Status'     : 0-1-2 (have a look to Status enum in PolitoceanConstants.h)
  * }
  */
+
+#endif
