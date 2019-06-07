@@ -29,8 +29,8 @@ namespace Politocean
             namespace Microseconds
             {
                 static const int DFLT_STEPPER           = 10000;
-                static const int STEPPER_MIN            = 500;
-                static const int STEPPER_MAX            = 30000;
+                static const int WRIST_MIN              = 500;
+                static const int WRIST_MAX              = 1000;
             }
         }
 
