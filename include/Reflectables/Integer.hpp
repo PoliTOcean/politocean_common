@@ -6,7 +6,7 @@
 
 #include "../Reflectable.hpp"
 
-namespace MQTT
+namespace Reflectable
 {
     class Integer : public Reflectable
     {
@@ -24,7 +24,7 @@ namespace MQTT
             }
             catch (const std::exception& e)
             {
-                throw IntegerExcpetion("An error occurred parsing integer value.");
+                throw ParsingException("An error occurred parsing integer value.");
             }
             
             return Integer(value);
@@ -83,19 +83,6 @@ namespace MQTT
 
         inline friend bool operator== (const Integer& lhs, const Integer& rhs){ return (lhs.value_ == rhs.value_); }
         inline friend bool operator!= (const Integer& lhs, const Integer& rhs){ return !(lhs == rhs); }
-    };
-
-    class IntegerExcpetion : public std::exception
-    {
-        std::string msg_;
-
-    public:
-        IntegerExcpetion(const std::string& msg) : msg_(msg) {}
-
-        virtual char const* what() const throw()
-        {
-            return msg_.c_str();
-        }
     };
 }
 

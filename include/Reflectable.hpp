@@ -5,7 +5,7 @@
 #include <string>
 #include <exception>
 
-namespace MQTT
+namespace Reflectable
 {
     class NotImplementedException : public std::exception
     {
@@ -13,6 +13,19 @@ namespace MQTT
 
     public:
         NotImplementedException(const std::string& msg) : msg_(msg) {}
+
+        virtual char const* what() const throw()
+        {
+            return msg_.c_str();
+        }
+    };
+
+    class ParsingException : public std::exception
+    {
+        std::string msg_;
+
+    public:
+        ParsingException(const std::string& msg) : msg_(msg) {}
 
         virtual char const* what() const throw()
         {
