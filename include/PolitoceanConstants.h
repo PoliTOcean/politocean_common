@@ -15,8 +15,7 @@ namespace Politocean
         {
             namespace Milliseconds
             {
-                static const int DFLT_STEPPER           = 10;
-                static const int DFLT_HEAD              = 20;
+                static const int DFLT_HEAD              = 10;
                 static const int MIN_WRIST              = 100;
                 static const int MAX_WRIST              = 1;
                 static const int AXES_DELAY             = 50;
@@ -26,6 +25,12 @@ namespace Politocean
             namespace Seconds
             {
                 static const int SENSORS    = 1;
+            }
+            namespace Microseconds
+            {
+                static const int DFLT_STEPPER           = 10000;
+                static const int STEPPER_MIN            = 500;
+                static const int STEPPER_MAX            = 30000;
             }
         }
 
