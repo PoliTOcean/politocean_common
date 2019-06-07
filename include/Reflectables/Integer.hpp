@@ -8,7 +8,7 @@
 
 namespace Reflectable
 {
-    class Integer : public Reflectable
+    class Integer : public IReflectable
     {
         int value_;
 
@@ -22,7 +22,7 @@ namespace Reflectable
             {
                 value = std::stoi(stringified);
             }
-            catch (const std::exception& e)
+            catch (...)
             {
                 throw ParsingException("An error occurred parsing integer value.");
             }
