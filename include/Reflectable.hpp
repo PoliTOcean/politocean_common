@@ -20,12 +20,12 @@ namespace Reflectable
         }
     };
 
-    class ParsingException : public std::exception
+    class ReflectableParsingException : public std::exception
     {
         std::string msg_;
 
     public:
-        ParsingException(const std::string& msg) : msg_(msg) {}
+        ReflectableParsingException(const std::string& msg) : msg_(msg) {}
 
         virtual char const* what() const throw()
         {

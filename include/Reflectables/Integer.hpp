@@ -24,7 +24,7 @@ namespace Reflectable
             }
             catch (...)
             {
-                throw ParsingException("An error occurred parsing integer value.");
+                throw ReflectableParsingException("An error occurred parsing Integer value.");
             }
             
             return Integer(value);
