@@ -96,6 +96,7 @@ namespace Politocean
 
         namespace Hmi
         {
+            const string MOUSE_ID           { "mouse" };
             const string CMD_ID             { "cmd" };
             const string AUTODRIVE_ID       { "autodrive" };
             const string GUI_ID             { "gui" };
