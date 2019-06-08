@@ -5,6 +5,7 @@
 using namespace Politocean;
 using namespace std;
 
+#define LIB_TAG "MqttClient: "
 
 /**
  * Factory
@@ -78,8 +79,8 @@ void MqttClient::wait()
 void MqttClient::subscribeTo(const std::string& topic, callback_t pf)
 {
 	string topicf = topic;
-	if(topicf.at(topicf.size()-1) != '#')
-		topicf = formatTopic(topic);
+	
+	topicf = formatTopic(topic);
 
 	topic_to_callback.insert(std::pair<std::string, callback_t>(topicf, pf));
 
@@ -106,7 +107,12 @@ void MqttClient::publish(const string& topic, const string& message)
 
 string MqttClient::formatTopic(const string& topic)
 {
-	return topic.substr(0, topic.find_last_not_of(" /")+1)+"/";
+	std::string topicf = topic;
+	if (topic.substr(topic.size()-2, 2) == "/#")
+		topicf = topicf.substr(0, topic.size()-2).substr(0, topic.find_last_not_of(" /")+1)+"/#";
+	else
+		topicf = topicf.substr(0, topic.find_last_not_of(" /")+1)+"/";
+	return topicf;
 }
 
 
@@ -206,7 +212,7 @@ void MqttClient::disconnect()
 void MqttClient::on_subscribe(int, int, const int *)
 {
 	stringstream ss;
-    ss << TAG << "Subscription succeeded.";
+    ss << LIB_TAG << "Subscription succeeded.";
 	LOGGER.log(logger::INFO, ss.str());
 }
 
@@ -214,7 +220,7 @@ void MqttClient::on_subscribe(int, int, const int *)
 void MqttClient::on_disconnect(int rc)
 {
 	stringstream ss;
-    ss << TAG << "disconnection (" << rc << ").";
+    ss << LIB_TAG << "disconnection (" << rc << ").";
 	if (connected)
 		LOGGER.log(logger::ERROR, ss.str()+" Reconnecting...");
 	else
@@ -223,18 +229,15 @@ void MqttClient::on_disconnect(int rc)
 
 void MqttClient::on_connect(int rc)
 {
-	stringstream ss;
     if ( rc == 0 ) {
-        ss << TAG << "connected with server";
-		LOGGER.log(logger::CONFIG, ss.str());
+		LOGGER.log(logger::CONFIG, string(LIB_TAG) + "connected with server");
 		connected = true;
 		reconnecting = false;
 		for(std::map<std::string, callback_t>::iterator it = topic_to_callback.begin(); it != topic_to_callback.end(); ++it) {
     		mosquittopp::subscribe(NULL, it->first.c_str());
 		}
     } else {
-		ss << TAG << "impossible to connect with server(" << rc << ")";
-		LOGGER.log(logger::ERROR, ss.str());
+		LOGGER.log(logger::WARNING, string(LIB_TAG) + "impossible to connect with server(" + to_string(rc) + ")");
     }
 }
 
@@ -242,6 +245,6 @@ void MqttClient::on_connect(int rc)
 void MqttClient::on_publish(int mid)
 {
 	stringstream ss;
-	ss << TAG << "Message (" << mid << ") succeed to be published ";
+	ss << LIB_TAG << "Message (" << mid << ") succeed to be published ";
 	LOGGER.log(logger::DEBUG, ss.str());
 }
