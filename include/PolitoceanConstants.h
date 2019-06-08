@@ -142,6 +142,7 @@ namespace Politocean
                 const int HEAD_UP           = 15;
                 const int HEAD_DOWN         = 17;
                 const int PITCH_CONTROL     = 6;
+                const int CLICK_MOUSE       = 30;
             }
             
             namespace Axes
@@ -153,6 +154,8 @@ namespace Politocean
                 static const int RZ         = 5;
                 static const int HAND       = 3;
                 static const int PITCH      = 2;
+                static const int X_MOUSE    = 9;
+                static const int Y_MOUSE    = 10;
             }
 
             namespace Actions
