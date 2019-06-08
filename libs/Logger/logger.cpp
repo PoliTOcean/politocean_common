@@ -9,6 +9,7 @@
 #include "PolitoceanConstants.h"
 #include "PolitoceanExceptions.hpp"
 #include <experimental/filesystem>
+#include <cstdlib>
 
 #define UNDEFINED "undefined"
 using namespace Politocean;
@@ -83,7 +84,7 @@ void logger::log(const levels level, const std::string& msg){
 
     folders << tag << "/" << (1900 + l_time->tm_year) << "-" << (l_time->tm_mon+1) << "-" << l_time->tm_mday << "/";
 
-    fullPath << Constants::Logger::LOGS_PATH << folders.str();
+    fullPath << getenv("HOME") << "/" << Constants::Logger::LOGS_PATH << folders.str();
 
     if(!(filesystem::exists(fullPath.str()))){
         if(!(filesystem::create_directories(fullPath.str()))){

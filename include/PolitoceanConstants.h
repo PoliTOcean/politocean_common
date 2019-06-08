@@ -15,8 +15,6 @@ namespace Politocean
         {
             namespace Milliseconds
             {
-                static const int DFLT_STEPPER           = 10;
-                static const int DFLT_HEAD              = 20;
                 static const int MIN_WRIST              = 100;
                 static const int MAX_WRIST              = 1;
                 static const int AXES_DELAY             = 50;
@@ -26,6 +24,13 @@ namespace Politocean
             namespace Seconds
             {
                 static const int SENSORS    = 1;
+            }
+            namespace Microseconds
+            {
+                static const int DFLT_STEPPER           = 10000;
+                static const int WRIST_MIN              = 500;
+                static const int WRIST_MAX              = 1000;
+                static const int DFLT_HEAD              = 10000;
             }
         }
 
@@ -91,6 +96,7 @@ namespace Politocean
 
         namespace Hmi
         {
+            const string MOUSE_ID           { "mouse" };
             const string CMD_ID             { "cmd" };
             const string AUTODRIVE_ID       { "autodrive" };
             const string GUI_ID             { "gui" };
@@ -137,6 +143,7 @@ namespace Politocean
                 const int HEAD_UP           = 15;
                 const int HEAD_DOWN         = 17;
                 const int PITCH_CONTROL     = 6;
+                const int CLICK_MOUSE       = 30;
             }
             
             namespace Axes
@@ -148,6 +155,8 @@ namespace Politocean
                 static const int RZ         = 5;
                 static const int HAND       = 3;
                 static const int PITCH      = 2;
+                static const int X_MOUSE    = 9;
+                static const int Y_MOUSE    = 10;
             }
 
             namespace Actions
