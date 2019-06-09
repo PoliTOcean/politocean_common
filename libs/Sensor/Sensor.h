@@ -9,6 +9,7 @@
 
 #include <Reflectable.hpp>
 #include "include/sensor_t.h"
+#include <json.hpp>
 
 namespace Politocean {
 
@@ -19,11 +20,19 @@ class Sensor : public Reflectable::IReflectable {
 
 public:
     static Sensor parse(const std::string& stringified) {
+        auto j_map = nlohmann::json::parse(stringified);
         
+        sensor_t type = j_map["type"];
+        T value = j_map["value"];
+
+        return Sensor(type, value);
     }
 
     std::string stringify() override {
-
+        nlohmann::json j_map;
+        j_map["type"] = type_;
+        j_map["value"] = value_;
+        return j_map.dump();
     }
 
     Sensor(sensor_t type, T value) : type_(type), value_(value) {}
