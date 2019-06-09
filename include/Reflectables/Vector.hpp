@@ -10,7 +10,6 @@
 #include <iostream>
 
 namespace Politocean {
-
 namespace Types {
 
 using namespace Reflectable;
@@ -19,19 +18,24 @@ template< class T, typename std::enable_if<std::is_base_of<Reflectable::IReflect
 class Vector : public std::vector<T>, public IReflectable {
 public:
     Vector() : std::vector<T>() {}
+    Vector(int N, int values) : std::vector<T>(N, values) {}
     Vector(std::vector<T> v) : std::vector<T>(v) {}
 
     template<typename R = T, typename std::enable_if<std::is_integral<R>::value, R>::type* = nullptr>
     static Vector<R> parse(const std::string& stringified) {
-        std::vector<R> c_map = nlohmann::json::parse(stringified);
-        return Vector<R>(c_map);
+        auto c_map = nlohmann::json::parse(stringified);
+
+	    Vector<R> vec = c_map.get<Vector<R>>();
+        return Vector<R>(vec);
     }
 
     template<typename R = T, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value, R>::type* = nullptr>
     static Vector<R> parse(const std::string& stringified) {
-        std::vector<std::string> c_map = nlohmann::json::parse(stringified);
+        auto c_map = nlohmann::json::parse(stringified);
+	    std::vector<std::string> vec_s = c_map.get<std::vector<std::string>>();
+
         Vector<R> vec;
-        for (std::string el : c_map) {
+        for (std::string el : vec_s) {
             vec.emplace_back( R::parse(el) );
         }
         return vec;
@@ -64,6 +68,7 @@ public:
         return j_map.dump();
     }
 };
+
 }
 }
 
