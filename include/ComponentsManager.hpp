@@ -65,7 +65,9 @@ namespace Politocean
 
         static void SetComponentState(component_t component, Component::Status state)
         {
-            MqttClient::getInstance(id_, Hmi::IP_ADDRESS).publish(Topics::COMPONENTS, find(component));
+            Component comp = find(component);
+            comp.setState(state);
+            MqttClient::getInstance(id_, Hmi::IP_ADDRESS).publish(Topics::COMPONENTS, comp);
         }
 
         static Component::Status GetComponentState(component_t component)
