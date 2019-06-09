@@ -90,9 +90,9 @@ void MqttClient::subscribeTo(const std::string& topic, callback_t pf)
 }
 
 
-void MqttClient::subscribeTo(const std::string& topic, void (*pf)(const std::string& payload))
+void MqttClient::subscribeTo(const std::string& topic, std::function<void(const std::string& payload)> pf)
 {
-	callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) { (*pf)(payload); };
+	callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) { pf(payload); };
 
 	subscribeTo(topic, wrapper_function);
 }
