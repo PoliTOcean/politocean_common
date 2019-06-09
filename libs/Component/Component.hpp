@@ -69,7 +69,7 @@ namespace Politocean
             }
             catch(const std::exception& e)
             {
-                throw ComponentException("An error occurred parsing object.");
+                throw ReflectableParsingException("An error occurred parsing object.");
             }
 
             return Component(name, state);
