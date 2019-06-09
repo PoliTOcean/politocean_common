@@ -9,6 +9,8 @@
 
 #include "Reflectable.hpp"
 
+#include "json.hpp"
+
 using namespace Reflectable;
 
 namespace Politocean
@@ -39,9 +41,39 @@ namespace Politocean
 
         void setState(Status status);
         Status getState();
+        std::string getStateStr() const;
 
         component_t getName();
         std::string getNameStr() const;
+
+        std::string stringify()
+        {
+            nlohmann::json j_map;
+            j_map["name"]   = name_;
+            j_map["status"] = state_;
+
+            return j_map.dump();
+        }
+
+        static Component parse(const std::string& stringified)
+        {
+            component_t name;
+            Status state;
+
+            try
+            {
+                auto j_map = nlohmann::json::parse(stringified);
+
+                name    = j_map["name"];
+                state   = j_map["status"];
+            }
+            catch(const std::exception& e)
+            {
+                throw ComponentException("An error occurred parsing object.");
+            }
+
+            return Component(name, state);
+        }
 
         friend std::ostream& operator<<(std::ostream& os, const Component& obj)
         {
@@ -53,6 +85,10 @@ namespace Politocean
             os << obj.name_ << " is " << state << std::endl;
             return os;
         }
+
+        friend inline bool operator ==(const Component& lhs, const Component& rhs){ return lhs.name_ == rhs.name_; }
+        friend inline bool operator!=(const Component& lhs, const Component& rhs){ return !(lhs == rhs); }
+
 
     private:
         component_t name_;

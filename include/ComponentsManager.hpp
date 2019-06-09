@@ -26,36 +26,37 @@ namespace Politocean
 
     class ComponentsManager
     {
+        static std::string id_;
         static std::vector<Component> components_;
 
         static Component& find(component_t component)
         {
-            bool found = false;
-                for (auto it = components_.begin(); it != components_.end() && !found; it++)
-                    if (it->getName == component)
-                    {
-                        found = true;
-                        return *it;
-                    }
+            std::vector<Component>::iterator it;
 
-                if (!found)
-                    throw ComponentsManagerException("Out of bounds exception.");
+            for (it = components_.begin(); it != components_.end(); it++)
+                if (it->getName() == component)
+                    return *it;
+
+            if (it == components_.end())
+                throw ComponentsManagerException("Out of bounds exception.");
         }
 
     public:
-        static void listen(Component& component)
+        static void listen(Component component)
         {
             find(component.getName()).setState(component.getState());
         }
 
-        static void Init()
+        static void Init(const std::string& id)
         {
-            MqttClient::getInstance(Constants::Hmi::COMPONENTS_ID, Constants::Hmi::IP_ADDRESS).subscribeTo(Topics::COMPONENTS, &listen);
+            id_ = id;
+
+            MqttClient::getInstance(id, Constants::Hmi::IP_ADDRESS).subscribeTo(Topics::COMPONENTS, &listen);
         }
 
         static void SetComponentState(component_t component, Component::Status state)
         {
-            MqttClient::getInstance(Hmi::COMPONENTS_ID, Hmi::IP_ADDRESS).publish(Topics::COMPONENTS, c);
+            MqttClient::getInstance(id_, Hmi::IP_ADDRESS).publish(Topics::COMPONENTS, find(component));
         }
 
         static Component::Status GetComponentState(component_t component)
@@ -63,4 +64,7 @@ namespace Politocean
             return find(component).getState();
         }
     };
+
+    std::string ComponentsManager::id_;
+    std::vector<Component> ComponentsManager::components_;
 }
