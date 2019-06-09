@@ -7,6 +7,10 @@
 
 #include "include/component_t.hpp"
 
+#include "Reflectable.hpp"
+
+using namespace Reflectable;
+
 namespace Politocean
 {
     class ComponentException : public std::exception
@@ -22,7 +26,7 @@ namespace Politocean
         }
     };
 
-    class Component
+    class Component : public IReflectable
     {
     public:
         enum class Status
@@ -30,28 +34,29 @@ namespace Politocean
             ENABLED, DISABLED, ERROR
         };
 
-        Component(component_t name, Status status) : name_(name), status_(status) {}
+        Component(component_t name, Status state) : name_(name), state_(state) {}
         Component(component_t name) : Component(name, Status::DISABLED) {}
 
-        void setStatus(Status status);
-        Status getStatus();
+        void setState(Status status);
+        Status getState();
 
         component_t getName();
+        std::string getNameStr() const;
 
         friend std::ostream& operator<<(std::ostream& os, const Component& obj)
         {
-            if (obj.status_ == ERROR)
-                throw ComponentException("An error occurred processing component " + obj.name_ + ".");
+            if (obj.state_ == Component::Status::ERROR)
+                throw ComponentException("An error occurred processing component " + obj.getNameStr() + ".");
 
-            std::string status = (obj.status_ == ENABLED) ? "enabled" : "disabled";
+            std::string state = (obj.state_ == Component::Status::ENABLED) ? "enabled" : "disabled";
             
-            os << obj.name_ << " is " << status << std::endl;
+            os << obj.name_ << " is " << state << std::endl;
             return os;
         }
 
     private:
         component_t name_;
-        Status status_;
+        Status state_;
     };
 }
 

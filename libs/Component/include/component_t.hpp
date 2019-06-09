@@ -51,6 +51,36 @@ namespace Politocean
 
         return os;
     }
+
+    inline std::ostream& operator<<(std::ostream& os, const component_t& obj)
+    {
+        switch (obj)
+        {
+            case component_t::POWER:
+                os << "POWER";
+                break;
+
+            case component_t::SHOULDER:
+                os << "SHOULDER";
+                break;
+
+            case component_t::WRIST:
+                os << "WRIST";
+                break;
+
+            case component_t::HEAD:
+                os << "HEAD";
+                break;
+
+            case component_t::JOYSTICK:
+                os << "JOYSTICK";
+                break;
+
+            default: break;
+        }
+
+        return os;
+    }
 }
 
 #endif // COMPONENT_T_HPP

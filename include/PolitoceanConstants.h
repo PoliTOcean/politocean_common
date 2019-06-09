@@ -102,6 +102,7 @@ namespace Politocean
             const string GUI_ID             { "gui" };
             const string JOYSTICK_ID        { "joystick" };
             const string SENSORS_ID         { "sensors" };
+            const string COMPONENTS_ID      { "components"} ;
 
             const string IP_ADDRESS         { "10.0.0.1" };
             const string CAMERA_IP_ADDRESS  { "10.0.0.5" };
