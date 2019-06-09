@@ -8,7 +8,7 @@
 #include <sstream>
 #include <iostream>
 
-namespace Reflectable {
+using namespace Reflectable;
 
 template <typename T, typename std::enable_if<std::is_base_of<Reflectable, T>::value>::type* = nullptr>
 class Vector : public std::vector<T>, public Reflectable {
@@ -38,7 +38,5 @@ public:
         return str;
     }
 };
-
-}
 
 #endif
