@@ -377,6 +377,19 @@ public:
     // Sends a message @payload to the topic @topic.
     void publish(const std::string& topic, const std::string& payload);
 
+    template <class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
+    void publish(const std::string& topic, const R& object) {
+        publish(topic, object.stringify());
+    }
+
+    template <  class R,
+                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr,
+                template<typename K> class CR,
+                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, CR<R>>::value>::type* = nullptr>
+    void publish(const std::string& topic, const CR<R>& object) {
+        publish(topic, object.stringify());
+    }
+
     // Returns true if it's connected.
     bool is_connected();
 
