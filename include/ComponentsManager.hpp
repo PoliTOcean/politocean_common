@@ -44,7 +44,14 @@ namespace Politocean
     public:
         static void listen(Component component)
         {
-            find(component.getName()).setState(component.getState());
+            try 
+            {
+                find(component.getName()).setState(component.getState());
+            }
+            catch (ComponentsManagerException& e)
+            {
+                components_.emplace_back(component);
+            }
         }
 
         static void Init(const std::string& id)
