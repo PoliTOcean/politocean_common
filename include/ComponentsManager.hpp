@@ -7,6 +7,9 @@
 
 #include "PolitoceanConstants.h"
 
+#include "../libs/Logger/logger.h"
+#include <sstream>
+
 using namespace Politocean::Constants;
 
 namespace Politocean
@@ -44,6 +47,9 @@ namespace Politocean
     public:
         static void listen(Component component)
         {
+            stringstream ss;
+            ss << component;
+            logger::getInstance().log(logger::CONFIG, ss.str());
             find(component.getName()).setState(component.getState());
         }
 
@@ -51,12 +57,17 @@ namespace Politocean
         {
             id_ = id;
 
+            for (auto componentType : component_t())
+                components_.emplace_back(Component(componentType));
+
             MqttClient::getInstance(id, Constants::Hmi::IP_ADDRESS).subscribeTo(Topics::COMPONENTS, &listen);
         }
 
         static void SetComponentState(component_t component, Component::Status state)
         {
-            MqttClient::getInstance(id_, Hmi::IP_ADDRESS).publish(Topics::COMPONENTS, find(component));
+            Component comp = find(component);
+            comp.setState(state);
+            MqttClient::getInstance(id_, Hmi::IP_ADDRESS).publish(Topics::COMPONENTS, comp);
         }
 
         static Component::Status GetComponentState(component_t component)

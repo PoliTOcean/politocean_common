@@ -119,14 +119,26 @@ public:
      */
     template < class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
     void subscribeTo(const std::string& topic, std::function<void(R object, const std::string& topic)> pf) {
-        callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) { pf(R::parse(payload), topic); };
+        callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) {
+            try {
+                pf(R::parse(payload), topic);
+            } catch(Reflectable::ReflectableParsingException e) {
+
+            } catch(...) {}
+        };
 
         subscribeTo(topic, wrapper_function);
     }
 
     template < class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
     void subscribeTo(const std::string& topic, std::function<void(R object)> pf) {
-        callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) { pf(R::parse(payload)); };
+        callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) {
+            try {
+                pf(R::parse(payload));
+            } catch(Reflectable::ReflectableParsingException e) {
+
+            } catch(...) {}
+        };
 
         subscribeTo(topic, wrapper_function);
     }
@@ -143,6 +155,13 @@ public:
         subscribeTo(topic, (std::function<void(R object, const std::string& topic)>)pf);
     }
 
+    template <  class T,
+                class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
+    void subscribeTo(const std::string& topic, void (T::*pf)(R object), T* obj)
+    {
+        subscribeTo(topic, (std::function<void(R object)>)std::bind(pf, obj, std::placeholders::_1));
+    }
+    
     template <  class T,
                 class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
     void subscribeTo(const std::string& topic, void (T::*pf)(R object, const std::string& topic), T* obj)
