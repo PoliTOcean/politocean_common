@@ -52,7 +52,6 @@ private:
 
 protected:
     bool connected, reconnecting;
-    logger& LOGGER;
     
     const int keepalive = 10;  // 10 s
     const int delay = 500;     // milliseconds
@@ -125,7 +124,7 @@ public:
             } catch(Reflectable::ReflectableParsingException e) {
                 logger::getInstance().log(logger::ERROR, e);
             } catch(...) {
-                logger::getInstance().log(logger::ERROR, "Unknown error", e);
+                logger::getInstance().log(logger::ERROR, "Unknown error while parsing MQTT Object");
             }
         };
 
@@ -140,7 +139,7 @@ public:
             } catch(Reflectable::ReflectableParsingException e) {
                 logger::getInstance().log(logger::ERROR, e);
             } catch(...) {
-                logger::getInstance().log(logger::ERROR, "Unknown error", e);
+                logger::getInstance().log(logger::ERROR, "Unknown error while parsing MQTT Object");
             }
         };
 

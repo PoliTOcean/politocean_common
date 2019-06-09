@@ -31,7 +31,7 @@ MqttClient &MqttClient::getInstance(const std::string& clientID, const std::stri
 
 MqttClient::MqttClient(const std::string& clientID, const std::string& address, const int& port)
     :   mosqpp::mosquittopp(clientID.c_str()), clientID_(clientID), address_(address), port_(port),
-		reconnectingThread(nullptr), connected(false), reconnecting(false), LOGGER(logger::getInstance(clientID))
+		reconnectingThread(nullptr), connected(false), reconnecting(false)
 {
     mosqpp::lib_init();
 	connect();
@@ -53,7 +53,7 @@ void MqttClient::connect()
 {
 	if(is_connected()) return;
 
-	LOGGER.log(logger::CONFIG, "Trying to connect to " + this->address_ + ":" + to_string(this->port_) + " as " + clientID_);
+	logger::getInstance().log(logger::CONFIG, "Trying to connect to " + this->address_ + ":" + to_string(this->port_) + " as " + clientID_);
 
 	reconnecting = true;
 	reconnectingThread = new std::thread([&]() {
@@ -86,7 +86,7 @@ void MqttClient::subscribeTo(const std::string& topic, callback_t pf)
 
     mosquittopp::subscribe(NULL, topicf.c_str());
 
-	LOGGER.log(logger::CONFIG, string("Subscribing ")+clientID_+string(" to topic ")+topicf);
+	logger::getInstance().log(logger::CONFIG, string("Subscribing ")+clientID_+string(" to topic ")+topicf);
 }
 
 
@@ -100,7 +100,7 @@ void MqttClient::subscribeTo(const std::string& topic, std::function<void(const 
 
 void MqttClient::publish(const string& topic, const string& message)
 {
-	LOGGER.log(logger::DEBUG, "Trying to publish to "+topic+ " from "+address_+"-"+clientID_);
+	logger::getInstance().log(logger::DEBUG, "Trying to publish to "+topic+ " from "+address_+"-"+clientID_);
     mosqpp::mosquittopp::publish(NULL, formatTopic(topic).c_str(), message.length(), message.c_str(), this->qos, false);
 }
 
@@ -122,7 +122,7 @@ void MqttClient::unsubscribeFrom(const std::string& topic)
 
     mosquittopp::unsubscribe(NULL, topic.c_str());
 
-	LOGGER.log(logger::INFO, string("Unsubscribed ")+clientID_+string(" from topic ")+topic);
+	logger::getInstance().log(logger::INFO, string("Unsubscribed ")+clientID_+string(" from topic ")+topic);
 }
 
 
@@ -191,7 +191,7 @@ void MqttClient::on_message(const struct mosquitto_message *msg)
 
 	if(it == topic_to_callback.end())
 	{
-		LOGGER.log(logger::ERROR, string("Callback's topic ")+msg->topic+string(" not found in subscribed topics of ")+clientID_);
+		logger::getInstance().log(logger::ERROR, string("Callback's topic ")+msg->topic+string(" not found in subscribed topics of ")+clientID_);
 		return;
 	}
 
@@ -213,7 +213,7 @@ void MqttClient::on_subscribe(int, int, const int *)
 {
 	stringstream ss;
     ss << LIB_TAG << "Subscription succeeded.";
-	LOGGER.log(logger::INFO, ss.str());
+	logger::getInstance().log(logger::INFO, ss.str());
 }
 
 
@@ -222,22 +222,22 @@ void MqttClient::on_disconnect(int rc)
 	stringstream ss;
     ss << LIB_TAG << "disconnection (" << rc << ").";
 	if (connected)
-		LOGGER.log(logger::WARNING, ss.str()+" Reconnecting...");
+		logger::getInstance().log(logger::WARNING, ss.str()+" Reconnecting...");
 	else
-		LOGGER.log(logger::INFO, ss.str());	
+		logger::getInstance().log(logger::INFO, ss.str());	
 }
 
 void MqttClient::on_connect(int rc)
 {
     if ( rc == 0 ) {
-		LOGGER.log(logger::CONFIG, string(LIB_TAG) + "connected with server");
+		logger::getInstance().log(logger::CONFIG, string(LIB_TAG) + "connected with server");
 		connected = true;
 		reconnecting = false;
 		for(std::map<std::string, callback_t>::iterator it = topic_to_callback.begin(); it != topic_to_callback.end(); ++it) {
     		mosquittopp::subscribe(NULL, it->first.c_str());
 		}
     } else {
-		LOGGER.log(logger::WARNING, string(LIB_TAG) + "impossible to connect with server(" + to_string(rc) + ")");
+		logger::getInstance().log(logger::WARNING, string(LIB_TAG) + "impossible to connect with server(" + to_string(rc) + ")");
     }
 }
 
@@ -246,5 +246,5 @@ void MqttClient::on_publish(int mid)
 {
 	stringstream ss;
 	ss << LIB_TAG << "Message (" << mid << ") succeed to be published ";
-	LOGGER.log(logger::DEBUG, ss.str());
+	logger::getInstance().log(logger::DEBUG, ss.str());
 }
