@@ -7,16 +7,25 @@
 
 #include <iostream>
 
+#include <Reflectable.hpp>
 #include "include/sensor_t.h"
 
 namespace Politocean {
 
 template <class T>
-class Sensor {
+class Sensor : public Reflectable::IReflectable {
     sensor_t type_;
     T value_;
 
 public:
+    static Sensor parse(const std::string& stringified) {
+        
+    }
+
+    std::string stringify() override {
+
+    }
+
     Sensor(sensor_t type, T value) : type_(type), value_(value) {}
 
     void setValue(T value) { value_ = value; }

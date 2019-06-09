@@ -6,6 +6,9 @@
 
 #include "../Reflectable.hpp"
 
+namespace Politocean {
+namespace Types {
+
 using namespace Reflectable;
 
 class Integer : public IReflectable
@@ -15,7 +18,7 @@ class Integer : public IReflectable
 public:
     Integer(int value) : value_(value) {}
 
-    static Integer parse(std::string stringified)
+    static Integer parse(const std::string& stringified) override
     {
         int value;
         try
@@ -35,7 +38,7 @@ public:
         return Integer(value);
     }
 
-    std::string stringify()
+    std::string stringify() override
     {
         return std::to_string(value_);
     }
@@ -84,5 +87,8 @@ public:
     inline friend bool operator== (const Integer& lhs, const Integer& rhs){ return (lhs.value_ == rhs.value_); }
     inline friend bool operator!= (const Integer& lhs, const Integer& rhs){ return !(lhs == rhs); }
 };
+
+}
+}
 
 #endif // REFLECTABLE_INTEGER_H
