@@ -7,6 +7,9 @@
 
 #include "PolitoceanConstants.h"
 
+#include "../libs/Logger/logger.h"
+#include <sstream>
+
 using namespace Politocean::Constants;
 
 namespace Politocean
@@ -44,6 +47,9 @@ namespace Politocean
     public:
         static void listen(Component component)
         {
+            stringstream ss;
+            ss << component;
+            logger::getInstance().log(logger::CONFIG, ss.str());
             find(component.getName()).setState(component.getState());
         }
 
