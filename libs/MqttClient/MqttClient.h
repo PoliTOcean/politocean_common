@@ -145,6 +145,13 @@ public:
 
     template <  class T,
                 class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
+    void subscribeTo(const std::string& topic, void (T::*pf)(R object), T* obj)
+    {
+        subscribeTo(topic, (std::function<void(R object)>)std::bind(pf, obj, std::placeholders::_1));
+    }
+    
+    template <  class T,
+                class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
     void subscribeTo(const std::string& topic, void (T::*pf)(R object, const std::string& topic), T* obj)
     {
         subscribeTo(topic, (std::function<void(R object, const std::string& topic)>)std::bind(pf, obj, std::placeholders::_1, std::placeholders::_2));
