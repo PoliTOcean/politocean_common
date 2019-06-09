@@ -44,19 +44,15 @@ namespace Politocean
     public:
         static void listen(Component component)
         {
-            try 
-            {
-                find(component.getName()).setState(component.getState());
-            }
-            catch (ComponentsManagerException& e)
-            {
-                components_.emplace_back(component);
-            }
+            find(component.getName()).setState(component.getState());
         }
 
         static void Init(const std::string& id)
         {
             id_ = id;
+
+            for (auto componentType : component_t())
+                components_.emplace_back(Component(componentType));
 
             MqttClient::getInstance(id, Constants::Hmi::IP_ADDRESS).subscribeTo(Topics::COMPONENTS, &listen);
         }
