@@ -6,9 +6,9 @@
 
 #include "../Reflectable.hpp"
 
-namespace MQTT
+namespace Reflectable
 {
-    class Integer : public Reflectable
+    class Integer : public IReflectable
     {
         int value_;
 
@@ -22,9 +22,9 @@ namespace MQTT
             {
                 value = std::stoi(stringified);
             }
-            catch (const std::exception& e)
+            catch (...)
             {
-                throw IntegerExcpetion("An error occurred parsing integer value.");
+                throw ReflectableParsingException("An error occurred parsing Integer value.");
             }
             
             return Integer(value);
@@ -83,19 +83,6 @@ namespace MQTT
 
         inline friend bool operator== (const Integer& lhs, const Integer& rhs){ return (lhs.value_ == rhs.value_); }
         inline friend bool operator!= (const Integer& lhs, const Integer& rhs){ return !(lhs == rhs); }
-    };
-
-    class IntegerExcpetion : public std::exception
-    {
-        std::string msg_;
-
-    public:
-        IntegerExcpetion(const std::string& msg) : msg_(msg) {}
-
-        virtual char const* what() const throw()
-        {
-            return msg_.c_str();
-        }
     };
 }
 

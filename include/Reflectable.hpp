@@ -5,7 +5,7 @@
 #include <string>
 #include <exception>
 
-namespace MQTT
+namespace Reflectable
 {
     class NotImplementedException : public std::exception
     {
@@ -19,11 +19,24 @@ namespace MQTT
             return msg_.c_str();
         }
     };
+
+    class ReflectableParsingException : public std::exception
+    {
+        std::string msg_;
+
+    public:
+        ReflectableParsingException(const std::string& msg) : msg_(msg) {}
+
+        virtual char const* what() const throw()
+        {
+            return msg_.c_str();
+        }
+    };
     
-    class Reflectable
+    class IReflectable
     {
     public:
-        template <typename T, typename std::enable_if<std::is_base_of<Reflectable, T>::value>::type* = nullptr>
+        template <typename T, typename std::enable_if<std::is_base_of<IReflectable, T>::value>::type* = nullptr>
         static T parse(std::string stringified)
         {
             throw NotImplementedException("Method PARSE has not been implemented.");
