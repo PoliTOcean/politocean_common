@@ -49,7 +49,7 @@ namespace Politocean
         {
             stringstream ss;
             ss << component;
-            logger::getInstance().log(logger::CONFIG, ss.str());
+            logger::getInstance().log(logger::DEBUG, ss.str());
             find(component.getName()).setState(component.getState());
         }
 
