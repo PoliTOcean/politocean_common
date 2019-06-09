@@ -222,7 +222,7 @@ void MqttClient::on_disconnect(int rc)
 	stringstream ss;
     ss << LIB_TAG << "disconnection (" << rc << ").";
 	if (connected)
-		LOGGER.log(logger::ERROR, ss.str()+" Reconnecting...");
+		LOGGER.log(logger::WARNING, ss.str()+" Reconnecting...");
 	else
 		LOGGER.log(logger::INFO, ss.str());	
 }

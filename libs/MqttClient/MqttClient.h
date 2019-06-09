@@ -123,8 +123,10 @@ public:
             try {
                 pf(R::parse(payload), topic);
             } catch(Reflectable::ReflectableParsingException e) {
-
-            } catch(...) {}
+                logger::getInstance().log(logger::ERROR, e);
+            } catch(...) {
+                logger::getInstance().log(logger::ERROR, "Unknown error", e);
+            }
         };
 
         subscribeTo(topic, wrapper_function);
@@ -136,8 +138,10 @@ public:
             try {
                 pf(R::parse(payload));
             } catch(Reflectable::ReflectableParsingException e) {
-
-            } catch(...) {}
+                logger::getInstance().log(logger::ERROR, e);
+            } catch(...) {
+                logger::getInstance().log(logger::ERROR, "Unknown error", e);
+            }
         };
 
         subscribeTo(topic, wrapper_function);
