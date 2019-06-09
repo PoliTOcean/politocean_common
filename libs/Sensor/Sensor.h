@@ -11,6 +11,8 @@
 #include "include/sensor_t.h"
 #include <json.hpp>
 
+using namespace Reflectable;
+
 namespace Politocean {
 
 template <class T>
