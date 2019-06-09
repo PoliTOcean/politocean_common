@@ -93,21 +93,9 @@ public:
     void subscribeTo(const std::string& topic, void (*pf)(const std::string& payload));
 
     template<class T>
-    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& payload))
-    {
-        subscribeTo(topic, pf);
-    }
-
-    template<class T>
     void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& payload), T* obj)
     {
         subscribeTo(topic, std::bind(pf, obj, std::placeholders::_1));
-    }
-
-    template<class T>
-    void subscribeTo(const std::string& topic, void (T::*pf)(const std::string& payload, const std::string& topic))
-    {
-        subscribeTo(topic, pf);
     }
 
     template<class T>
@@ -120,108 +108,31 @@ public:
      * Subscribe to with Reflectable Objects
      */
     template < class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
-    void subscribeTo(const std::string& topic, void (*pf)(R object, const std::string& topic)) {
-        callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) { (*pf)(R::parse(payload), topic); };
+    void subscribeTo(const std::string& topic, std::function<void(R object, const std::string& topic)> pf) {
+        callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) { pf(R::parse(payload), topic); };
 
         subscribeTo(topic, wrapper_function);
     }
 
     template < class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
-    void subscribeTo(const std::string& topic, void (*pf)(R object)) {
-        callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) { (*pf)(R::parse(payload)); };
+    void subscribeTo(const std::string& topic, std::function<void(R object)> pf) {
+        callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) { pf(R::parse(payload)); };
 
         subscribeTo(topic, wrapper_function);
-    }
-
-    template <  class T,
-                class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
-    void subscribeTo(const std::string& topic, void (T::*pf)(R object))
-    {
-        subscribeTo(topic, pf);
     }
 
     template <  class T,
                 class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
     void subscribeTo(const std::string& topic, void (T::*pf)(R object), T* obj)
     {
-        subscribeTo(topic, std::bind(pf, obj, std::placeholders::_1));
-    }
-
-    template <  class T,
-                class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
-    void subscribeTo(const std::string& topic, void (T::*pf)(R object, const std::string& topic))
-    {
-        subscribeTo(topic, pf);
+        subscribeTo(topic, (std::function<void(R object)>)std::bind(pf, obj, std::placeholders::_1));
     }
 
     template <  class T,
                 class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
     void subscribeTo(const std::string& topic, void (T::*pf)(R object, const std::string& topic), T* obj)
     {
-        subscribeTo(topic, (callback_t)std::bind(pf, obj, std::placeholders::_1, std::placeholders::_2));
-    }
-    
-    /**
-     * Subscribe to with Reflectable Collections Objects
-     */
-    template <  class R,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr,
-                template<typename K> class CR,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, CR<R>>::value>::type* = nullptr>
-    void subscribeTo(const std::string& topic, void (*pf)(const CR<R>& object, const std::string& topic)) {
-        callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) { (*pf)(CR<R>::parse(payload), topic); };
-
-        subscribeTo(topic, wrapper_function);
-    }
-
-    template <  class R,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr,
-                template<typename K> class CR,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, CR<R>>::value>::type* = nullptr>
-    void subscribeTo(const std::string& topic, void (*pf)(const CR<R>& object)) {
-        callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) { (*pf)(CR<R>::parse(payload)); };
-
-        subscribeTo(topic, wrapper_function);
-    }
-
-    template <  class T,
-                class R,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr,
-                template<typename K> class CR,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, CR<R>>::value>::type* = nullptr>
-    void subscribeTo(const std::string& topic, void (T::*pf)(R object))
-    {
-        subscribeTo(topic, pf);
-    }
-
-    template <  class T,
-                class R,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr,
-                template<typename K> class CR,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, CR<R>>::value>::type* = nullptr>
-    void subscribeTo(const std::string& topic, void (T::*pf)(const CR<R>& object), T* obj)
-    {
-        subscribeTo(topic, std::bind(pf, obj, std::placeholders::_1));
-    }
-
-    template <  class T,
-                class R,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr,
-                template<typename K> class CR,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, CR<R>>::value>::type* = nullptr>
-    void subscribeTo(const std::string& topic, void (T::*pf)(const CR<R>& object, const std::string& topic))
-    {
-        subscribeTo(topic, pf);
-    }
-
-    template <  class T,
-                class R,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr,
-                template<typename K> class CR,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, CR<R>>::value>::type* = nullptr>
-    void subscribeTo(const std::string& topic, void (T::*pf)(const CR<R>& object, const std::string& topic), T* obj)
-    {
-        subscribeTo(topic, (callback_t)std::bind(pf, obj, std::placeholders::_1, std::placeholders::_2));
+        subscribeTo(topic, (std::function<void(R object, const std::string& topic)>)std::bind(pf, obj, std::placeholders::_1, std::placeholders::_2));
     }
     
 
@@ -237,27 +148,15 @@ public:
     }
 
     template<class T>
-    void subscribeToFamily(const std::string& topic, void (T::*pf)(const std::string& payload))
-    {
-        subscribeToFamily(topic, pf);
-    }
-
-    template<class T>
     void subscribeToFamily(const std::string& topic, void (T::*pf)(const std::string& payload), T* obj)
     {
         subscribeToFamily(topic, std::bind(pf, obj, std::placeholders::_1));
     }
 
     template<class T>
-    void subscribeToFamily(const std::string& topic, void (T::*pf)(const std::string& payload, const std::string& topic))
-    {
-        subscribeToFamily(topic, pf);
-    }
-
-    template<class T>
     void subscribeToFamily(const std::string& topic, void (T::*pf)(const std::string& payload, const std::string& topic), T* obj)
     {
-        subscribeToFamily(topic, (callback_t)std::bind(pf, obj, std::placeholders::_1, std::placeholders::_2));
+        subscribeToFamily(topic, std::bind(pf, obj, std::placeholders::_1, std::placeholders::_2));
     }
 
     /**
@@ -275,13 +174,6 @@ public:
 
     template <  class T,
                 class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
-    void subscribeToFamily(const std::string& topic, void (T::*pf)(R object))
-    {
-        subscribeToFamily(topic, pf);
-    }
-
-    template <  class T,
-                class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
     void subscribeToFamily(const std::string& topic, void (T::*pf)(R object), T* obj)
     {
         subscribeToFamily(topic, std::bind(pf, obj, std::placeholders::_1));
@@ -289,77 +181,10 @@ public:
 
     template <  class T,
                 class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
-    void subscribeToFamily(const std::string& topic, void (T::*pf)(R object, const std::string& topic))
-    {
-        subscribeToFamily(topic, pf);
-    }
-
-    template <  class T,
-                class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
     void subscribeToFamily(const std::string& topic, void (T::*pf)(R object, const std::string& topic), T* obj)
     {
-        subscribeToFamily(topic, (callback_t)std::bind(pf, obj, std::placeholders::_1, std::placeholders::_2));
+        subscribeToFamily(topic, std::bind(pf, obj, std::placeholders::_1, std::placeholders::_2));
     }
-
-    /**
-     * Subscribe to a family of topics with Reflectable Collections Objects
-     */
-    template <  class R,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr,
-                template<typename K> class CR,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, CR<R>>::value>::type* = nullptr>
-    void subscribeToFamily(const std::string& topic, void (*pf)(const CR<R>& object, const std::string& topic)) {
-        subscribeTo(formatTopic(topic)+"#", pf);
-    }
-
-    template <  class R,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr,
-                template<typename K> class CR,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, CR<R>>::value>::type* = nullptr>
-    void subscribeToFamily(const std::string& topic, void (*pf)(const CR<R>& object)){
-        subscribeTo(formatTopic(topic)+"#", pf);
-    }
-
-    template <  class T,
-                class R,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr,
-                template<typename K> class CR,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, CR<R>>::value>::type* = nullptr>
-    void subscribeToFamily(const std::string& topic, void (T::*pf)(const CR<R>& object))
-    {
-        subscribeToFamily(topic, pf);
-    }
-
-    template <  class T,
-                class R,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr,
-                template<typename K> class CR,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, CR<R>>::value>::type* = nullptr>
-    void subscribeToFamily(const std::string& topic, void (T::*pf)(const CR<R>& object), T* obj)
-    {
-        subscribeToFamily(topic, std::bind(pf, obj, std::placeholders::_1));
-    }
-
-    template <  class T,
-                class R,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr,
-                template<typename K> class CR,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, CR<R>>::value>::type* = nullptr>
-    void subscribeToFamily(const std::string& topic, void (T::*pf)(const CR<R>& object, const std::string& topic))
-    {
-        subscribeToFamily(topic, pf);
-    }
-
-    template <  class T,
-                class R,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr,
-                template<typename K> class CR,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, CR<R>>::value>::type* = nullptr>
-    void subscribeToFamily(const std::string& topic, void (T::*pf)(const CR<R>& object, const std::string& topic), T* obj)
-    {
-        subscribeToFamily(topic, (callback_t)std::bind(pf, obj, std::placeholders::_1, std::placeholders::_2));
-    }
-
 
     /**
      * Unsubscribe from the topic
@@ -378,15 +203,7 @@ public:
     void publish(const std::string& topic, const std::string& payload);
 
     template <class R, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr>
-    void publish(const std::string& topic, R object) {
-        publish(topic, object.stringify());
-    }
-
-    template <  class R,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, R>::value>::type* = nullptr,
-                template<typename K> class CR,
-                typename std::enable_if<std::is_base_of<Reflectable::IReflectable, CR<R>>::value>::type* = nullptr>
-    void publish(const std::string& topic, const CR<R>& object) {
+    void publish(const std::string& topic, R& object) {
         publish(topic, object.stringify());
     }
 
