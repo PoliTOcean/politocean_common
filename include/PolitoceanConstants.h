@@ -15,25 +15,47 @@ namespace Politocean
         {
             namespace Milliseconds
             {
-                static const int DFLT_STEPPER           = 10;
-                static const int DFLT_HEAD              = 20;
                 static const int MIN_WRIST              = 100;
                 static const int MAX_WRIST              = 1;
                 static const int AXES_DELAY             = 50;
                 static const int SENSORS_UPDATE_DELAY   = 2000;
-                static const int JOYSTICK_AXIS          = 100;
+                static const int JOYSTICK               = 100;
+                static const int COMMANDS               = 10;
             }
             namespace Seconds
             {
                 static const int SENSORS    = 1;
             }
+            namespace Microseconds
+            {
+                static const int DFLT_STEPPER           = 10000;
+                static const int WRIST_MIN              = 500;
+                static const int WRIST_MAX              = 1000;
+                static const int DFLT_HEAD              = 10000;
+            }
         }
+
+        namespace Logger
+        {
+            const string LOGS_PATH { "logs/" };
+
+            namespace Levels
+            {
+                const string ERROR      { "error" };
+                const string WARNING    { "warning" };
+                const string CONFIG     { "config" };
+                const string INFO       { "info" };
+                const string DEBUG      { "debug" };
+            }
+        }
+        
 
         namespace Topics
         {
-            const string ERRORS             { "messages/errors/" };
-            const string INFO               { "messages/info/" };
-            const string COMPONENTS         { "messages/components/" };
+            const string LOGS               { "logs/" };
+            const string ERRORS             { LOGS + Logger::Levels::ERROR };
+            
+            const string COMPONENTS         { "components/" };
 
             const string MICRO_ROV_CAMERA   { "microRovCamera/" };
 
@@ -65,18 +87,6 @@ namespace Politocean
             const string MICROROV_COMMANDS  { MICROROV + "commands/" };
         }
 
-        namespace Logger
-        {
-            const string LOGS_PATH { "logs/" };
-
-            namespace Levels
-            {
-                const string ERROR  { "error" };
-                const string INFO   { "info" };
-                const string DEBUG  { "debug" };
-            }
-        }
-        
         namespace MicroRov
         {
             const string HOST_ADDRESS   { "127.0.0.1" }; //TODO da togliere
@@ -87,11 +97,13 @@ namespace Politocean
 
         namespace Hmi
         {
+            const string MOUSE_ID           { "mouse" };
             const string CMD_ID             { "cmd" };
             const string AUTODRIVE_ID       { "autodrive" };
             const string GUI_ID             { "gui" };
             const string JOYSTICK_ID        { "joystick" };
             const string SENSORS_ID         { "sensors" };
+            const string COMPONENTS_ID      { "components"} ;
 
             const string IP_ADDRESS         { "10.0.0.1" };
             const string CAMERA_IP_ADDRESS  { "10.0.0.5" };
@@ -132,6 +144,8 @@ namespace Politocean
                 const int HAND              = 29;
                 const int HEAD_UP           = 15;
                 const int HEAD_DOWN         = 17;
+                const int PITCH_CONTROL     = 6;
+                const int CLICK_MOUSE       = 30;
             }
             
             namespace Axes
@@ -142,6 +156,9 @@ namespace Politocean
                 static const int WRIST      = 4;
                 static const int RZ         = 5;
                 static const int HAND       = 3;
+                static const int PITCH      = 2;
+                static const int X_MOUSE    = 9;
+                static const int Y_MOUSE    = 10;
             }
 
             namespace Actions
@@ -164,6 +181,7 @@ namespace Politocean
                     const string SLOW               { "SLOW" };
                     const string MEDIUM             { "MEDIUM" };
                     const string START_AND_STOP     { "START_AND_STOP" };
+                    const string PITCH_CONTROL      { "PITCH_CONTROL" };
                 }
 
                 namespace Stepper
@@ -186,6 +204,14 @@ namespace Politocean
             const string POWER      { "power" };
             const string SHOULDER   { "shoulder" };
             const string WRIST      { "wrist" };
+            const string HEAD       { "head" };
+            const string JOYSTICK   { "joytick" };
+            
+            enum Status {
+                ENABLED,
+                DISABLED,
+                ERROR
+            };
         }
     }
 

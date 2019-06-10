@@ -5,33 +5,36 @@
 using namespace Politocean;
 using namespace std;
 
+#define LIB_TAG "MqttClient: "
 
 /**
- * Singletons
+ * Factory
  */
-std::string MqttClient::clientID = "Default";
-std::map<std::string, MqttClient> MqttClient::instances;
+std::map<mqttID_t, MqttClient*> MqttClient::instances;
 
-void MqttClient::setClientId(std::string clientID)
+MqttClient &MqttClient::getInstance(const std::string& clientID, const std::string& ipAddress, const int& port)
 {
-	MqttClient::clientID = clientID;
-}
+	mqttID_t myKey(clientID, ipAddress, port);
 
-MqttClient& MqttClient::getInstance(std::string clientID, std::string ipAddress, int port)
-{
-	if (instances.find(clientID) != instances.end())
-		return instances.at(clientID);
+	if (instances.find(myKey) != instances.end())
+	{
+		if(instances.at(myKey)==nullptr)
+			instances.erase(myKey);
+		else{
+			return *instances.at(myKey);
+		}
+	}
 
-	static MqttClient newInstance(clientID, ipAddress, port);
-	instances.insert(std::pair<std::string, MqttClient>(clientID, newInstance));
-	return newInstance;	
+	instances.insert(std::pair<mqttID_t, MqttClient*>(myKey, new MqttClient(clientID, ipAddress, port)));
+	return *instances.at(myKey);
 }
 
 MqttClient::MqttClient(const std::string& clientID, const std::string& address, const int& port)
-    :  mosqpp::mosquittopp(clientID.c_str()), clientID_(clientID), address_(address)
+    :   mosqpp::mosquittopp(clientID.c_str()), clientID_(clientID), address_(address), port_(port),
+		reconnectingThread(nullptr), connected(false), reconnecting(false)
 {
-    port_ = port;
     mosqpp::lib_init();
+	connect();
 }
 
 MqttClient::~MqttClient()
@@ -43,40 +46,53 @@ MqttClient::~MqttClient()
 
 bool MqttClient::is_connected()
 {
-    return connected;
+    return connected || reconnecting;
 }
 
 void MqttClient::connect()
 {
-    connect_async(this->address_.c_str(), this->port_, this->keepalive);
-    loop_start();
-	connected = true;
+	if(is_connected()) return;
+
+	logger::getInstance().log(logger::CONFIG, "Trying to connect to " + this->address_ + ":" + to_string(this->port_) + " as " + clientID_);
+
+	reconnecting = true;
+	reconnectingThread = new std::thread([&]() {
+		while (!connected && reconnecting)
+		{
+    		mosquittopp::connect(this->address_.c_str(), this->port_, this->keepalive);
+    		loop_start();
+			std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+		}
+	});
 }
 
 
 void MqttClient::wait()
 {
-	while(is_connected());
+	while(is_connected())
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+	}
 }
 
 
 void MqttClient::subscribeTo(const std::string& topic, callback_t pf)
 {
 	string topicf = topic;
-	if(topicf.at(topicf.size()-1) != '#')
-		topicf = formatTopic(topic);
+	
+	topicf = formatTopic(topic);
 
 	topic_to_callback.insert(std::pair<std::string, callback_t>(topicf, pf));
 
     mosquittopp::subscribe(NULL, topicf.c_str());
 
-	logger::log(logger::DEBUG, string("Subscribed ")+clientID_+string(" to topic ")+topicf);
+	logger::getInstance().log(logger::CONFIG, string("Subscribing ")+clientID_+string(" to topic ")+topicf);
 }
 
 
-void MqttClient::subscribeTo(const std::string& topic, void (*pf)(const std::string& payload))
+void MqttClient::subscribeTo(const std::string& topic, std::function<void(const std::string& payload)> pf)
 {
-	callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) { (*pf)(payload); };
+	callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) { pf(payload); };
 
 	subscribeTo(topic, wrapper_function);
 }
@@ -84,13 +100,19 @@ void MqttClient::subscribeTo(const std::string& topic, void (*pf)(const std::str
 
 void MqttClient::publish(const string& topic, const string& message)
 {
+	logger::getInstance().log(logger::DEBUG, "Trying to publish to "+topic+ " from "+address_+"-"+clientID_);
     mosqpp::mosquittopp::publish(NULL, formatTopic(topic).c_str(), message.length(), message.c_str(), this->qos, false);
 }
 
 
 string MqttClient::formatTopic(const string& topic)
 {
-	return topic.substr(0, topic.find_last_not_of(" /")+1)+"/";
+	std::string topicf = topic;
+	if (topic.substr(topic.size()-2, 2) == "/#")
+		topicf = topicf.substr(0, topic.size()-2).substr(0, topic.find_last_not_of(" /")+1)+"/#";
+	else
+		topicf = topicf.substr(0, topic.find_last_not_of(" /")+1)+"/";
+	return topicf;
 }
 
 
@@ -100,7 +122,7 @@ void MqttClient::unsubscribeFrom(const std::string& topic)
 
     mosquittopp::unsubscribe(NULL, topic.c_str());
 
-	logger::log(logger::DEBUG, string("Unsubscribed ")+clientID_+string(" from topic ")+topic);
+	logger::getInstance().log(logger::INFO, string("Unsubscribed ")+clientID_+string(" from topic ")+topic);
 }
 
 
@@ -128,6 +150,17 @@ std::string MqttClient::getClientId()
 }
 
 
+std::string MqttClient::getIpAddress()
+{
+	return address_;
+}
+
+int MqttClient::getPort()
+{
+	return port_;
+}
+
+
 void MqttClient::on_message(const struct mosquitto_message *msg)
 {
     if(topic_to_callback.empty())
@@ -137,6 +170,7 @@ void MqttClient::on_message(const struct mosquitto_message *msg)
 	std::map<std::string, callback_t>::iterator it;
 
 	it = topic_to_callback.find(topic);
+
 
 	if(it==topic_to_callback.end())
 	{
@@ -157,7 +191,7 @@ void MqttClient::on_message(const struct mosquitto_message *msg)
 
 	if(it == topic_to_callback.end())
 	{
-		logger::log(logger::ERROR, string("Callback's topic ")+msg->topic+string(" not found in subscribed topics of ")+clientID_);
+		logger::getInstance().log(logger::ERROR, string("Callback's topic ")+msg->topic+string(" not found in subscribed topics of ")+clientID_);
 		return;
 	}
 
@@ -170,6 +204,7 @@ void MqttClient::on_message(const struct mosquitto_message *msg)
 void MqttClient::disconnect()
 {
     mosquittopp::disconnect();
+	MqttClient::instances.erase(mqttID_t(clientID_, address_, port_));
 	connected = false;
 }
 
@@ -177,29 +212,32 @@ void MqttClient::disconnect()
 void MqttClient::on_subscribe(int, int, const int *)
 {
 	stringstream ss;
-    ss << TAG << "Subscription succeeded.";
-	logger::log(logger::DEBUG, ss.str());
+    ss << LIB_TAG << "Subscription succeeded.";
+	logger::getInstance().log(logger::INFO, ss.str());
 }
 
 
 void MqttClient::on_disconnect(int rc)
 {
 	stringstream ss;
-    ss << TAG << "disconnection (" << rc << "). Reconnecting...";
-	logger::log(logger::ERROR, ss.str());
+    ss << LIB_TAG << "disconnection (" << rc << ").";
+	if (connected)
+		logger::getInstance().log(logger::WARNING, ss.str()+" Reconnecting...");
+	else
+		logger::getInstance().log(logger::INFO, ss.str());	
 }
-
 
 void MqttClient::on_connect(int rc)
 {
-	stringstream ss;
     if ( rc == 0 ) {
-        ss << TAG << "connected with server";
-		logger::log(logger::DEBUG, ss.str());
+		logger::getInstance().log(logger::CONFIG, string(LIB_TAG) + "connected with server");
 		connected = true;
+		reconnecting = false;
+		for(std::map<std::string, callback_t>::iterator it = topic_to_callback.begin(); it != topic_to_callback.end(); ++it) {
+    		mosquittopp::subscribe(NULL, it->first.c_str());
+		}
     } else {
-		ss << TAG << "impossible to connect with server(" << rc << ")";
-		logger::log(logger::ERROR, ss.str());
+		logger::getInstance().log(logger::WARNING, string(LIB_TAG) + "impossible to connect with server(" + to_string(rc) + ")");
     }
 }
 
@@ -207,6 +245,6 @@ void MqttClient::on_connect(int rc)
 void MqttClient::on_publish(int mid)
 {
 	stringstream ss;
-	ss << TAG << "Message (" << mid << ") succeed to be published ";
-	logger::log(logger::DEBUG, ss.str());
+	ss << LIB_TAG << "Message (" << mid << ") succeed to be published ";
+	logger::getInstance().log(logger::DEBUG, ss.str());
 }

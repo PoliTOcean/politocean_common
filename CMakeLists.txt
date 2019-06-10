@@ -7,10 +7,11 @@ include_directories(include)
 #add_subdirectory(name_of_directory)
 add_subdirectory(libs/Logger)
 add_subdirectory(libs/mqttLogger)
-add_subdirectory(libs/Publisher)
-add_subdirectory(libs/Subscriber)
+#add_subdirectory(libs/Publisher)
+#add_subdirectory(libs/Subscriber)
 add_subdirectory(libs/Sensor)
 add_subdirectory(libs/MqttClient)
+add_subdirectory(libs/Component)
 
 
 # Install and export (do not touch this part)
