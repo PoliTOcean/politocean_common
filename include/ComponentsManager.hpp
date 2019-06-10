@@ -3,11 +3,11 @@
 #include <vector>
 #include <exception>
 
+#include "../libs/mqttLogger/mqttLogger.h"
 #include "../libs/MqttClient/MqttClient.h"
 
 #include "PolitoceanConstants.h"
 
-#include "../libs/Logger/logger.h"
 #include <sstream>
 
 using namespace Politocean::Constants;
