@@ -121,7 +121,7 @@ public:
         callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) {
             try {
                 pf(R::parse(payload), topic);
-            } catch(Reflectable::ReflectableParsingException e) {
+            } catch(const Reflectable::ReflectableParsingException& e) {
                 logger::getInstance().log(logger::ERROR, e);
             } catch(...) {
                 logger::getInstance().log(logger::ERROR, "Unknown error while parsing MQTT Object");
@@ -136,7 +136,7 @@ public:
         callback_t wrapper_function = [pf](const std::string& payload, const std::string& topic) {
             try {
                 pf(R::parse(payload));
-            } catch(Reflectable::ReflectableParsingException e) {
+            } catch(const Reflectable::ReflectableParsingException& e) {
                 logger::getInstance().log(logger::ERROR, e);
             } catch(...) {
                 logger::getInstance().log(logger::ERROR, "Unknown error while parsing MQTT Object");
