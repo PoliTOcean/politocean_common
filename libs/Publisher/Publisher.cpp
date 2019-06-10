@@ -31,7 +31,6 @@ void Publisher::connect()
 
     if(!regex_match(clientID_, std::regex(Constants::CLIENT_ID_REGEX)))
     {
-        logger::log(logger::ERROR, "Invalid characters for clientID.");
         throw mqttException("Invalid clientID.");
     }
     cli_.set_callback(*this);
@@ -56,7 +55,6 @@ void Publisher::publish(std::string topic, std::string payload)
     {
         // Logging
         logger::log(logger::ERROR, clientID_+std::string(" is not connected but it's trying to publish."));
-        //throw Politocean::mqttException("Publisher is not connected.");
         return;
     }
     
