@@ -5,8 +5,6 @@
 using namespace Politocean;
 using namespace std;
 
-#define LIB_TAG "MqttClient: "
-
 /**
  * Factory
  */
@@ -53,7 +51,7 @@ void MqttClient::connect()
 {
 	if(is_connected()) return;
 
-	logger::getInstance().log(logger::CONFIG, "Trying to connect to " + this->address_ + ":" + to_string(this->port_) + " as " + clientID_);
+	logger::getInstance(LIB_TAG).log(logger::CONFIG, "Trying to connect to " + this->address_ + ":" + to_string(this->port_) + " as " + clientID_);
 
 	reconnecting = true;
 	reconnectingThread = new std::thread([&]() {
@@ -86,7 +84,7 @@ void MqttClient::subscribeTo(const std::string& topic, callback_t pf)
 
     mosquittopp::subscribe(NULL, topicf.c_str());
 
-	logger::getInstance().log(logger::CONFIG, string("Subscribing ")+clientID_+string(" to topic ")+topicf);
+	logger::getInstance(LIB_TAG).log(logger::CONFIG, string("Subscribing ")+clientID_+string(" to topic ")+topicf);
 }
 
 
@@ -100,7 +98,7 @@ void MqttClient::subscribeTo(const std::string& topic, std::function<void(const 
 
 void MqttClient::publish(const string& topic, const string& message)
 {
-	logger::getInstance().log(logger::DEBUG, "Trying to publish to "+topic+ " from "+address_+"-"+clientID_);
+	logger::getInstance(LIB_TAG).log(logger::DEBUG, "Trying to publish to "+topic+ " from "+address_+"-"+clientID_);
     mosqpp::mosquittopp::publish(NULL, formatTopic(topic).c_str(), message.length(), message.c_str(), this->qos, false);
 }
 
@@ -122,7 +120,7 @@ void MqttClient::unsubscribeFrom(const std::string& topic)
 
     mosquittopp::unsubscribe(NULL, topic.c_str());
 
-	logger::getInstance().log(logger::INFO, string("Unsubscribed ")+clientID_+string(" from topic ")+topic);
+	logger::getInstance(LIB_TAG).log(logger::INFO, string("Unsubscribed ")+clientID_+string(" from topic ")+topic);
 }
 
 
@@ -191,7 +189,7 @@ void MqttClient::on_message(const struct mosquitto_message *msg)
 
 	if(it == topic_to_callback.end())
 	{
-		logger::getInstance().log(logger::ERROR, string("Callback's topic ")+msg->topic+string(" not found in subscribed topics of ")+clientID_);
+		logger::getInstance(LIB_TAG).log(logger::ERROR, string("Callback's topic ")+msg->topic+string(" not found in subscribed topics of ")+clientID_);
 		return;
 	}
 
@@ -212,32 +210,32 @@ void MqttClient::disconnect()
 void MqttClient::on_subscribe(int, int, const int *)
 {
 	stringstream ss;
-    ss << LIB_TAG << "Subscription succeeded.";
-	logger::getInstance().log(logger::INFO, ss.str());
+    ss << "Subscription succeeded.";
+	logger::getInstance(LIB_TAG).log(logger::INFO, ss.str());
 }
 
 
 void MqttClient::on_disconnect(int rc)
 {
 	stringstream ss;
-    ss << LIB_TAG << "disconnection (" << rc << ").";
+    ss << "disconnection (" << rc << ").";
 	if (connected)
-		logger::getInstance().log(logger::WARNING, ss.str()+" Reconnecting...");
+		logger::getInstance(LIB_TAG).log(logger::WARNING, ss.str()+" Reconnecting...");
 	else
-		logger::getInstance().log(logger::INFO, ss.str());	
+		logger::getInstance(LIB_TAG).log(logger::INFO, ss.str());	
 }
 
 void MqttClient::on_connect(int rc)
 {
     if ( rc == 0 ) {
-		logger::getInstance().log(logger::CONFIG, string(LIB_TAG) + "connected with server");
+		logger::getInstance(LIB_TAG).log(logger::CONFIG, "Connected with server on "+address_);
 		connected = true;
 		reconnecting = false;
 		for(std::map<std::string, callback_t>::iterator it = topic_to_callback.begin(); it != topic_to_callback.end(); ++it) {
     		mosquittopp::subscribe(NULL, it->first.c_str());
 		}
     } else {
-		logger::getInstance().log(logger::WARNING, string(LIB_TAG) + "impossible to connect with server(" + to_string(rc) + ")");
+		logger::getInstance(LIB_TAG).log(logger::WARNING, "impossible to connect with server(" + to_string(rc) + ")");
     }
 }
 
@@ -245,6 +243,6 @@ void MqttClient::on_connect(int rc)
 void MqttClient::on_publish(int mid)
 {
 	stringstream ss;
-	ss << LIB_TAG << "Message (" << mid << ") succeed to be published ";
-	logger::getInstance().log(logger::DEBUG, ss.str());
+	ss << "Message (" << mid << ") succeed to be published ";
+	logger::getInstance(LIB_TAG).log(logger::DEBUG, ss.str());
 }

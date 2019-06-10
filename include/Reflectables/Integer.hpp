@@ -27,12 +27,12 @@ public:
         }
         catch (const std::exception& e)
         {
-            logger::getInstance().log(logger::WARNING, "An error occurred parsing Integer value.", e);
+            mqttLogger::getInstance(LIB_TAG).log(logger::WARNING, "An error occurred parsing Integer value.", e);
             throw ReflectableParsingException(std::string("An error occurred parsing Integer value: ")+e.what());
         }
         catch (...)
         {
-            logger::getInstance().log(logger::WARNING, "An error occurred parsing Integer value.");
+            mqttLogger::getInstance(LIB_TAG).log(logger::WARNING, "An error occurred parsing Integer value.");
             throw ReflectableParsingException("An error occurred parsing Integer value.");
         }
         
