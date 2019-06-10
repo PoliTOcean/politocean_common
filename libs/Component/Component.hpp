@@ -5,6 +5,8 @@
 #include <string>
 #include <exception>
 
+#include <logger.h>
+
 #include "include/component_t.hpp"
 
 #include "Reflectable.hpp"
@@ -69,7 +71,12 @@ namespace Politocean
             }
             catch(const std::exception& e)
             {
-                throw ReflectableParsingException("An error occurred parsing object.");
+                logger::getInstance().log(logger::WARNING, "Error while parsing Component: ", e);
+                throw ReflectableParsingException(std::string("An error occurred parsing Component: ") + e.what());   
+            }
+            catch(...)
+            {
+                throw ReflectableParsingException("An error occurred parsing Component.");
             }
 
             return Component(name, state);

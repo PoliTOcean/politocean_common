@@ -33,9 +33,9 @@ public:
             type    = j_map["type"];
             value   = j_map["value"];
         }
-        catch(const std::exception& e)
+        catch(...)
         {
-            throw ReflectableParsingException("An error occurred parsing sensor.");
+            throw Reflectable::ReflectableParsingException("An error occurred while parsing sensor.");
         }
 
         return Sensor(type, value);
