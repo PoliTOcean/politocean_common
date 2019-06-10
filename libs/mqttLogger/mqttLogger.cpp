@@ -76,6 +76,9 @@ void mqttLogger::log(const levels level, const std::string& msg) {
     catch(std::exception& e){
         ss << "\t--- [not published due to: " << e.what() << "]";
     }
+    catch (...) {
+        logger::log(logger::ERROR, "Uknown error while logging over MQTT.");
+    }
     auto str = ss.str();
     logger::log(level, str.c_str());
 }

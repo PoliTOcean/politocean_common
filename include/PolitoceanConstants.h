@@ -20,6 +20,7 @@ namespace Politocean
                 static const int AXES_DELAY             = 50;
                 static const int SENSORS_UPDATE_DELAY   = 2000;
                 static const int JOYSTICK               = 100;
+                static const int COMMANDS               = 10;
             }
             namespace Seconds
             {

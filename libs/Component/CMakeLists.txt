@@ -6,6 +6,7 @@ add_library(Component SHARED
 
 add_library(PolitoceanCommon::Component ALIAS Component)
 
+target_link_libraries(Component PolitoceanCommon::logger)
 target_include_directories(Component
         PUBLIC
             $<INSTALL_INTERFACE:include>

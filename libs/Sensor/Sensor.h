@@ -11,6 +11,8 @@
 #include "include/sensor_t.h"
 #include <json.hpp>
 
+using namespace Reflectable;
+
 namespace Politocean {
 
 template <class T>
@@ -19,19 +21,32 @@ class Sensor : public Reflectable::IReflectable {
     T value_;
 
 public:
-    static Sensor parse(const std::string& stringified) {
-        auto j_map = nlohmann::json::parse(stringified);
-        
-        sensor_t type = j_map["type"];
-        T value = j_map["value"];
+    static Sensor parse(const std::string& stringified)
+    {
+        sensor_t type;
+        T value;
+
+        try
+        {
+            auto j_map = nlohmann::json::parse(stringified);
+
+            type    = j_map["type"];
+            value   = j_map["value"];
+        }
+        catch(...)
+        {
+            throw Reflectable::ReflectableParsingException("An error occurred while parsing sensor.");
+        }
 
         return Sensor(type, value);
     }
 
-    std::string stringify() override {
+    std::string stringify() override
+    {
         nlohmann::json j_map;
         j_map["type"] = type_;
         j_map["value"] = value_;
+
         return j_map.dump();
     }
 
