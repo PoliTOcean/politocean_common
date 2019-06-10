@@ -31,12 +31,10 @@ public:
         }
         catch (const std::exception& e)
         {
-            logger::getInstance().log(logger::WARNING, "An error occurred parsing Vector value.", e);
             throw ReflectableParsingException(std::string("An error occurred parsing Vector value: ")+e.what());
         }
         catch (...)
         {
-            logger::getInstance().log(logger::WARNING, "An error occurred parsing Vector value.");
             throw ReflectableParsingException("An error occurred parsing Vector value.");
         }
         return vec;
@@ -56,12 +54,10 @@ public:
         }
         catch (const std::exception& e)
         {
-            logger::getInstance().log(logger::WARNING, "An error occurred parsing Vector value.", e);
             throw ReflectableParsingException(std::string("An error occurred parsing Vector value: ")+e.what());
         }
         catch (...)
         {
-            logger::getInstance().log(logger::WARNING, "An error occurred parsing Vector value.");
             throw ReflectableParsingException("An error occurred parsing Vector value.");
         }
         return vec;

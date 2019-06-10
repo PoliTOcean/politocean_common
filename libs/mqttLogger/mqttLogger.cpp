@@ -12,78 +12,78 @@ using namespace Politocean;
 
 using namespace Politocean::Constants;
 
-std::string mqttLogger::def_clientID = UNDEFINED;
+logger::levels mqttLogger::publisher_activation_level = logger::INFO;
 
-mqttLogger::mqttLogger(std::string clientID, std::string ipAddress, int port)
- :  logger(logger::getInstance(clientID)), clientID_(clientID), ipAddress_(ipAddress), port_(port),
-    publisher_activation_level(logger::WARNING)
+mqttLogger::mqttLogger(const std::string& tag) : logger(tag)
 {}
 
-std::map<mqttID_t, mqttLogger*> mqttLogger::instances;
+std::map<std::string, mqttLogger*> mqttLogger::instances;
 
-mqttLogger& mqttLogger::getInstance(const std::string& ipAddress, const int& port) {
-    return getInstance(def_clientID, ipAddress, port);
-}
+mqttLogger& mqttLogger::getInstance(const std::string& tag) {
+    if (tag==""){
+        static mqttLogger defaultInstance(logger::rootTag);
+        return defaultInstance;
+    }
 
-mqttLogger& mqttLogger::getInstance(MqttClient& client) {
-    return getInstance(client.getClientId(), client.getIpAddress(), client.getPort());
-}
-
-mqttLogger& mqttLogger::getInstance(const std::string& clientID, const std::string& ipAddress, const int& port) {
-	mqttID_t myKey(clientID, ipAddress, port);
-    if (def_clientID==UNDEFINED)
-        def_clientID = clientID;
-	else if (instances.find(myKey) != instances.end())
+    if (instances.find(tag) != instances.end())
 	{
-		if(instances.at(myKey)==nullptr)
-			instances.erase(myKey);
+		if(instances.at(tag)==nullptr)
+			instances.erase(tag);
 		else
-			return *instances.at(myKey);
+			return *instances.at(tag);
 	}
 
-	instances.insert(std::pair<mqttID_t, mqttLogger*>(myKey, new mqttLogger(clientID, ipAddress, port)));
-	return *instances.at(myKey);
+	instances.insert(std::pair<std::string, mqttLogger*>(tag, new mqttLogger(tag)));
+	return *instances.at(tag);
 }
 
 void mqttLogger::log(const levels level, const std::exception& exc) {
-    log(level, "An error occured due to an exception.", exc);
+    mqttLogger::log(level, "An error occured due to an exception.", exc);
 }
 
 void mqttLogger::log(const levels level, const std::string& msg, const std::exception& exc) {
     std::stringstream ss;
     ss << msg << "\tException: " << exc.what();
     auto str = ss.str();
-    log(level, msg);
+    mqttLogger::log(level, msg);
 }
 
 void mqttLogger::log(const levels level, const std::string& msg) {
-
-    std::stringstream ss;
-    ss << msg;
-
-    std::string topic = Topics::LOGS+logger::levels_name.at(level);    
+    
+    std::string topic = Topics::LOGS + logger::levels_name.at(level) + "/";
     try{
-        if (level < publisher_activation_level)
+        if (level > publisher_activation_level)
             throw Politocean::loggerException("Publisher activation level lower than "+logger::levels_name.at(level));
 
-        MqttClient& mqtt_pub = MqttClient::getInstance(clientID_, ipAddress_, port_);
+        MqttClient& mqtt_pub = MqttClient::getInstance(logger::rootTag, Hmi::IP_ADDRESS);
 
         if(!mqtt_pub.is_connected())
             throw Politocean::mqttException("mqtt_pub is not connected");
-        mqtt_pub.publish(topic, "["+mqtt_pub.getClientId()+"]"+msg);
-        ss << "\t--- [published]";
+        
+        mqtt_pub.publish(topic, (rootTag == "" ? mqtt_pub.getClientId() : rootTag ) + ": " + msg);
+
+        logger::log(level, msg + " [published]");
     }
-    catch(std::exception& e){
-        ss << "\t--- [not published due to: " << e.what() << "]";
+    catch(std::exception& e) {
+        logger::log(level, msg + " [not published] due to: " + e.what());
     }
     catch (...) {
         logger::log(logger::ERROR, "Uknown error while logging over MQTT.");
     }
-    auto str = ss.str();
-    logger::log(level, str.c_str());
+    
 }
 
 void mqttLogger::setPublishLevel(const levels level)
 {
     publisher_activation_level = level;
+}
+
+void mqttLogger::setDisplayLevel(const levels level)
+{
+    logger::enableLevel(level);
+}
+
+void mqttLogger::setRootTag(const std::string& rootTag)
+{
+    logger::setRootTag(rootTag);
 }

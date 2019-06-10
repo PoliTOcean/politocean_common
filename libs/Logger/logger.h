@@ -25,20 +25,21 @@ public:
     virtual void log(const levels level, const std::string& msg);
 
     static void enableLevel(const levels level);
-    static logger& getInstance();
-    static logger& getInstance(const std::string& tag);
+    static logger& getInstance(const std::string& tag = "");
+    static void setRootTag(const std::string& tag);
 
     logger operator=(const logger&);
 
 protected:
     logger(const logger& lgr) : logger(lgr.tag) {}
     static const std::map<levels, std::string> levels_name;
+    static std::string rootTag;
+    static int activation_level;
+    std::string tag;
 
 private:
     static std::map<std::string, logger*> instances;
-    static int activation_level;
-    std::string tag;
-    static std::string def_tag;
+
 };
 
 }

@@ -9,27 +9,23 @@ namespace Politocean {
 class mqttLogger : public logger {
 
 protected:
-    std::string clientID_, ipAddress_;
-    int port_;
+    std::string clientID_;
     
 public:
-    mqttLogger(std::string clientID, std::string ipAddress, int port = DEF_MOSQUITTO_PORT);
+    mqttLogger(const std::string& tag);
 
     void log(const levels level, const std::exception& exc) override;
     void log(const levels level, const std::string& msg, const std::exception& exc) override;
     void log(const levels level, const std::string& msg) override;
 
-    void setPublishLevel(const levels level);
-
-    static mqttLogger& getInstance(const std::string& ipAddress, const int& port = DEF_MOSQUITTO_PORT);
-    static mqttLogger& getInstance(const std::string& clientID, const std::string& ipAddress, const int& port = DEF_MOSQUITTO_PORT);
-    static mqttLogger& getInstance(MqttClient& client);
+    static void setPublishLevel(const levels level);
+    static void setDisplayLevel(const levels level);
+    static mqttLogger& getInstance(const std::string& tag = "");
+    static void setRootTag(const std::string& rootTag);
 
 private:
-    static std::map<mqttID_t, mqttLogger*> instances;
-    static std::string def_clientID;
-    int publisher_activation_level;
-
+    static std::map<std::string, mqttLogger*> instances;
+    static logger::levels publisher_activation_level;
 
     mqttLogger(const mqttLogger&);
     mqttLogger operator=(const mqttLogger&);

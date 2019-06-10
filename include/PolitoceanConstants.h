@@ -37,7 +37,7 @@ namespace Politocean
 
         namespace Logger
         {
-            const string LOGS_PATH { "logs/" };
+            const string LOGS_PATH { "pto_logs/" };
 
             namespace Levels
             {
@@ -53,7 +53,14 @@ namespace Politocean
         namespace Topics
         {
             const string LOGS               { "logs/" };
-            const string ERRORS             { LOGS + Logger::Levels::ERROR };
+
+            namespace Logs {
+                const string ERRORS         { LOGS + Logger::Levels::ERROR + "/" };
+                const string WARNING        { LOGS + Logger::Levels::WARNING + "/" };
+                const string CONFIG         { LOGS + Logger::Levels::CONFIG + "/" };
+                const string INFO           { LOGS + Logger::Levels::INFO + "/" };
+                const string DEBUG          { LOGS + Logger::Levels::DEBUG + "/" };
+            }
             
             const string COMPONENTS         { "components/" };
 

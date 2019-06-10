@@ -29,6 +29,7 @@ namespace Politocean
 
     class ComponentsManager
     {
+        static const std::string LIB_TAG;
         static std::string id_;
         static std::vector<Component> components_;
 
@@ -49,7 +50,7 @@ namespace Politocean
         {
             stringstream ss;
             ss << component;
-            logger::getInstance().log(logger::DEBUG, ss.str());
+            mqttLogger::getInstance(LIB_TAG).log(logger::DEBUG, ss.str());
             find(component.getName()).setState(component.getState());
         }
 
@@ -76,6 +77,7 @@ namespace Politocean
         }
     };
 
+    const std::string ComponentsManager::LIB_TAG = "ComponentsManager";
     std::string ComponentsManager::id_;
     std::vector<Component> ComponentsManager::components_;
 }

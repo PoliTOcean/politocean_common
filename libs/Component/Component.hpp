@@ -71,12 +71,10 @@ namespace Politocean
             }
             catch(const std::exception& e)
             {
-                logger::getInstance().log(logger::WARNING, "Error while parsing Component: ", e);
                 throw ReflectableParsingException(std::string("An error occurred parsing Component: ") + e.what());   
             }
             catch(...)
             {
-                logger::getInstance().log(logger::WARNING, "Error while parsing Component.");
                 throw ReflectableParsingException("An error occurred parsing Component.");
             }
 

@@ -12,7 +12,8 @@
 #include <chrono>
 #include <Reflectable.hpp>
 
-#define DEF_MOSQUITTO_PORT 1883
+#define MQTT_CLIENT_LIB_TAG "MqttClient"
+#define DEF_MOSQUITTO_PORT  1883
 
 namespace Politocean {
 
@@ -40,6 +41,8 @@ typedef struct mqttID_t {
 
 class MqttClient : public mosqpp::mosquittopp
 {
+    const std::string LIB_TAG = MQTT_CLIENT_LIB_TAG;
+    
 private:
     std::string clientID_, address_;
     int port_;
@@ -122,9 +125,9 @@ public:
             try {
                 pf(R::parse(payload), topic);
             } catch(const Reflectable::ReflectableParsingException& e) {
-                logger::getInstance().log(logger::WARNING, e);
+                logger::getInstance(MQTT_CLIENT_LIB_TAG).log(logger::WARNING, e);
             } catch(...) {
-                logger::getInstance().log(logger::ERROR, "Unknown error while parsing MQTT Object");
+                logger::getInstance(MQTT_CLIENT_LIB_TAG).log(logger::ERROR, "Unknown error while parsing MQTT Object");
             }
         };
 
@@ -137,9 +140,9 @@ public:
             try {
                 pf(R::parse(payload));
             } catch(const Reflectable::ReflectableParsingException& e) {
-                logger::getInstance().log(logger::WARNING, e);
+                logger::getInstance(MQTT_CLIENT_LIB_TAG).log(logger::WARNING, e);
             } catch(...) {
-                logger::getInstance().log(logger::ERROR, "Unknown error while parsing MQTT Object");
+                logger::getInstance(MQTT_CLIENT_LIB_TAG).log(logger::ERROR, "Unknown error while parsing MQTT Object");
             }
         };
 
