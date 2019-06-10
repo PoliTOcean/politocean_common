@@ -66,6 +66,7 @@ void logger::log(const levels level, const std::string& msg){
     std::string level_name = levels_name.at(level);
 
     std::stringstream ss;
+
     ss << "[" << level_name << "] ";
     time_t now = time(0);
     tm *l_time = localtime(&now);
@@ -73,15 +74,13 @@ void logger::log(const levels level, const std::string& msg){
     time_str[strlen(time_str)-1]='\0';
     ss << time_str << " >\t" << ( tag=="" ? rootTag : tag ) << ": " << msg;
     
-    std::ofstream out, out_tag;
+    std::ofstream out;
 
     std::stringstream fullPath;
     std::stringstream folders;
     std::string fileName;
-
     folders << rootTag << "/";
     folders << (1900 + l_time->tm_year) << "-" << (l_time->tm_mon+1) << "-" << l_time->tm_mday << "/";
-
     fullPath << getenv("HOME") << "/" << Constants::Logger::LOGS_PATH << folders.str();
 
     if(!(filesystem::exists(fullPath.str()))){
@@ -89,20 +88,18 @@ void logger::log(const levels level, const std::string& msg){
             throw loggerException("Couldn't create the directory.");
         }
     }
-    else {
-        int lastSize = -1;
-        for(const auto& file : filesystem::directory_iterator(fullPath.str())){
-            if (filesystem::is_directory(file)) continue;
-            lastSize = filesystem::file_size(file.path());
-            fileName = file.path().filename();
-        }
-        if(lastSize==-1 || lastSize > MAX_FILE_SIZE){
-            std::stringstream newFileName;
-            newFileName << now << ".log";
 
-            fileName = newFileName.str();
-        }
-        
+    int lastSize = -1;
+    for(const auto& file : filesystem::directory_iterator(fullPath.str())){
+        if (filesystem::is_directory(file)) continue;
+        lastSize = filesystem::file_size(file.path());
+        fileName = file.path().filename();
+    }
+    if(lastSize==-1 || lastSize > MAX_FILE_SIZE){
+        std::stringstream newFileName;
+        newFileName << now << ".log";
+
+        fileName = newFileName.str();
     }
 
     out.open(fullPath.str() + fileName, std::ios::out | std::ios::app);
@@ -111,31 +108,15 @@ void logger::log(const levels level, const std::string& msg){
 
     if (tag != "") {
         fullPath << tag << "/";
-
         if(!(filesystem::exists(fullPath.str()))){
             if(!(filesystem::create_directories(fullPath.str()))){
                 throw loggerException("Couldn't create the directory.");
             }
         }
-        else {
-            int lastSize = -1;
-            for(const auto& file : filesystem::directory_iterator(fullPath.str())){
-                if (filesystem::is_directory(file)) continue;
-                lastSize = filesystem::file_size(file.path());
-                fileName = file.path().filename();
-            }
-            if(lastSize==-1 || lastSize > MAX_FILE_SIZE){
-                std::stringstream newFileName;
-                newFileName << now << ".log";
 
-                fileName = newFileName.str();
-            }
-            
-        }
-
-        out_tag.open(fullPath.str() + fileName, std::ios::out | std::ios::app);
-        out_tag << ss.str() << std::endl;
-        out_tag.close();
+        out.open(fullPath.str() + fileName, std::ios::out | std::ios::app);
+        out << ss.str() << std::endl;
+        out.close();
     }
 
 
