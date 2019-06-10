@@ -76,6 +76,7 @@ namespace Politocean
             }
             catch(...)
             {
+                logger::getInstance().log(logger::WARNING, "Error while parsing Component.");
                 throw ReflectableParsingException("An error occurred parsing Component.");
             }
 

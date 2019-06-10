@@ -122,7 +122,7 @@ public:
             try {
                 pf(R::parse(payload), topic);
             } catch(const Reflectable::ReflectableParsingException& e) {
-                logger::getInstance().log(logger::ERROR, e);
+                logger::getInstance().log(logger::WARNING, e);
             } catch(...) {
                 logger::getInstance().log(logger::ERROR, "Unknown error while parsing MQTT Object");
             }
@@ -137,7 +137,7 @@ public:
             try {
                 pf(R::parse(payload));
             } catch(const Reflectable::ReflectableParsingException& e) {
-                logger::getInstance().log(logger::ERROR, e);
+                logger::getInstance().log(logger::WARNING, e);
             } catch(...) {
                 logger::getInstance().log(logger::ERROR, "Unknown error while parsing MQTT Object");
             }
