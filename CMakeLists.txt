@@ -12,6 +12,7 @@ add_subdirectory(libs/mqttLogger)
 add_subdirectory(libs/Sensor)
 add_subdirectory(libs/MqttClient)
 add_subdirectory(libs/Component)
+add_subdirectory(libs/Listener)
 
 
 # Install and export (do not touch this part)
