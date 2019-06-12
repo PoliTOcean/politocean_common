@@ -26,6 +26,7 @@ public:
 template<class T>
 class Listener
 {
+protected:
     T value_;
     bool isUpdated_;
 

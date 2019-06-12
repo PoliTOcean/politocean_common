@@ -13,6 +13,7 @@ namespace Politocean
 template< class T >
 class QueuedListener : public Listener<T>
 {
+protected:
     std::queue<T> queue_;
 
 public:
