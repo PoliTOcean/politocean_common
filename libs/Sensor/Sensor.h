@@ -54,7 +54,7 @@ public:
 
     void setValue(T value) { value_ = value; }
     T getValue() { return value_; }
-    sensor_t getType();
+    sensor_t getType() { return type_; }
 
     /*
      * Overloading the operator << to properly print a sensor object
