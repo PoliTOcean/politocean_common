@@ -4,6 +4,7 @@
 #include <string>
 #include <queue>
 #include <exception>
+#include <optional>
 
 namespace Politocean
 {
@@ -27,11 +28,10 @@ template<class T>
 class Listener
 {
 protected:
-    T value_;
-    bool isUpdated_;
+    std::optional<T> value_;
 
 public:
-    Listener() : isUpdated_(false) {}
+    Listener() {}
 
     virtual void listen(const T& obj);
     virtual T get();
@@ -44,23 +44,23 @@ template<class T>
 void Listener<T>::listen(const T& obj)
 {
     value_ = obj;
-    isUpdated_ = true;
 }
 
 template<class T>
 T Listener<T>::get()
 {
-    if (!isUpdated_)
+    if (!value_.has_value())
         throw ListenerException("Nothing to retrieve yet.");
     
-    isUpdated_ = false;
-    return value_;
+    T value = value_.value();
+    value_.reset();
+    return value;
 }
 
 template<class T>
 bool Listener<T>::isUpdated()
 {
-    return isUpdated_;
+    return value_.has_value();
 }
 
 }
