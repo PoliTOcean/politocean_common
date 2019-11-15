@@ -14,7 +14,7 @@ namespace Types {
 
 using namespace Reflectable;
 
-template< class T, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, T>::value || std::is_integral<T>::value, T>::type* = nullptr>
+template< class T, typename std::enable_if<std::is_base_of<Reflectable::IReflectable, T>::value || std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type* = nullptr>
 class Vector : public std::vector<T>, public IReflectable {
 public:
     Vector() : std::vector<T>() {}
@@ -71,7 +71,7 @@ public:
         return stringify(this);
     }
 
-    template<typename R = T, typename std::enable_if<std::is_integral<R>::value, R>::type* = nullptr>
+    template<typename R = T, typename std::enable_if<std::is_integral<R>::value || std::is_floating_point<R>::value, R>::type* = nullptr>
     std::string stringify(Vector<R> *vec) {
         nlohmann::json j_map;
         j_map = *vec;
