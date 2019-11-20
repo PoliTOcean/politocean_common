@@ -20,6 +20,7 @@ public:
     Vector() : std::vector<T>() {}
     Vector(int N, int values) : std::vector<T>(N, values) {}
     Vector(std::vector<T> v) : std::vector<T>(v) {}
+    Vector(std::initializer_list<T> init_list) : std::vector<T>(init_list) {}
 
     template<typename R = T, typename std::enable_if<std::is_integral<R>::value, R>::type* = nullptr>
     static Vector<R> parse(const std::string& stringified) {
